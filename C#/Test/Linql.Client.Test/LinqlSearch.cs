@@ -23,6 +23,30 @@ namespace Linql.Client.Test
             this.TestLoader.Compare(nameof(LinqlSearchTests.SimpleConstant), simpleConstant);
         }
 
+        [Test]
+        public async Task SimpleBooleanProperty()
+        {
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string simpleConstant = await search.Where(r => r.Boolean).ToJsonAsync();
+            this.TestLoader.Compare(nameof(LinqlSearchTests.SimpleBooleanProperty), simpleConstant);
+        }
+
+        [Test]
+        public async Task SimpleBooleanPropertyChaining()
+        {
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string simpleConstant = await search.Where(r => r.OneToOne.Boolean).ToJsonAsync();
+            this.TestLoader.Compare(nameof(LinqlSearchTests.SimpleBooleanPropertyChaining), simpleConstant);
+        }
+        
+        [Test]
+        public async Task SimpleBooleanPropertyEquals()
+        {
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string simpleConstant = await search.Where(r => r.Boolean == false).ToJsonAsync();
+            this.TestLoader.Compare(nameof(LinqlSearchTests.SimpleBooleanPropertyEquals), simpleConstant);
+        }
+
     }
 
     public class DerivedSearch<T> : LinqlSearch<T>

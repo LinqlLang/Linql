@@ -9,6 +9,19 @@ using System.Text;
 
 namespace Linql.Client
 {
+    public abstract class AbstractLinqlSearch : IQueryable
+    {
+        public Type ElementType => throw new NotImplementedException();
+
+        public Expression Expression => throw new NotImplementedException();
+
+        public IQueryProvider Provider => throw new NotImplementedException();
+
+        public IEnumerator GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+    }
 
 
     public class LinqlSearch<T> : LinqlSearch, IQueryable<T>
