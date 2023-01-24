@@ -37,10 +37,10 @@ namespace Linql.Client.Test
         }
 
         [Test]
-        public void SimpleConstant()
+        public async Task SimpleConstant()
         {
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
-            string json = search.Where(r => r.OneToOne.Boolean).ToJson();
+            string json = await search.Where(r => r.OneToOne.Boolean).ToJsonAsync();
         }
 
     }

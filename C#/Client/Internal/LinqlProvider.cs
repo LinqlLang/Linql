@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Linql.Client.Json;
 using System.Data.Common;
+using System.Xml.Linq;
 
 namespace Linql.Client.Internal
 {
@@ -67,8 +68,10 @@ namespace Linql.Client.Internal
         {
             if (!(c.Value is Linql.Client.Json.LinqlSearch))
             {
-
+                LinqlConstant constant = new LinqlConstant(c.Type.Name, c.Value);
+                this.PushToStack(constant, c);
             }
+         
             return base.VisitConstant(c);
         }
 
@@ -92,7 +95,6 @@ namespace Linql.Client.Internal
 
             if(this.LinqlStack.Count == 0)
             {
-                
                 if(this.Search.Expressions == null)
                 {
                     this.Search.Expressions = new List<LinqlExpression>();
@@ -104,15 +106,9 @@ namespace Linql.Client.Internal
 
             Expression expression = base.VisitMethodCall(m);
 
-            this.PopStack();
-
-            return expression;
+            return m;
         }
 
-        //protected override Expression VisitUnary(UnaryExpression t)
-        //{
-        //    return base.VisitUnary(t);
-        //}
 
         //protected override Expression VisitLambda<T>(LambdaExpression lambda)
         //{
@@ -123,13 +119,26 @@ namespace Linql.Client.Internal
         {
             LinqlExpression previous = this.LinqlStack.First();
             LinqlLambda linqlLambda = new LinqlLambda();
+            this.PushToStack(linqlLambda, lambda);
 
-            Expression expression = base.VisitLambda<T>(lambda);
+
+            base.Visit(lambda.Body);
+           
+            foreach(ParameterExpression parameter in lambda.Parameters)
+            {
+                LinqlParameter param = new LinqlParameter(parameter.Name);
+
+                if(linqlLambda.Parameters == null)
+                {
+                    linqlLambda.Parameters = new List<LinqlExpression>();
+                }
+                linqlLambda.Parameters.Add(param);
+            }
 
             this.AttachToExpression(previous, linqlLambda);
-            this.PopStack();
 
-            return expression;
+
+            return lambda;
         }
 
 
@@ -140,8 +149,9 @@ namespace Linql.Client.Internal
             LinqlParameter param = new LinqlParameter(parameter.Name);
             this.PushToStack(param, parameter);
             Expression expression = base.VisitParameter(parameter);
+
             this.AttachToExpression(previous, param);
-            return expression;
+            return parameter;
         }
 
         protected void AttachToExpression(LinqlExpression PreviousExpression, LinqlExpression ExpressionToAttach)
@@ -149,6 +159,14 @@ namespace Linql.Client.Internal
             if(PreviousExpression is LinqlLambda lambda)
             {
                 lambda.Body = ExpressionToAttach;
+            }
+            else if(PreviousExpression is LinqlFunction function)
+            {
+                if (function.Arguments == null) 
+                {
+                    function.Arguments = new List<LinqlExpression>();
+                }
+                function.Arguments.Add(ExpressionToAttach);
             }
             else
             {
@@ -167,7 +185,6 @@ namespace Linql.Client.Internal
             this.AttachToExpression(previous, property);
 
             this.PushToStack(property, m);
-
 
             return m;
         }
