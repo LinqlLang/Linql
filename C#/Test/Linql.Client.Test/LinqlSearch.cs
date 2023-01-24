@@ -81,6 +81,21 @@ namespace Linql.Client.Test
             this.TestLoader.Compare(nameof(LinqlSearchTests.ComplexBoolean), simpleConstant);
         }
 
+        [Test]
+        public async Task ComplexBooleanAsArgument()
+        {
+            DataModel test = new DataModel();
+            await this.InternalComplexBooleanAsArgument(test);
+         
+        }
+
+        private async Task InternalComplexBooleanAsArgument(DataModel test)
+        {
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string simpleConstant = await search.Where(r => test.Boolean).ToJsonAsync();
+            this.TestLoader.Compare(nameof(LinqlSearchTests.ComplexBoolean), simpleConstant);
+        }
+
     }
 
     public class DerivedSearch<T> : LinqlSearch<T>

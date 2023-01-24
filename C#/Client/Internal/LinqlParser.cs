@@ -86,14 +86,6 @@ namespace Linql.Client.Internal
                 object value = c.Value;
                 string Type = c.Type.Name;
 
-                //if (c.Type.IsClass && previous is MemberExpression exp)
-                //{
-                //    FieldInfo field = exp.Member.DeclaringType.GetField(exp.Member.Name);
-                //    value = field.GetValue(c.Value);
-                //    Type = value.GetType().Name;
-                    
-                //}
-
                 LinqlConstant constant = new LinqlConstant(Type, value);
                 this.AttachToExpression(constant);
                 this.PushToStack(constant, c);
