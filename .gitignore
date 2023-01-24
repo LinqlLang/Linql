@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/C#/.vs/Linql
+/C#/Client/bin/Debug/netstandard2.0
+/C#/Client/obj
+/C#/Test/Linql.Client.Test/bin/Debug/net7.0
+/C#/Test/Linql.Client.Test/obj
