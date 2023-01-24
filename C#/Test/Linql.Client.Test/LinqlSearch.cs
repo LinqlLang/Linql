@@ -47,6 +47,40 @@ namespace Linql.Client.Test
             this.TestLoader.Compare(nameof(LinqlSearchTests.SimpleBooleanPropertyEquals), simpleConstant);
         }
 
+        [Test]
+        public async Task SimpleBooleanPropertyEqualsSwap()
+        {
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string simpleConstant = await search.Where(r => false == r.Boolean).ToJsonAsync();
+            this.TestLoader.Compare(nameof(LinqlSearchTests.SimpleBooleanPropertyEqualsSwap), simpleConstant);
+        }
+
+        [Test]
+        public async Task TwoBooleans()
+        {
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string simpleConstant = await search.Where(r => false == true).ToJsonAsync();
+            this.TestLoader.Compare(nameof(LinqlSearchTests.TwoBooleans), simpleConstant);
+        }
+
+        [Test]
+        public async Task BooleanVar()
+        {
+            bool test = false;
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string simpleConstant = await search.Where(r => false == test).ToJsonAsync();
+            this.TestLoader.Compare(nameof(LinqlSearchTests.BooleanVar), simpleConstant);
+        }
+
+        [Test]
+        public async Task ComplexBoolean()
+        {
+            DataModel test = new DataModel();
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string simpleConstant = await search.Where(r => test.Boolean).ToJsonAsync();
+            this.TestLoader.Compare(nameof(LinqlSearchTests.ComplexBoolean), simpleConstant);
+        }
+
     }
 
     public class DerivedSearch<T> : LinqlSearch<T>

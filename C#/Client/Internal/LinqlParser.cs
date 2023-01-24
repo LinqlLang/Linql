@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 
 namespace Linql.Client.Internal
@@ -80,9 +81,20 @@ namespace Linql.Client.Internal
 
             if (!(c.Value is Linql.Client.Json.LinqlSearch))
             {
-                LinqlExpression previous = this.LinqlStack.FirstOrDefault();
+                Expression previous = this.ExpressionStack.FirstOrDefault();
 
-                LinqlConstant constant = new LinqlConstant(c.Type.Name, c.Value);
+                object value = c.Value;
+                string Type = c.Type.Name;
+
+                //if (c.Type.IsClass && previous is MemberExpression exp)
+                //{
+                //    FieldInfo field = exp.Member.DeclaringType.GetField(exp.Member.Name);
+                //    value = field.GetValue(c.Value);
+                //    Type = value.GetType().Name;
+                    
+                //}
+
+                LinqlConstant constant = new LinqlConstant(Type, value);
                 this.AttachToExpression(constant);
                 this.PushToStack(constant, c);
             }
@@ -168,10 +180,43 @@ namespace Linql.Client.Internal
 
             LinqlProperty property = new LinqlProperty(m.Member.Name);
 
+            if(m.Member.MemberType == System.Reflection.MemberTypes.Field)
+            {
+                ExpressionStack.Push(m);
+            }
+
             base.VisitMember(m);
             LinqlExpression previous = this.LinqlStack.First();
-            this.AttachToExpression(property);
-            this.PushToStack(property, m);
+
+            if (previous is LinqlConstant constant)
+            {
+                object value = constant.Value;
+
+                FieldInfo field = m.Member.DeclaringType.GetField(m.Member.Name);
+
+                if(field != null)
+                {
+                    value = field.GetValue(value);
+                }
+                else
+                {
+                    PropertyInfo propertyInfo = m.Member.DeclaringType.GetProperty(m.Member.Name);
+                    value = propertyInfo.GetValue(value);
+                }
+                
+                string Type = value.GetType().Name;
+
+                LinqlConstant linqlConstant = new LinqlConstant(Type, value);
+                this.PopStack();
+                this.AttachToExpression(linqlConstant);
+                this.PushToStack(linqlConstant, m);
+            }
+            else
+            {
+                this.AttachToExpression(property);
+                this.PushToStack(property, m);
+            }
+        
 
             return m;
         }
