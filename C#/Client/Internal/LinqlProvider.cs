@@ -66,10 +66,14 @@ namespace Linql.Client.Internal
 
         protected override Expression VisitConstant(ConstantExpression c)
         {
+
             if (!(c.Value is Linql.Client.Json.LinqlSearch))
             {
+                LinqlExpression previous = this.LinqlStack.First();
+
                 LinqlConstant constant = new LinqlConstant(c.Type.Name, c.Value);
                 this.PushToStack(constant, c);
+                this.AttachToExpression(previous, constant);
             }
          
             return base.VisitConstant(c);

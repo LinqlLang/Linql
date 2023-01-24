@@ -36,7 +36,7 @@ namespace Linql.Client
                 Linql.Client.Json.LinqlSearch search = linqlProvider.BuildLinqlRequest(source.Expression);
                 using (var stream = new MemoryStream())
                 {
-                    await JsonSerializer.SerializeAsync(stream, search, typeof(Linql.Client.Json.LinqlSearch));
+                    await JsonSerializer.SerializeAsync(stream, search, typeof(Linql.Client.Json.LinqlSearch), linqlProvider.JsonOptions);
                     stream.Position = 0;
                     using (var reader = new StreamReader(stream))
                     {
