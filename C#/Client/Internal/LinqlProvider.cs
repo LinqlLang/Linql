@@ -18,9 +18,9 @@ namespace Linql.Client.Internal
 
         protected Linql.Client.Json.LinqlSearch Search { get; set; }
 
-        public JsonSerializerOptions JsonOptions { get; protected set; } = new JsonSerializerOptions 
-        { 
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault, 
+        public JsonSerializerOptions JsonOptions { get; protected set; } = new JsonSerializerOptions
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
         };
 
         public LinqlProvider(Type RootType)
@@ -56,12 +56,12 @@ namespace Linql.Client.Internal
 
             if (!(root is LinqlConstant constant && constant.ConstantType.TypeName == nameof(LinqlSearch)))
             {
-                if (root != null && this.Search.Expressions == null)
-                {
-                    this.Search.Expressions = new List<LinqlExpression>();
-                }
                 if (root != null)
                 {
+                    if (this.Search.Expressions == null)
+                    {
+                        this.Search.Expressions = new List<LinqlExpression>();
+                    }
                     this.Search.Expressions.Add(root);
                 }
             }

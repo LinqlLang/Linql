@@ -39,12 +39,12 @@ namespace Linql.Client
 
         public IEnumerator<T> GetEnumerator()
         {
-            return Provider.Execute<IEnumerable<T>>(Expression).GetEnumerator();
+            throw new EnumerationIsNotSupportedException();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            throw new EnumerationIsNotSupportedException();
         }
     }
 }
