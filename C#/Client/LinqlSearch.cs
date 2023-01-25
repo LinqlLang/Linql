@@ -11,22 +11,29 @@ namespace Linql.Client
 {
     public class LinqlSearch<T> : LinqlSearch, IQueryable<T>
     {
-        public LinqlSearch() : base(typeof(T))
+        protected LinqlContext Context { get; set; }
+
+        public LinqlSearch() : this(null, null, null) { }
+
+        public LinqlSearch(LinqlContext Context = null, IQueryProvider QueryProvider = null, Expression Expression = null) : base(typeof(T))
         {
-            this.Provider = new LinqlProvider(typeof(T));
-            Expression = Expression.Constant(this);
-        }
-        public LinqlSearch(LinqlContext Context) : base(typeof(T))
-        {
-            this.Provider = new LinqlProvider(typeof(T));
-            Expression = Expression.Constant(this);
+            if(Context == null)
+            {
+                this.Context = new LinqlContext();
+            }
+            if(QueryProvider == null)
+            {
+                this.Provider = new LinqlProvider(typeof(T));
+            }
+            this.Expression = Expression;
         }
 
-        internal LinqlSearch(IQueryProvider provider, Expression expression) : base(typeof(T))
+        internal LinqlSearch(IQueryProvider provider, Expression expression) : this(null, provider, expression)
         {
             this.Provider = provider;
             this.Expression = expression;
         }
+
 
         public Type ElementType
         {
@@ -39,12 +46,12 @@ namespace Linql.Client
 
         public IEnumerator<T> GetEnumerator()
         {
-            return Provider.Execute<IEnumerable<T>>(Expression).GetEnumerator();
+            throw new EnumerationIsNotSupportedException();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            throw new EnumerationIsNotSupportedException();
         }
     }
 }

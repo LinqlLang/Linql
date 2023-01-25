@@ -1,5 +1,4 @@
 using Linql.Client.Internal;
-using System.Reflection;
 
 namespace Linql.Client.Test
 {
@@ -170,12 +169,8 @@ namespace Linql.Client.Test
             this.TestLoader.Compare(nameof(Smoke.ListIntFromProperty), simpleConstant);
         }
 
+       
 
-    }
-
-    public class DerivedSearch<T> : LinqlSearch<T>
-    {
-      
     }
 
 }

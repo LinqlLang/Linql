@@ -11,9 +11,9 @@ namespace Linql.Client.Internal
 {
     public class LinqlParser : ExpressionVisitor
     {
-        internal Stack<LinqlExpression> LinqlStack { get; set; } = new Stack<LinqlExpression>();
+        internal Stack<LinqlExpression> LinqlStack { get; } = new Stack<LinqlExpression>();
 
-        internal Stack<Expression> ExpressionStack { get; set; } = new Stack<Expression>();
+        internal Stack<Expression> ExpressionStack { get; } = new Stack<Expression>();
 
         public LinqlExpression Root { get; protected set; }
 
@@ -32,22 +32,7 @@ namespace Linql.Client.Internal
         protected void AttachToExpression(LinqlExpression ExpressionToAttach)
         {
             LinqlExpression previousExpression = this.LinqlStack.FirstOrDefault();
-            if (previousExpression is LinqlLambda lambda)
-            {
-                lambda.Body = ExpressionToAttach;
-            }
-            else if (previousExpression is LinqlBinary binary)
-            {
-                if (binary.Left == null)
-                {
-                    binary.Left = ExpressionToAttach;
-                }
-                else
-                {
-                    binary.Right = ExpressionToAttach;
-                }
-            }
-            else if (previousExpression != null)
+            if (previousExpression != null)
             {
                 previousExpression.Next = ExpressionToAttach;
             }
@@ -63,16 +48,6 @@ namespace Linql.Client.Internal
             this.PopStack();
 
             LinqlExpression previousExpression = this.LinqlStack.FirstOrDefault();
-
-            if (previousExpression is LinqlFunction function)
-            {
-                if (function.Arguments != null && ExpressionToRemove != null)
-                {
-                    function.Arguments.Remove(ExpressionToRemove);
-                }
-
-            }
-
         }
 
         public LinqlParser(Expression LinqlExpression) : base()
@@ -119,11 +94,7 @@ namespace Linql.Client.Internal
                 return argParser.Root;
             }).ToList();
 
-            if(function.Arguments.Count == 0)
-            {
-                function.Arguments = null;
-            }
-
+           
             this.AttachToExpression(function);
             this.PushToStack(function, m);
 
@@ -155,12 +126,6 @@ namespace Linql.Client.Internal
 
             return node;
         }
-
-
-        //protected override Expression VisitLambda<T>(LambdaExpression lambda)
-        //{
-        //    return base.VisitLambda<T>(lambda);
-        //}
 
         protected override Expression VisitBinary(BinaryExpression binary)
         {

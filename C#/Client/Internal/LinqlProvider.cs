@@ -38,6 +38,7 @@ namespace Linql.Client.Internal
             return (IQueryable<TElement>)new LinqlSearch<TElement>(this, expression);
         }
 
+
         public object Execute(Expression expression)
         {
             return Execute(expression);
@@ -56,12 +57,13 @@ namespace Linql.Client.Internal
 
             if (!(root is LinqlConstant constant && constant.ConstantType.TypeName == nameof(LinqlSearch)))
             {
-                if (root != null && this.Search.Expressions == null)
-                {
-                    this.Search.Expressions = new List<LinqlExpression>();
-                }
+               
                 if (root != null)
                 {
+                    if (this.Search.Expressions == null)
+                    {
+                        this.Search.Expressions = new List<LinqlExpression>();
+                    }
                     this.Search.Expressions.Add(root);
                 }
             }
