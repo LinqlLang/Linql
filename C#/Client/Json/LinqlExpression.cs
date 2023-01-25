@@ -11,6 +11,7 @@ namespace Linql.Client.Json
     [JsonDerivedType(typeof(LinqlParameter))]
     [JsonDerivedType(typeof(LinqlProperty))]
     [JsonDerivedType(typeof(LinqlBinary))]
+    [JsonDerivedType(typeof(LinqlUnary))]
 
     public abstract class LinqlExpression
     {

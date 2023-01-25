@@ -1,0 +1,1 @@
+﻿{"Type":"DataModel","Expressions":[{"FunctionName":"Where","Arguments":[{"Parameters":[{"ParameterName":"r"}],"Body":{"UnaryName":"Not","Next":{"ParameterName":"r","Next":{"PropertyName":"Boolean"}}}}]}]}

@@ -140,6 +140,22 @@ namespace Linql.Client.Internal
         }
 
 
+        protected override Expression VisitUnary(UnaryExpression node)
+        {
+            if (node.NodeType != ExpressionType.Quote)
+            {
+                string unaryName = Enum.GetName(typeof(ExpressionType), node.NodeType);
+
+                LinqlUnary unary = new LinqlUnary(unaryName);
+                this.AttachToExpression(unary);
+                this.PushToStack(unary, node);
+            }
+            base.VisitUnary(node);
+
+            return node;
+        }
+
+
         //protected override Expression VisitLambda<T>(LambdaExpression lambda)
         //{
         //    return base.VisitLambda<T>(lambda);

@@ -32,6 +32,14 @@ namespace Linql.Client.Test
         }
 
         [Test]
+        public async Task BooleanNegate()
+        {
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string simpleConstant = await search.Where(r => !r.Boolean).ToJsonAsync();
+            this.TestLoader.Compare(nameof(Smoke.BooleanNegate), simpleConstant);
+        }
+
+        [Test]
         public async Task SimpleBooleanPropertyChaining()
         {
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
