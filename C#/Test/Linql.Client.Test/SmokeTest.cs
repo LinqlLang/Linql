@@ -178,8 +178,21 @@ namespace Linql.Client.Test
             this.TestLoader.Compare(nameof(SmokeTest.InnerLambda), simpleConstant);
         }
 
+        [Test]
+        public async Task NullableHasValue()
+        {
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string simpleConstant = await search.Where(r => r.OneToOneNullable.Integer.HasValue).ToJsonAsync();
+            this.TestLoader.Compare(nameof(SmokeTest.NullableHasValue), simpleConstant);
+        }
 
-
+        [Test]
+        public async Task NullableValue()
+        {
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string simpleConstant = await search.Where(r => r.OneToOneNullable.Integer.HasValue && r.OneToOneNullable.Integer.Value == 1).ToJsonAsync();
+            this.TestLoader.Compare(nameof(SmokeTest.NullableValue), simpleConstant);
+        }
     }
 
 }
