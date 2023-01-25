@@ -19,14 +19,22 @@ namespace Linql.Client
 
         public LinqlSearch(IQueryProvider Provider): base(typeof(T))
         {
+            if(Provider == null)
+            {
+                throw new Exception("Provider cannot be null");
+            }
            this.Provider = Provider;
+            Expression = Expression.Constant(this);
         }
-     
 
-        internal LinqlSearch(IQueryProvider provider, Expression expression) : base(typeof(T))
+
+        public LinqlSearch(IQueryProvider Provider, Expression Expression) : this(Provider)
         {
-            this.Provider = provider;
-            this.Expression = expression;
+            if(Expression == null)
+            {
+                throw new Exception("Expression cannot be null");
+            }
+            this.Expression = Expression;
         }
 
         public Type ElementType

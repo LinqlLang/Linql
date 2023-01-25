@@ -40,7 +40,7 @@ namespace Linql.Client.Internal
 
         public object Execute(Expression expression)
         {
-            return Execute(expression);
+            return default(object);
         }
 
         public TResult Execute<TResult>(Expression expression)

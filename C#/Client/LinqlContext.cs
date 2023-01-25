@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Linql.Client.Internal;
+using System;
 using System.Net.Http;
 
 namespace Linql.Client
@@ -16,7 +17,7 @@ namespace Linql.Client
             }
         }
 
-        public LinqlSearch<T> Set<T>()
+        public virtual LinqlSearch<T> Set<T>()
         {
             return new LinqlSearch<T>();
         }

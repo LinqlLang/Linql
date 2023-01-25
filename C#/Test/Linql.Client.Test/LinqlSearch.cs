@@ -1,5 +1,6 @@
 using Linql.Client.Internal;
 using System.Collections;
+using System.Linq.Expressions;
 
 namespace Linql.Client.Test
 {
@@ -85,6 +86,111 @@ namespace Linql.Client.Test
 
             string simpleConstant = await search.Where(r => r.ListInteger.Contains(1)).ToJsonAsync();
             
+        }
+
+        [Test]
+        public void NullProvider()
+        {
+            try
+            {
+                LinqlSearch<DataModel> search = new LinqlSearch<DataModel>(null);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsTrue(true);
+                return;
+            }
+            Assert.IsTrue(false);
+
+        }
+
+        [Test]
+        public void NullExpression()
+        {
+            try
+            {
+                LinqlSearch<DataModel> search = new LinqlSearch<DataModel>(new CustomLinqlProvider(typeof(DataModel)), null);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsTrue(true);
+                return;
+            }
+            Assert.IsTrue(false);
+
+        }
+
+        [Test]
+        public void ProviderTests()
+        {
+            try
+            {
+                LinqlProvider provider = new CustomLinqlProvider(typeof(DataModel));
+                object test = provider.CreateQuery(Expression.Constant(true));
+                Assert.IsNull(test);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsTrue(false);
+                return;
+            }
+            
+
+        }
+
+        [Test]
+        public void ProviderTests2()
+        {
+            try
+            {
+                LinqlProvider provider = new CustomLinqlProvider(typeof(DataModel));
+                object test = provider.CreateQuery(Expression.Constant(true));
+                Assert.IsNull(test);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsTrue(false);
+                return;
+            }
+
+
+        }
+
+
+        [Test]
+        public void ProviderTests3()
+        {
+            try
+            {
+                LinqlProvider provider = new CustomLinqlProvider(typeof(DataModel));
+                object test = provider.Execute(Expression.Constant(true));
+                Assert.IsNull(test);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsTrue(false);
+                return;
+            }
+
+
+        }
+
+        [Test]
+        public void ProviderTests4()
+        {
+            try
+            {
+                LinqlProvider provider = new CustomLinqlProvider(typeof(DataModel));
+                bool test = provider.Execute<bool>(Expression.Constant(true));
+                Assert.IsFalse(test);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsTrue(false);
+                return;
+            }
+
+
         }
 
     }
