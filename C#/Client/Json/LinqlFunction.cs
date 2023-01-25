@@ -10,6 +10,8 @@ namespace Linql.Client.Json
 
         public List<LinqlExpression> Arguments { get; set; }
 
+        public LinqlExpression Object { get; set; }
+
         public LinqlFunction(string FunctionName, List<LinqlExpression> Arguments = null) 
         {
             this.FunctionName = FunctionName;

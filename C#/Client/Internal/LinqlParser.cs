@@ -36,14 +36,6 @@ namespace Linql.Client.Internal
             {
                 lambda.Body = ExpressionToAttach;
             }
-            else if (previousExpression is LinqlFunction function)
-            {
-                if (function.Arguments == null)
-                {
-                    function.Arguments = new List<LinqlExpression>();
-                }
-                function.Arguments.Add(ExpressionToAttach);
-            }
             else if (previousExpression is LinqlBinary binary)
             {
                 if (binary.Left == null)
@@ -71,14 +63,14 @@ namespace Linql.Client.Internal
             this.PopStack();
 
             LinqlExpression previousExpression = this.LinqlStack.FirstOrDefault();
-         
+
             if (previousExpression is LinqlFunction function)
             {
                 if (function.Arguments != null && ExpressionToRemove != null)
                 {
                     function.Arguments.Remove(ExpressionToRemove);
                 }
-               
+
             }
 
         }
@@ -87,7 +79,11 @@ namespace Linql.Client.Internal
         {
             List<LinqlType> genericArgs = Type.IsConstructedGenericType ? Type.GetGenericArguments().Select(r => this.GetLinqlType(r)).ToList() : null;
             LinqlType type;
-            if (typeof(IEnumerable).IsAssignableFrom(Type))
+            if (typeof(LinqlSearch).IsAssignableFrom(Type))
+            {
+                type = new LinqlType(nameof(LinqlSearch), genericArgs);
+            }
+            else if (typeof(IEnumerable).IsAssignableFrom(Type))
             {
                 type = new LinqlType("List", genericArgs);
             }
@@ -97,7 +93,7 @@ namespace Linql.Client.Internal
             }
 
             return type;
-           
+
         }
 
         public LinqlParser(Expression LinqlExpression) : base()
@@ -114,17 +110,16 @@ namespace Linql.Client.Internal
         protected override Expression VisitConstant(ConstantExpression c)
         {
 
-            if (!(c.Value is Linql.Client.Json.LinqlSearch))
-            {
-                Expression previous = this.ExpressionStack.FirstOrDefault();
 
-                object value = c.Value;
-                LinqlType Type = this.GetLinqlType(c.Type);
+            Expression previous = this.ExpressionStack.FirstOrDefault();
 
-                LinqlConstant constant = new LinqlConstant(Type, value);
-                this.AttachToExpression(constant);
-                this.PushToStack(constant, c);
-            }
+            object value = c.Value;
+            LinqlType Type = this.GetLinqlType(c.Type);
+
+            LinqlConstant constant = new LinqlConstant(Type, value);
+            this.AttachToExpression(constant);
+            this.PushToStack(constant, c);
+
 
             return base.VisitConstant(c);
         }
@@ -132,9 +127,36 @@ namespace Linql.Client.Internal
         protected override Expression VisitMethodCall(MethodCallExpression m)
         {
             LinqlFunction function = new LinqlFunction(m.Method.Name);
+
+            if (m.Object != null)
+            {
+                LinqlParser objectParser = new LinqlParser(m.Object);
+                LinqlExpression parsedObject = objectParser.Root;
+                function.Object = parsedObject;
+            }
+            function.Arguments = m.Arguments.Select(r =>
+            {
+                LinqlParser argParser = new LinqlParser(r);
+                return argParser.Root;
+            }).ToList();
+
+            if(function.Arguments.Count == 0)
+            {
+                function.Arguments = null;
+            }
+
             this.AttachToExpression(function);
             this.PushToStack(function, m);
-            base.VisitMethodCall(m);
+
+            if (this.Root == function)
+            {
+                LinqlExpression firstArg = function.Arguments.FirstOrDefault();
+
+                if (firstArg is LinqlConstant linqlConstant && linqlConstant.ConstantType.TypeName == nameof(LinqlSearch))
+                {
+                    function.Arguments = function.Arguments.Skip(1).ToList();
+                }
+            }
 
             return m;
         }
@@ -165,7 +187,7 @@ namespace Linql.Client.Internal
         {
             string binaryName = Enum.GetName(typeof(ExpressionType), binary.NodeType);
             LinqlBinary linqlBinary = new LinqlBinary(binaryName);
-            
+
             this.AttachToExpression(linqlBinary);
             this.PushToStack(linqlBinary, binary);
 
@@ -184,12 +206,13 @@ namespace Linql.Client.Internal
         protected override Expression VisitLambda<T>(Expression<T> lambda)
         {
             LinqlLambda linqlLambda = new LinqlLambda();
-            
+
             this.AttachToExpression(linqlLambda);
             this.PushToStack(linqlLambda, lambda);
 
+            LinqlParser bodyParser = new LinqlParser(lambda.Body);
 
-            base.Visit(lambda.Body);
+            linqlLambda.Body = bodyParser.Root;
 
             foreach (ParameterExpression parameter in lambda.Parameters)
             {
@@ -208,7 +231,7 @@ namespace Linql.Client.Internal
 
         protected override Expression VisitParameter(ParameterExpression parameter)
         {
-          
+
             LinqlParameter param = new LinqlParameter(parameter.Name);
             this.AttachToExpression(param);
             this.PushToStack(param, parameter);
@@ -217,13 +240,13 @@ namespace Linql.Client.Internal
             return parameter;
         }
 
-      
+
         protected override Expression VisitMember(MemberExpression m)
         {
 
             LinqlProperty property = new LinqlProperty(m.Member.Name);
 
-            if(m.Member.MemberType == System.Reflection.MemberTypes.Field)
+            if (m.Member.MemberType == System.Reflection.MemberTypes.Field)
             {
                 ExpressionStack.Push(m);
             }
@@ -237,7 +260,7 @@ namespace Linql.Client.Internal
 
                 FieldInfo field = m.Member.DeclaringType.GetField(m.Member.Name);
 
-                if(field != null)
+                if (field != null)
                 {
                     value = field.GetValue(value);
                 }
@@ -246,7 +269,7 @@ namespace Linql.Client.Internal
                     PropertyInfo propertyInfo = m.Member.DeclaringType.GetProperty(m.Member.Name);
                     value = propertyInfo.GetValue(value);
                 }
-                
+
                 LinqlType Type = this.GetLinqlType(value.GetType());
 
                 LinqlConstant linqlConstant = new LinqlConstant(Type, value);
@@ -260,7 +283,7 @@ namespace Linql.Client.Internal
                 this.AttachToExpression(property);
                 this.PushToStack(property, m);
             }
-        
+
 
             return m;
         }

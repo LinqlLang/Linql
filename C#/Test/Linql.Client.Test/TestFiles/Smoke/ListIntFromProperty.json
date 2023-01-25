@@ -1,1 +1,1 @@
-﻿{"Type":"DataModel","Expressions":[{"FunctionName":"Where","Arguments":[{"Parameters":[{"ParameterName":"r"}],"Body":{"FunctionName":"Contains","Arguments":[{"ParameterName":"r","Next":{"PropertyName":"ListInteger","Next":{"ConstantType":{"TypeName":"Int32"},"Value":1}}}]}}]}]}
+﻿{"Type":"DataModel","Expressions":[{"FunctionName":"Where","Arguments":[{"Parameters":[{"ParameterName":"r"}],"Body":{"FunctionName":"Contains","Arguments":[{"ConstantType":{"TypeName":"Int32"},"Value":1}],"Object":{"ParameterName":"r","Next":{"PropertyName":"ListInteger"}}}}]}]}
