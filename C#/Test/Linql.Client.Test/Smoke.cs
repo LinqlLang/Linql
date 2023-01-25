@@ -114,6 +114,17 @@ namespace Linql.Client.Test
             this.TestLoader.Compare(nameof(Smoke.ListInt), simpleConstant);
         }
 
+
+        [Test]
+        public async Task ListIntFromProperty()
+        {
+            List<int> integers = new List<int>() { 1, 2, 3 };
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string simpleConstant = await search.Where(r => r.ListInteger.Contains(1)).ToJsonAsync();
+            this.TestLoader.Compare(nameof(Smoke.ListIntFromProperty), simpleConstant);
+        }
+
+
     }
 
     public class DerivedSearch<T> : LinqlSearch<T>
