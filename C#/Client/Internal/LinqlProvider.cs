@@ -50,7 +50,7 @@ namespace Linql.Client.Internal
 
         public virtual Linql.Client.Json.LinqlSearch BuildLinqlRequest(Expression expression)
         {
-            this.Search = new Linql.Client.Json.LinqlSearch(this.RootType.Name);
+            this.Search = new Linql.Client.Json.LinqlSearch(this.RootType);
             LinqlParser parser = new LinqlParser(expression);
             LinqlExpression root = parser.Root;
 

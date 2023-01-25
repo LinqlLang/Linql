@@ -1,3 +1,4 @@
+using Linql.Client.Internal;
 using System.Reflection;
 
 namespace Linql.Client.Test
@@ -5,6 +6,43 @@ namespace Linql.Client.Test
     public class Smoke : TestFileTests
     {
         protected LinqlContext Context { get; set; } = new LinqlContext();
+
+        [Test]
+        //Should fail.
+        public void IncorrectToJson()
+        {
+            List<int> listType = new List<int>();
+
+            try
+            {
+                listType.AsQueryable().ToJson();
+            }
+            catch(UnsupportedIQueryableException ex)
+            {
+                Assert.IsTrue(true);
+                return;
+            }
+            Assert.IsTrue(false);
+        }
+
+        [Test]
+        //Should fail.
+        public async Task IncorrectToJsonAsync()
+        {
+            List<int> listType = new List<int>();
+
+            try
+            {
+                await listType.AsQueryable().ToJsonAsync();
+            }
+            catch (UnsupportedIQueryableException ex)
+            {
+                Assert.IsTrue(true);
+                return;
+            }
+            Assert.IsTrue(false);
+        }
+
 
         [Test]
         public void EmptySearch()

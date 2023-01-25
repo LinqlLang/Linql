@@ -25,7 +25,7 @@ namespace Linql.Client
             }
             else
             {
-                return "";
+                throw new UnsupportedIQueryableException();
             }
         }
 
@@ -46,7 +46,7 @@ namespace Linql.Client
             }
             else
             {
-                return "";
+                throw new UnsupportedIQueryableException();
             }
         }
     }

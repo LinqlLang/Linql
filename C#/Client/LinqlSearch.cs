@@ -9,35 +9,20 @@ using System.Text;
 
 namespace Linql.Client
 {
-    public abstract class AbstractLinqlSearch : IQueryable
-    {
-        public Type ElementType => throw new NotImplementedException();
-
-        public Expression Expression => throw new NotImplementedException();
-
-        public IQueryProvider Provider => throw new NotImplementedException();
-
-        public IEnumerator GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-
     public class LinqlSearch<T> : LinqlSearch, IQueryable<T>
     {
-        public LinqlSearch() : base(typeof(T).Name)
+        public LinqlSearch() : base(typeof(T))
         {
             this.Provider = new LinqlProvider(typeof(T));
             Expression = Expression.Constant(this);
         }
-        public LinqlSearch(LinqlContext Context) : base(typeof(T).Name)
+        public LinqlSearch(LinqlContext Context) : base(typeof(T))
         {
             this.Provider = new LinqlProvider(typeof(T));
             Expression = Expression.Constant(this);
         }
 
-        internal LinqlSearch(IQueryProvider provider, Expression expression) : base(typeof(T).Name)
+        internal LinqlSearch(IQueryProvider provider, Expression expression) : base(typeof(T))
         {
             this.Provider = provider;
             this.Expression = expression;
