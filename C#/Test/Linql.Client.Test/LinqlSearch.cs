@@ -77,11 +77,25 @@ namespace Linql.Client.Test
             Assert.That(search.Type.TypeName, Is.EqualTo("DataModel"));
         }
 
+        [Test]
+        public async Task TestJsonOptions()
+        {
+            List<int> integers = new List<int>() { 1, 2, 3 };
+            CustomLinqlSearch<DataModel> search = new CustomLinqlSearch<DataModel>();
+
+            string simpleConstant = await search.Where(r => r.ListInteger.Contains(1)).ToJsonAsync();
+            
+        }
+
     }
 
     internal class CustomLinqlProvider : LinqlProvider
     {
-        public CustomLinqlProvider(Type RootType) : base(RootType) { }
+        public CustomLinqlProvider(Type RootType) : base(RootType) 
+        {
+            this.JsonOptions = new System.Text.Json.JsonSerializerOptions() { WriteIndented = true };
+        }
+
     }
 
     internal class CustomLinqlSearch<T> : LinqlSearch<T>
