@@ -1,5 +1,6 @@
 ﻿using Linql.Client.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -65,11 +66,28 @@ namespace Linql.Client.Internal
 
         }
 
+        protected void RemoveFromPrevious(LinqlExpression ExpressionToRemove)
+        {
+            this.PopStack();
+
+            LinqlExpression previousExpression = this.LinqlStack.FirstOrDefault();
+         
+            if (previousExpression is LinqlFunction function)
+            {
+                if (function.Arguments != null && ExpressionToRemove != null)
+                {
+                    function.Arguments.Remove(ExpressionToRemove);
+                }
+               
+            }
+
+        }
+
         protected LinqlType GetLinqlType(Type Type)
         {
             List<LinqlType> genericArgs = Type.IsConstructedGenericType ? Type.GetGenericArguments().Select(r => this.GetLinqlType(r)).ToList() : null;
             LinqlType type;
-            if (typeof(IEnumerable<>).IsAssignableFrom(Type))
+            if (typeof(IEnumerable).IsAssignableFrom(Type))
             {
                 type = new LinqlType("List", genericArgs);
             }
@@ -116,7 +134,7 @@ namespace Linql.Client.Internal
             LinqlFunction function = new LinqlFunction(m.Method.Name);
             this.AttachToExpression(function);
             this.PushToStack(function, m);
-            Expression expression = base.VisitMethodCall(m);
+            base.VisitMethodCall(m);
 
             return m;
         }
@@ -216,7 +234,8 @@ namespace Linql.Client.Internal
                 LinqlType Type = this.GetLinqlType(value.GetType());
 
                 LinqlConstant linqlConstant = new LinqlConstant(Type, value);
-                this.PopStack();
+                LinqlExpression previousExpression = this.LinqlStack.FirstOrDefault();
+                this.RemoveFromPrevious(previousExpression);
                 this.AttachToExpression(linqlConstant);
                 this.PushToStack(linqlConstant, m);
             }

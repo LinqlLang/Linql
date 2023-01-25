@@ -1,0 +1,1 @@
+﻿{"Type":"DataModel","Expressions":[{"FunctionName":"Where","Arguments":[{"Parameters":[{"ParameterName":"r"}],"Body":{"FunctionName":"Contains","Arguments":[{"ConstantType":{"TypeName":"List","GenericParameters":[{"TypeName":"Int32"}]},"Value":[1,2,3],"Next":{"ParameterName":"r","Next":{"PropertyName":"Integer"}}}]}}]}]}

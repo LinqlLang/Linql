@@ -105,6 +105,15 @@ namespace Linql.Client.Test
             this.TestLoader.Compare(nameof(Smoke.ThreeBooleans), simpleConstant);
         }
 
+        [Test]
+        public async Task ListInt()
+        {
+            List<int> integers = new List<int>() { 1, 2, 3 };
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string simpleConstant = await search.Where(r => integers.Contains(r.Integer)).ToJsonAsync();
+            this.TestLoader.Compare(nameof(Smoke.ListInt), simpleConstant);
+        }
+
     }
 
     public class DerivedSearch<T> : LinqlSearch<T>
