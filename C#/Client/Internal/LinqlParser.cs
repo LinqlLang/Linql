@@ -65,6 +65,23 @@ namespace Linql.Client.Internal
 
         }
 
+        protected LinqlType GetLinqlType(Type Type)
+        {
+            List<LinqlType> genericArgs = Type.IsConstructedGenericType ? Type.GetGenericArguments().Select(r => this.GetLinqlType(r)).ToList() : null;
+            LinqlType type;
+            if (typeof(IEnumerable<>).IsAssignableFrom(Type))
+            {
+                type = new LinqlType("List", genericArgs);
+            }
+            else
+            {
+                type = new LinqlType(Type.Name, genericArgs);
+            }
+
+            return type;
+           
+        }
+
         public LinqlParser(Expression LinqlExpression) : base()
         {
             this.Visit(LinqlExpression);
@@ -84,7 +101,7 @@ namespace Linql.Client.Internal
                 Expression previous = this.ExpressionStack.FirstOrDefault();
 
                 object value = c.Value;
-                string Type = c.Type.Name;
+                LinqlType Type = this.GetLinqlType(c.Type);
 
                 LinqlConstant constant = new LinqlConstant(Type, value);
                 this.AttachToExpression(constant);
@@ -196,7 +213,7 @@ namespace Linql.Client.Internal
                     value = propertyInfo.GetValue(value);
                 }
                 
-                string Type = value.GetType().Name;
+                LinqlType Type = this.GetLinqlType(value.GetType());
 
                 LinqlConstant linqlConstant = new LinqlConstant(Type, value);
                 this.PopStack();

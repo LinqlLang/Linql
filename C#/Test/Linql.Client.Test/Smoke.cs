@@ -103,7 +103,6 @@ namespace Linql.Client.Test
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => r.Boolean && r.Boolean && r.Boolean).ToJsonAsync();
             this.TestLoader.Compare(nameof(Smoke.ThreeBooleans), simpleConstant);
-
         }
 
     }

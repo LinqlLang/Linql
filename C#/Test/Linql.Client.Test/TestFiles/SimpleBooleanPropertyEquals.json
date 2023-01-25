@@ -1,1 +1,0 @@
-﻿{"Type":"DataModel","Expressions":[{"FunctionName":"Where","Arguments":[{"Parameters":[{"ParameterName":"r"}],"Body":{"BinaryName":"Equal","Left":{"ParameterName":"r","Next":{"PropertyName":"Boolean"}},"Right":{"ConstantType":"Boolean","Value":false}}}]}]}
