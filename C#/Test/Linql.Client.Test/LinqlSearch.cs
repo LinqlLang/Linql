@@ -18,6 +18,13 @@ namespace Linql.Client.Test
         }
 
         [Test]
+        public void Constructor2()
+        {
+            LinqlSearch<DataModel> search = new LinqlSearch<DataModel>();
+            Assert.That(search.Type.TypeName, Is.EqualTo("DataModel"));
+        }
+
+        [Test]
         public void GetEnumerator()
         {
             LinqlSearch<DataModel> search = new LinqlSearch<DataModel>();
@@ -61,5 +68,24 @@ namespace Linql.Client.Test
             LinqlSearch<DataModel> search = new LinqlSearch<DataModel>();
             Assert.That(search.ElementType, Is.EqualTo(typeof(DataModel)));
         }
+
+
+        [Test]
+        public void CustomProvider()
+        {
+            CustomLinqlSearch<DataModel> search = new CustomLinqlSearch<DataModel>();
+            Assert.That(search.Type.TypeName, Is.EqualTo("DataModel"));
+        }
+
+    }
+
+    internal class CustomLinqlProvider : LinqlProvider
+    {
+        public CustomLinqlProvider(Type RootType) : base(RootType) { }
+    }
+
+    internal class CustomLinqlSearch<T> : LinqlSearch<T>
+    {
+        public CustomLinqlSearch() : base(new CustomLinqlProvider(typeof(T))) { }
     }
 }

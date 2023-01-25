@@ -18,7 +18,7 @@ namespace Linql.Client
 
         public LinqlSearch<T> Set<T>()
         {
-            return new LinqlSearch<T>(this);
+            return new LinqlSearch<T>();
         }
 
 

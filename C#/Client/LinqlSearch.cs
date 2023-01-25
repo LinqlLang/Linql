@@ -16,11 +16,12 @@ namespace Linql.Client
             this.Provider = new LinqlProvider(typeof(T));
             Expression = Expression.Constant(this);
         }
-        public LinqlSearch(LinqlContext Context) : base(typeof(T))
+
+        public LinqlSearch(IQueryProvider Provider): base(typeof(T))
         {
-            this.Provider = new LinqlProvider(typeof(T));
-            Expression = Expression.Constant(this);
+           this.Provider = Provider;
         }
+     
 
         internal LinqlSearch(IQueryProvider provider, Expression expression) : base(typeof(T))
         {
