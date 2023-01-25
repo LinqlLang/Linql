@@ -1,4 +1,5 @@
 using Linql.Client.Internal;
+using Linql.Client.Json;
 using Linql.Client.Test.TestFiles;
 
 namespace Linql.Client.Test
@@ -192,6 +193,34 @@ namespace Linql.Client.Test
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => r.OneToOneNullable.Integer.HasValue && r.OneToOneNullable.Integer.Value == 1).ToJsonAsync();
             this.TestLoader.Compare(nameof(SmokeTest.NullableValue), simpleConstant);
+        }
+
+        [Test]
+        public async Task LinqlObject()
+        {
+            LinqlObject<DataModel> objectTest = new LinqlObject<DataModel>(new DataModel());
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string simpleConstant = await search.Where(r => objectTest.TypedValue.Integer == r.Integer).ToJsonAsync();
+            this.TestLoader.Compare(nameof(SmokeTest.LinqlObject), simpleConstant);
+        }
+
+        [Test]
+        public async Task ObjectCalculationWithNull()
+        {
+            DataModel objectTest = new DataModel();
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string simpleConstant = await search.Where(r => objectTest.OneToOne.Integer == r.Integer).ToJsonAsync();
+            this.TestLoader.Compare(nameof(SmokeTest.ObjectCalculationWithNull), simpleConstant);
+        }
+
+        [Test]
+        public async Task ObjectCalculationWithoutNull()
+        {
+            DataModel objectTest = new DataModel();
+            objectTest.OneToOne = new DataModel();
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string simpleConstant = await search.Where(r => objectTest.OneToOne.Integer == r.Integer).ToJsonAsync();
+            this.TestLoader.Compare(nameof(SmokeTest.ObjectCalculationWithoutNull), simpleConstant);
         }
     }
 
