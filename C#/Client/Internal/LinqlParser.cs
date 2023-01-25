@@ -206,11 +206,7 @@ namespace Linql.Client.Internal
 
                 object value = constant.Value;
 
-                if (value == null)
-                {
-                    expression = new LinqlConstant(new LinqlType(typeof(object)), null);
-                }
-                else
+                if(value != null)
                 {
                     FieldInfo field = m.Member.DeclaringType.GetField(m.Member.Name);
 
@@ -241,11 +237,12 @@ namespace Linql.Client.Internal
                     {
                         expression = new LinqlConstant(new LinqlType(typeof(object)), null);
                     }
+                    LinqlExpression previousExpression = this.LinqlStack.FirstOrDefault();
+                    this.RemoveFromPrevious(previousExpression);
+                    this.AttachToExpression(expression);
+                    this.PushToStack(expression, m);
                 }
-                LinqlExpression previousExpression = this.LinqlStack.FirstOrDefault();
-                this.RemoveFromPrevious(previousExpression);
-                this.AttachToExpression(expression);
-                this.PushToStack(expression, m);
+              
             }
             else
             {

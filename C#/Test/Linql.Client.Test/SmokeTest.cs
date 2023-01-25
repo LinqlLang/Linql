@@ -199,6 +199,7 @@ namespace Linql.Client.Test
         public async Task LinqlObject()
         {
             LinqlObject<DataModel> objectTest = new LinqlObject<DataModel>(new DataModel());
+            Assert.That(objectTest.TypedValue, Is.EqualTo(objectTest.Value));
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => objectTest.TypedValue.Integer == r.Integer).ToJsonAsync();
             this.TestLoader.Compare(nameof(SmokeTest.LinqlObject), simpleConstant);
@@ -221,6 +222,15 @@ namespace Linql.Client.Test
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => objectTest.OneToOne.Integer == r.Integer).ToJsonAsync();
             this.TestLoader.Compare(nameof(SmokeTest.ObjectCalculationWithoutNull), simpleConstant);
+        }
+
+
+        [Test]
+        public async Task MultipleClauses()
+        {
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string simpleConstant = await search.Where(r => true).Where(r=> false).ToJsonAsync();
+            this.TestLoader.Compare(nameof(SmokeTest.MultipleClauses), simpleConstant);
         }
     }
 
