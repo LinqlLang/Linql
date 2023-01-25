@@ -11,7 +11,7 @@ using System.Xml.Linq;
 
 namespace Linql.Client.Internal
 {
-    public partial class LinqlProvider : ExpressionVisitor, IQueryProvider
+    public class LinqlProvider : ExpressionVisitor, IQueryProvider
     {
 
         protected Type RootType { get; set; }
