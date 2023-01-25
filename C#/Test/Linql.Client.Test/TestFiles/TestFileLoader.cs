@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Linql.Client.Test
+namespace Linql.Client.Test.TestFiles
 {
     public abstract class TestFileTests
     {
@@ -13,8 +13,8 @@ namespace Linql.Client.Test
         [SetUp]
         public async Task Setup()
         {
-            this.TestLoader = new TestFileLoader(true);
-            await this.TestLoader.LoadFiles();
+            TestLoader = new TestFileLoader(true);
+            await TestLoader.LoadFiles();
         }
 
     }
@@ -39,20 +39,20 @@ namespace Linql.Client.Test
 
                 string FileName = Path.GetFileNameWithoutExtension(file);
                 string text = await File.ReadAllTextAsync(file);
-                this.TestFiles.Add(FileName, text);
+                TestFiles.Add(FileName, text);
             }
         }
 
         public void Compare(string TestName, string Output)
         {
-            if (this.WriteOutput)
+            if (WriteOutput)
             {
                 string directory = "./Output";
                 Directory.CreateDirectory(directory);
                 File.WriteAllText($"{directory}/{TestName}.json", Output);
             }
 
-            string testAgainst = this.TestFiles[TestName];
+            string testAgainst = TestFiles[TestName];
             Assert.That(Output, Is.EqualTo(testAgainst));
         }
     }
