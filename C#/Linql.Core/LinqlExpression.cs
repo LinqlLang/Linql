@@ -14,8 +14,10 @@ namespace Linql.Core
     [JsonDerivedType(typeof(LinqlUnary))]
     [JsonDerivedType(typeof(LinqlObject))]
 
-    public abstract class LinqlExpression
+    public class LinqlExpression
     {
         public LinqlExpression Next { get; set; }
+
+        public LinqlExpression() { }
     }
 }

@@ -8,6 +8,8 @@ namespace Linql.Core
     {
         public string ParameterName { get; set; }
 
+        public LinqlParameter() { }
+
         public LinqlParameter(string ParameterName) 
         {
             this.ParameterName = ParameterName;

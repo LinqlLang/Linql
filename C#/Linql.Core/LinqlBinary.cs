@@ -12,6 +12,8 @@ namespace Linql.Core
 
         public LinqlExpression Right { get; set; }
 
+        public LinqlBinary() { }
+
         public LinqlBinary(string BinaryName, LinqlExpression Left = null, LinqlExpression Right = null) 
         {
             this.BinaryName = BinaryName;

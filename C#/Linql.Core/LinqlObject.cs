@@ -10,6 +10,8 @@ namespace Linql.Core
 
         public object Value { get; set; }
 
+        public LinqlObject() { }
+
         public LinqlObject(LinqlType Type, object Value) 
         {
             this.Type = Type;

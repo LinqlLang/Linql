@@ -10,6 +10,8 @@ namespace Linql.Core
 
         public object Value { get; set; }
 
+        public LinqlConstant() { }
+
         public LinqlConstant(LinqlType ConstantType, object Value) 
         {
             this.ConstantType = ConstantType;

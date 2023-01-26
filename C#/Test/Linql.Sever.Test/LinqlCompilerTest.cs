@@ -10,7 +10,7 @@ namespace Linql.Server.Test
         [Test]
         public void Constructor()
         {
-            string json = this.TestLoader.TestFiles.FirstOrDefault().Value;
+            string json = this.TestLoader.TestFiles.LastOrDefault().Value;
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
 
             if (search != null) 
