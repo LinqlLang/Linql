@@ -1,0 +1,18 @@
+﻿{
+  "FunctionName": "Where",
+  "Arguments": [
+    {
+      "Parameters": [
+        {
+          "ParameterName": "r"
+        }
+      ],
+      "Body": {
+        "ConstantType": {
+          "TypeName": "Boolean"
+        },
+        "Value": false
+      }
+    }
+  ]
+}

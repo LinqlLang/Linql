@@ -20,6 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="TestFiles\Deserialization\Function.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Linql.Client\Linql.Client.csproj" />
   </ItemGroup>
 
