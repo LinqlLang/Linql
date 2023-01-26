@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Linql.Client.Json
+namespace Linql.Core
 {
     public class LinqlBinary : LinqlExpression
     {

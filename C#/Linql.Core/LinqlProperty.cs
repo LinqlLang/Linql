@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Linql.Client.Json
+namespace Linql.Core
 {
     public class LinqlProperty : LinqlExpression
     {
         public string PropertyName { get; set; }
+
+
+        public LinqlProperty() { }
 
         public LinqlProperty(string PropertyName) 
         {

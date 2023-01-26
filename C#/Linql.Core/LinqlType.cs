@@ -4,13 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Linql.Client.Json
+namespace Linql.Core
 {
     public class LinqlType 
     {
         public string TypeName { get; set; }
 
         public List<LinqlType> GenericParameters { get; protected set; }
+
+        public LinqlType() { }
 
         public LinqlType(Type Type)
         {

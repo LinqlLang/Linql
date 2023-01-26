@@ -1,13 +1,10 @@
-﻿using System;
+﻿using Linql.Core;
+using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Linq;
-using System.Text;
+using System.Linq.Expressions;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Linql.Client.Json;
-using System.Data.Common;
-using System.Xml.Linq;
 
 namespace Linql.Client.Internal
 {
@@ -16,7 +13,7 @@ namespace Linql.Client.Internal
 
         protected Type RootType { get; set; }
 
-        protected Linql.Client.Json.LinqlSearch Search { get; set; }
+        protected Linql.Core.LinqlSearch Search { get; set; }
 
         public JsonSerializerOptions JsonOptions { get; protected set; } = new JsonSerializerOptions
         {
@@ -48,9 +45,9 @@ namespace Linql.Client.Internal
             return default(TResult);
         }
 
-        public virtual Linql.Client.Json.LinqlSearch BuildLinqlRequest(Expression expression)
+        public virtual Linql.Core.LinqlSearch BuildLinqlRequest(Expression expression)
         {
-            this.Search = new Linql.Client.Json.LinqlSearch(this.RootType);
+            this.Search = new Linql.Core.LinqlSearch(this.RootType);
             LinqlParser parser = new LinqlParser(expression);
             LinqlExpression root = parser.Root;
 

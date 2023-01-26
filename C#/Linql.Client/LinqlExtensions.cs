@@ -18,7 +18,7 @@ namespace Linql.Client
         {
             if (source.Provider is LinqlProvider linqlProvider)
             {
-                Linql.Client.Json.LinqlSearch search = linqlProvider.BuildLinqlRequest(source.Expression);    
+                Linql.Core.LinqlSearch search = linqlProvider.BuildLinqlRequest(source.Expression);    
                 string result = JsonSerializer.Serialize(search, linqlProvider.JsonOptions);
 
                 return result;
@@ -33,10 +33,10 @@ namespace Linql.Client
         {
             if (source.Provider is LinqlProvider linqlProvider)
             {
-                Linql.Client.Json.LinqlSearch search = linqlProvider.BuildLinqlRequest(source.Expression);
+                Linql.Core.LinqlSearch search = linqlProvider.BuildLinqlRequest(source.Expression);
                 using (var stream = new MemoryStream())
                 {
-                    await JsonSerializer.SerializeAsync(stream, search, typeof(Linql.Client.Json.LinqlSearch), linqlProvider.JsonOptions);
+                    await JsonSerializer.SerializeAsync(stream, search, typeof(Linql.Core.LinqlSearch), linqlProvider.JsonOptions);
                     stream.Position = 0;
                     using (var reader = new StreamReader(stream))
                     {

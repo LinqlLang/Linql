@@ -1,10 +1,12 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Linql.Client.Test.TestFiles
+namespace Linql.Test.Files
 {
     public abstract class TestFileTests
     {
@@ -21,7 +23,7 @@ namespace Linql.Client.Test.TestFiles
 
     public class TestFileLoader
     {
-        protected Dictionary<string, string> TestFiles { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> TestFiles { get; set; } = new Dictionary<string, string>();
 
         protected bool WriteOutput { get; set; }
 
@@ -38,7 +40,7 @@ namespace Linql.Client.Test.TestFiles
             {
 
                 string FileName = Path.GetFileNameWithoutExtension(file);
-                string text = await File.ReadAllTextAsync(file);
+                string text = File.ReadAllText(file);
                 TestFiles.Add(FileName, text);
             }
         }

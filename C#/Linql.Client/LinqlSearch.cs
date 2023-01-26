@@ -1,5 +1,5 @@
 ﻿using Linql.Client.Internal;
-using Linql.Client.Json;
+using Linql.Core;
 using System;
 using System.Collections;
 using System.Collections.Generic;

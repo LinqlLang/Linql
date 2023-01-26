@@ -1,6 +1,5 @@
 using Linql.Client.Internal;
-using Linql.Client.Json;
-using Linql.Client.Test.TestFiles;
+using Linql.Test.Files;
 
 namespace Linql.Client.Test
 {

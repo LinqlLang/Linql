@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace Linql.Client.Json
+namespace Linql.Core
 {
     [JsonDerivedType(typeof(LinqlConstant))]
     [JsonDerivedType(typeof(LinqlFunction))]

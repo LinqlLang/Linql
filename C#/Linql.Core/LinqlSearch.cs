@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Linql.Client.Json
+namespace Linql.Core
 {
     public class LinqlSearch
     {
@@ -16,5 +16,10 @@ namespace Linql.Client.Json
         }
 
         public LinqlSearch(Type Type) : this(new LinqlType(Type)) { }
+
+        public LinqlSearch()
+        {
+
+        }
     }
 }
