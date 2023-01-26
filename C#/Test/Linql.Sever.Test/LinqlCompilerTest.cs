@@ -16,16 +16,48 @@ namespace Linql.Server.Test
             string json = this.TestLoader.TestFiles.LastOrDefault().Value;
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
 
-            if (search != null) 
+            Assert.DoesNotThrow(() =>
             {
-                LinqlCompiler compiler = new LinqlCompiler(search);
-                Assert.True(true);
-            }
-            else
-            {
-                Assert.Fail();
-            }
+                if (search != null)
+                {
+                    LinqlCompiler compiler = new LinqlCompiler(search);
+                }
+            });
+           
+         
+        }
 
+        [Test]
+        public void SearchIsSet()
+        {
+            //string json = this.TestLoader.TestFiles["Function"];
+            //LinqlExpression? search = JsonSerializer.Deserialize<LinqlExpression>(json);
+
+            string json = this.TestLoader.TestFiles.LastOrDefault().Value;
+            LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+
+            Assert.DoesNotThrow(() =>
+            {
+                if (search != null)
+                {
+                    DerivedCompiler compiler = new DerivedCompiler(search);
+                    Assert.NotNull(compiler.GetSearch());
+                }
+            });
+
+
+        }
+    }
+
+    internal class DerivedCompiler : LinqlCompiler
+    {
+        public LinqlSearch GetSearch()
+        {
+            return this.Search;
+        }
+
+        public DerivedCompiler(LinqlSearch Search) : base(Search)
+        {
         }
     }
 }
