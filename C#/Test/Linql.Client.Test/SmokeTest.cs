@@ -1,4 +1,5 @@
 using Linql.Client.Internal;
+using Linql.Core.Test;
 using Linql.Test.Files;
 
 namespace Linql.Client.Test

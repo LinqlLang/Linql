@@ -1,4 +1,5 @@
 using Linql.Client.Internal;
+using Linql.Core.Test;
 using System.Linq.Expressions;
 
 namespace Linql.Client.Test

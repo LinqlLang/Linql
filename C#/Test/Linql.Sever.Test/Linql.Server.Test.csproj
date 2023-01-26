@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Linql.Server\Linql.Server.csproj" />
+    <ProjectReference Include="..\Linql.Core.Test\Linql.Core.Test.csproj" />
     <ProjectReference Include="..\Linql.Test.Files\Linql.Test.Files.csproj" />
   </ItemGroup>
 

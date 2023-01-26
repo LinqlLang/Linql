@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Linql.Client.Test
+namespace Linql.Core.Test
 {
     public class DataModel
     {

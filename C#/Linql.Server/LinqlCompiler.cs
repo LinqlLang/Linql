@@ -1,17 +1,26 @@
 ﻿using Linql.Core;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Linql.Server
 {
-    public class LinqlCompiler
+    public static class LinqlCompiler
     {
-        protected LinqlSearch Search { get; set; }
-
-        public LinqlCompiler(LinqlSearch Search)
+        public static void Execute(this LinqlSearch Search, IQueryable Queryable)
         {
-            this.Search = Search;
+            Search.Expressions.ForEach(r =>
+            {
+                if(r is LinqlFunction function)
+                {
+
+                }
+                else if(r is LinqlConstant constant)
+                {
+
+                }
+            });
         }
     }
 }
