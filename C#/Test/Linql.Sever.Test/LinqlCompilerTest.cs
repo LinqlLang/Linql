@@ -23,16 +23,11 @@ namespace Linql.Server.Test
                     LinqlCompiler compiler = new LinqlCompiler(search);
                 }
             });
-           
-         
         }
 
         [Test]
         public void SearchIsSet()
         {
-            //string json = this.TestLoader.TestFiles["Function"];
-            //LinqlExpression? search = JsonSerializer.Deserialize<LinqlExpression>(json);
-
             string json = this.TestLoader.TestFiles.LastOrDefault().Value;
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
 
@@ -44,8 +39,6 @@ namespace Linql.Server.Test
                     Assert.NotNull(compiler.GetSearch());
                 }
             });
-
-
         }
     }
 
