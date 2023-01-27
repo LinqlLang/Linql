@@ -142,6 +142,29 @@ namespace Linql.Server.Test
             Assert.That(foundMethod, Is.EqualTo(methodToComapre));
         }
 
+        [Test]
+        public void ExecuteShouldErrorIfNotAFunction()
+        {
+            string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];
+            LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+            search.Expressions[0] = new LinqlConstant();
+
+            Assert.Catch(() => this.Execute(search, new List<DataModel>()));
+
+        }
+
+        [Test]
+        public void ShouldErrorIfMethodNotFound()
+        {
+            string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];
+            LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+            LinqlFunction function = search.Expressions.FirstOrDefault() as LinqlFunction;
+            function.FunctionName = "DummyMethod";
+
+            Assert.Catch(() => this.FindMethod(typeof(IEnumerable<DataModel>), function));
+
+        }
+
     }
 
 }
