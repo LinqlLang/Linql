@@ -7,7 +7,7 @@ namespace Linql.Client.Test
 {
     public class LinqlSearchTest
     {
-        [SetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
         }

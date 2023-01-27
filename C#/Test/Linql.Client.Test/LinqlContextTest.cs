@@ -2,7 +2,7 @@ namespace Linql.Client.Test
 {
     public class LinqlContextTests
     {
-        [SetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
         }

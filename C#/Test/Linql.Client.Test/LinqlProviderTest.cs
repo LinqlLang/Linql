@@ -6,7 +6,7 @@ namespace Linql.Client.Test
 {
     public class LinqlProviderTests
     {
-        [SetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
         }

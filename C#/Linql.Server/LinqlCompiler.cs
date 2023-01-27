@@ -60,9 +60,7 @@ namespace Linql.Server
             Type queryableType = Queryable.GetType();
             Type genericType = Queryable.GetType().GetEnumerableType();
 
-
-            List<MethodInfo> methods = this.GetMethods(queryableType).ToList();
-            MethodInfo foundMethod = this.FindMethod(queryableType, Function, methods);
+            MethodInfo foundMethod = this.FindMethod(queryableType, Function);
 
             List<object> methodArgs = new List<object>() { Queryable };
 
@@ -132,9 +130,11 @@ namespace Linql.Server
             return methods;
         }
 
-        protected MethodInfo FindMethod(Type QueryableType, LinqlFunction function, List<MethodInfo> Candidates)
+        protected MethodInfo FindMethod(Type QueryableType, LinqlFunction function)
         {
-            List<MethodInfo> trimmedMethods = Candidates
+            List<MethodInfo> candidates = this.GetMethods(QueryableType).ToList();
+
+            List<MethodInfo> trimmedMethods = candidates
                 .Where(r => r.Name.Contains(function.FunctionName))
                 .Where(r =>
             (r.IsStatic && r.GetParameters().Count() == function.Arguments.Count() + 1)

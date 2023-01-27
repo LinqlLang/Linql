@@ -7,13 +7,13 @@ using System.Text.Json;
 
 namespace Linql.Server.Test
 {
-    public class LinqlCompilerTest : TestFileTests
+    public class ApplicationTest : TestFileTests
     {
         public IQueryable<DataModel> Data { get; set; }
 
         public LinqlCompiler Compiler { get; set; }
 
-        [SetUp]
+        [OneTimeSetUp]
         public override async Task Setup()
         {
             await base.Setup();

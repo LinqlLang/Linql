@@ -12,7 +12,7 @@ namespace Linql.Test.Files
     {
         public TestFileLoader TestLoader { get; set; }
 
-        [SetUp]
+        [OneTimeSetUp]
         public virtual async Task Setup()
         {
             TestLoader = new TestFileLoader(true);
