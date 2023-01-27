@@ -11,7 +11,7 @@ namespace Linql.Server.Test
     {
         public IQueryable<DataModel> Data { get; set; }
 
-        public LinqlCompiler Compiler { get; set; } 
+        public LinqlCompiler Compiler { get; set; }
 
         [SetUp]
         public override async Task Setup()
@@ -27,11 +27,11 @@ namespace Linql.Server.Test
 
             Data = dataList.AsQueryable();
 
-            List<Assembly> assemblies = new List<Assembly>() 
-            { 
+            List<Assembly> assemblies = new List<Assembly>()
+            {
                 typeof(Boolean).Assembly, 
                 //typeof(Enumerable).Assembly, 
-                typeof(Queryable).Assembly 
+                typeof(Queryable).Assembly
             };
             this.Compiler = new LinqlCompiler(assemblies);
 
@@ -74,7 +74,7 @@ namespace Linql.Server.Test
 
         [Test]
         public void WhereFalse()
-        {           
+        {
             string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
 
@@ -87,19 +87,17 @@ namespace Linql.Server.Test
         }
 
         [Test]
-        public void WhereFalseLinqlSearch()
+        public async Task WhereFalseLinqlSearch()
         {
             string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
 
             LinqlSearch<DataModel> data = new LinqlSearch<DataModel>();
 
-            Assert.DoesNotThrow(() =>
-            {
-                IEnumerable<DataModel> result = this.Compiler.Execute<IEnumerable<DataModel>>(search, data);
-                string test = result.AsQueryable().ToJson();
-
-            });
+            IQueryable<DataModel> result = this.Compiler.Execute<IQueryable<DataModel>>(search, data);
+            string test = await result.ToJsonAsync();
+            this.TestLoader.Compare("SimpleBooleanFalse", test);
         }
+
     }
 }
