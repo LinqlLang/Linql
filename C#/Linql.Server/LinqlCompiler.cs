@@ -15,6 +15,8 @@ namespace Linql.Server
 
         public List<Assembly> ValidAssemblies { get; set; } = new List<Assembly>();
 
+        private readonly LinqlLambda StaticLambdaInstance = new LinqlLambda();
+
         public bool UseCache { get; set; }
 
         protected Dictionary<Type, List<MethodInfo>> MethodCache { get; set; } = new Dictionary<Type, List<MethodInfo>>();
@@ -34,8 +36,10 @@ namespace Linql.Server
         }
 
        
-        public void Execute(LinqlSearch Search, IQueryable Queryable)
+        public object Execute(LinqlSearch Search, IEnumerable Queryable)
         {
+            object result = Queryable;
+
             Search.Expressions.ForEach(exp =>
             {
                 Type queryableType = Queryable.GetType().GetEnumerableType();
@@ -47,20 +51,31 @@ namespace Linql.Server
 
                     List<object> methodArgs = new List<object>() { Queryable };
 
-                    List<LambdaExpression> argExpressionx = function.Arguments.Select(r => this.VisitLambda(r as LinqlLambda, queryableType, typeof(Boolean))).ToList();
+                    List<LambdaExpression> argExpressions = function.Arguments.Select(r => this.VisitLambda(r as LinqlLambda, queryableType, typeof(Boolean))).ToList();
 
                     if (foundMethod.GetParameters().Any(r => r.ParameterType.IsFunc()))
                     {
-                        methodArgs.AddRange(argExpressionx.Select(r => r.Compile()));
+                        methodArgs.AddRange(argExpressions.Select(r => r.Compile()));
+                    }
+                    else
+                    {
+                        methodArgs.AddRange(argExpressions);
                     }
 
-                    object intermediateValue = foundMethod.MakeGenericMethod(queryableType).Invoke(null, methodArgs.ToArray());
+                    result = foundMethod.MakeGenericMethod(queryableType).Invoke(null, methodArgs.ToArray());
                 }
                 else
                 {
                     throw new Exception($"Linql Search did not start with a function, but started with {exp.GetType().Name}");
                 }
             });
+            return result;
+        }
+
+        public T Execute<T>(LinqlSearch Search, IEnumerable Queryable)
+        {
+            object result = this.Execute(Search, Queryable);
+            return (T) result;
         }
 
         protected List<MethodInfo> GetMethodsForType(Type Type)
@@ -116,7 +131,11 @@ namespace Linql.Server
                   
                     if (typeof(Func<,>).IsAssignableFrom(parameterType))
                     {
-                        return new LinqlLambda() as LinqlExpression;
+                        return this.StaticLambdaInstance as LinqlExpression;
+                    }
+                    else if (typeof(Expression).IsAssignableFrom(parameterType))
+                    {
+                        return this.StaticLambdaInstance as LinqlExpression;
                     }
 
                     return null;

@@ -1,3 +1,4 @@
+using Linql.Client;
 using Linql.Core;
 using Linql.Core.Test;
 using Linql.Test.Files;
@@ -9,6 +10,8 @@ namespace Linql.Server.Test
     public class LinqlCompilerTest : TestFileTests
     {
         public IQueryable<DataModel> Data { get; set; }
+
+        public LinqlCompiler Compiler { get; set; } 
 
         [SetUp]
         public override async Task Setup()
@@ -23,6 +26,15 @@ namespace Linql.Server.Test
             }
 
             Data = dataList.AsQueryable();
+
+            List<Assembly> assemblies = new List<Assembly>() 
+            { 
+                typeof(Boolean).Assembly, 
+                //typeof(Enumerable).Assembly, 
+                typeof(Queryable).Assembly 
+            };
+            this.Compiler = new LinqlCompiler(assemblies);
+
 
         }
 
@@ -61,32 +73,33 @@ namespace Linql.Server.Test
         //}
 
         [Test]
-        public void Execute()
-        {
-            //string json = this.TestLoader.TestFiles["Function"];
-            //LinqlExpression? search = JsonSerializer.Deserialize<LinqlExpression>(json);
-           
-            List<Assembly> assemblies = new List<Assembly>() { typeof(Boolean).Assembly, typeof(Enumerable).Assembly };
-            LinqlCompiler compiler = new LinqlCompiler(assemblies);
-            string json = this.TestLoader.TestFiles["SimpleConstant"];
+        public void WhereFalse()
+        {           
+            string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
 
             Assert.DoesNotThrow(() =>
             {
-                compiler.Execute(search, this.Data);
+                IEnumerable<DataModel> data = this.Compiler.Execute<IEnumerable<DataModel>>(search, this.Data);
+
+                Assert.That(data.Count(), Is.EqualTo(0));
+            });
+        }
+
+        [Test]
+        public void WhereFalseLinqlSearch()
+        {
+            string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];
+            LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+
+            LinqlSearch<DataModel> data = new LinqlSearch<DataModel>();
+
+            Assert.DoesNotThrow(() =>
+            {
+                IEnumerable<DataModel> result = this.Compiler.Execute<IEnumerable<DataModel>>(search, data);
+                string test = result.AsQueryable().ToJson();
+
             });
         }
     }
-
-    //internal class DerivedCompiler : LinqlCompiler
-    //{
-    //    public LinqlSearch GetSearch()
-    //    {
-    //        return this.Search;
-    //    }
-
-    //    public DerivedCompiler(LinqlSearch Search) : base(Search)
-    //    {
-    //    }
-    //}
 }
