@@ -55,6 +55,16 @@ namespace Linql.Server
             return result;
         }
 
+        public void ClearMethodCache()
+        {
+            this.MethodCache.Clear();
+        }
+
+        public void ClearMethodCacheForType(Type Type)
+        {
+            this.MethodCache.Remove(Type);
+        }
+
         protected object TopLevelFunction(LinqlFunction Function, IEnumerable Queryable)
         {
             Type queryableType = Queryable.GetType();
@@ -132,7 +142,7 @@ namespace Linql.Server
 
         protected MethodInfo FindMethod(Type QueryableType, LinqlFunction function)
         {
-            List<MethodInfo> candidates = this.GetMethods(QueryableType).ToList();
+            List<MethodInfo> candidates = this.GetMethodsForType(QueryableType).ToList();
 
             List<MethodInfo> trimmedMethods = candidates
                 .Where(r => r.Name.Contains(function.FunctionName))

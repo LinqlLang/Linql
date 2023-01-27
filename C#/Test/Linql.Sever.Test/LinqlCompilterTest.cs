@@ -63,26 +63,51 @@ namespace Linql.Server.Test
         }
 
         [Test]
-        public void DefaultWhereEnumerable()
+        //Since cache is turned on at the start, and I've queried using Queryable before, the methods will be loaded. 
+        //Therefore, even though I've removed Queryable from the searchable assemblies, the cache should pick up the queryable method
+        //Then, I turn caching off, and ensure that I don't get the queryable method back. 
+        public void TestMethodCaching()
         {
+            Type enumerableType = typeof(IEnumerable<DataModel>);
+            Type queryableType = typeof(IQueryable<DataModel>);
+
+            MethodInfo enumerableWhere = typeof(Enumerable).GetMethods().First(r => r.Name == "Where");
+            MethodInfo queryableWhere = typeof(Queryable).GetMethods().First(r => r.Name == "Where");
+
+
+            this.ClearMethodCache();
+
             this.ValidAssemblies.Remove(typeof(Queryable).Assembly);
             string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];
+            
+            
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
             LinqlFunction function = search.Expressions.FirstOrDefault() as LinqlFunction;
 
-            MethodInfo methodToComapre = typeof(Enumerable).GetMethods().First(r => r.Name == "Where");
 
-            MethodInfo foundMethod = this.FindMethod(typeof(IQueryable<DataModel>), function);
+            MethodInfo foundMethod = this.FindMethod(queryableType, function);
 
-            Assert.That(foundMethod, Is.EqualTo(methodToComapre));
+            Assert.That(foundMethod, Is.EqualTo(enumerableWhere));
 
             this.ValidAssemblies.Add(typeof(Queryable).Assembly);
 
-            methodToComapre = typeof(Queryable).GetMethods().First(r => r.Name == "Where");
 
-            foundMethod = this.FindMethod(typeof(IQueryable<DataModel>), function);
+            foundMethod = this.FindMethod(queryableType, function);
 
-            Assert.That(foundMethod, Is.EqualTo(methodToComapre));
+            Assert.That(foundMethod, Is.EqualTo(enumerableWhere));
+
+            this.UseCache = false;
+
+            foundMethod = this.FindMethod(queryableType, function);
+
+            Assert.That(foundMethod, Is.EqualTo(queryableWhere));
+
+            this.UseCache = true;
+            this.ClearMethodCacheForType(queryableType);
+
+            foundMethod = this.FindMethod(queryableType, function);
+
+            Assert.That(foundMethod, Is.EqualTo(queryableWhere));
         }
 
         [Test]
