@@ -21,6 +21,8 @@ namespace Linql.Server
 
         protected Dictionary<Type, List<MethodInfo>> MethodCache { get; set; } = new Dictionary<Type, List<MethodInfo>>();
 
+        protected Dictionary<string, ParameterExpression> Parameters { get; set; } = new Dictionary<string, ParameterExpression>();
+
         public LinqlCompiler(List<Assembly> extensionAssemblies = null, bool UseCache = true, Dictionary<Type, List<MethodInfo>> MethodCache = null)
         {
             if (extensionAssemblies != null)
@@ -35,9 +37,15 @@ namespace Linql.Server
             }
         }
 
+        //Used for recursive lambda generation
+        protected LinqlCompiler(LinqlCompiler Parent, Dictionary<string, ParameterExpression> ParameterExpressions) : this(Parent.ValidAssemblies, Parent.UseCache, Parent.MethodCache)
+        {
+            this.Parameters = ParameterExpressions;
+        }
        
         public object Execute(LinqlSearch Search, IEnumerable Queryable)
         {
+            this.Parameters.Clear();
             object result = Queryable;
 
             Search.Expressions.ForEach(exp =>

@@ -38,40 +38,6 @@ namespace Linql.Server.Test
 
         }
 
-        //[Test]
-        //public void Constructor()
-        //{
-        //    //string json = this.TestLoader.TestFiles["Function"];
-        //    //LinqlExpression? search = JsonSerializer.Deserialize<LinqlExpression>(json);
-
-        //    string json = this.TestLoader.TestFiles.LastOrDefault().Value;
-        //    LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
-
-        //    Assert.DoesNotThrow(() =>
-        //    {
-        //        if (search != null)
-        //        {
-        //            LinqlCompiler compiler = new LinqlCompiler(search);
-        //        }
-        //    });
-        //}
-
-        //[Test]
-        //public void SearchIsSet()
-        //{
-        //    string json = this.TestLoader.TestFiles.LastOrDefault().Value;
-        //    LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
-
-        //    Assert.DoesNotThrow(() =>
-        //    {
-        //        if (search != null)
-        //        {
-        //            DerivedCompiler compiler = new DerivedCompiler(search);
-        //            Assert.NotNull(compiler.GetSearch());
-        //        }
-        //    });
-        //}
-
         [Test]
         public void WhereFalse()
         {
@@ -113,5 +79,31 @@ namespace Linql.Server.Test
             this.TestLoader.Compare("SimpleBooleanFalse", test);
         }
 
+        [Test]
+        public async Task SimpleBooleanPropertyInception()
+        {
+            string json = this.TestLoader.TestFiles["SimpleBooleanProperty"];
+            LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+
+            LinqlSearch<DataModel> data = new LinqlSearch<DataModel>();
+
+            IQueryable<DataModel> result = this.Compiler.Execute<IQueryable<DataModel>>(search, data);
+            string test = await result.ToJsonAsync();
+            this.TestLoader.Compare("SimpleBooleanProperty", test);
+        }
+
+        [Test]
+        public async Task SimpleBooleanPropertyData()
+        {
+            string json = this.TestLoader.TestFiles["SimpleBooleanProperty"];
+            LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+
+            IQueryable<DataModel> data = this.Data;
+
+            IQueryable<DataModel> result = this.Compiler.Execute<IQueryable<DataModel>>(search, data);
+            List<DataModel> compiledResult = result.ToList();
+            Assert.That(result.Count(), Is.EqualTo(this.Data.Count() / 2));
+
+        }
     }
 }

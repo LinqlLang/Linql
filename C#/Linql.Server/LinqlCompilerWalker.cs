@@ -14,7 +14,7 @@ namespace Linql.Server
 {
     public partial class LinqlCompiler
     {
-        protected Expression Visit(LinqlExpression Expression, Type InputType)
+        protected Expression Visit(LinqlExpression Expression, Type InputType, Expression Previous = null)
         {
             if(Expression is LinqlLambda lambda)
             {
@@ -22,25 +22,37 @@ namespace Linql.Server
             }
             else if(Expression is LinqlConstant constant)
             {
-                return this.VisitConstant(constant);
+                return this.VisitConstant(constant, Previous);
             }
             else if (Expression is LinqlParameter param)
             {
-                return this.VisitParameter(param, InputType);
+                return this.VisitParameter(param, InputType, Previous);
+            }
+            else if (Expression is LinqlProperty property)
+            {
+                return this.VisitProperty(property, InputType, Previous);
             }
             return null;
         }
 
 
-        protected LambdaExpression VisitLambda(LinqlLambda Lambda, Type InputType, Type FunctionType)
+        protected LambdaExpression VisitLambda(LinqlLambda Lambda, Type InputType, Type FunctionType, Expression Previous = null)
         {
             if(InputType == null)
             {
                 throw new Exception("Input type cannot be null when trying to create a Lambda function");
             }
 
-            IEnumerable<ParameterExpression> parameters = Lambda.Parameters.Select(r => this.Visit(r, InputType)).Cast<ParameterExpression>();
-            Expression body = this.Visit(Lambda.Body, InputType);
+            List<ParameterExpression> parameters = Lambda.Parameters.Select(r => this.Visit(r, InputType)).Cast<ParameterExpression>().ToList();
+
+            parameters.ForEach(r =>
+            {
+                this.Parameters.Add(r.Name, r);
+            });
+
+            LinqlCompiler bodyCompiler = new LinqlCompiler(this, new Dictionary<string, ParameterExpression>(this.Parameters));
+
+            Expression body = bodyCompiler.Visit(Lambda.Body, InputType);
 
             Type functionTypeConstructed = typeof(Func<,>).MakeGenericType(InputType, FunctionType);
             
@@ -48,7 +60,7 @@ namespace Linql.Server
             return lambdaExp;
         }
 
-        protected Expression VisitConstant(LinqlConstant Constant)
+        protected Expression VisitConstant(LinqlConstant Constant, Expression Previous = null)
         {
             Type foundType = this.ValidAssemblies.SelectMany(r => r.ExportedTypes.Where(s => s.Name.Contains(Constant.ConstantType.TypeName))).FirstOrDefault();
 
@@ -79,9 +91,43 @@ namespace Linql.Server
             
         }
 
-        protected Expression VisitParameter(LinqlParameter Param, Type InputType)
+        protected Expression VisitParameter(LinqlParameter Param, Type InputType, Expression Previous = null)
         {
-            return Expression.Parameter(InputType, Param.ParameterName);
+            Expression parameter;
+
+            if (this.Parameters.ContainsKey(Param.ParameterName))
+            {
+                parameter = this.Parameters[Param.ParameterName];
+            }
+            else
+            {
+                parameter = Expression.Parameter(InputType, Param.ParameterName);
+            }
+
+            if (Param.Next != null)
+            {
+                parameter = this.Visit(Param.Next, InputType, parameter); 
+            }
+
+            return parameter;
+        }
+
+        protected Expression VisitProperty(LinqlProperty Property, Type InputType, Expression Previous = null)
+        {
+            if(Previous == null)
+            {
+                throw new Exception("Attempted to access a property on a null Expression");
+            }
+
+            PropertyInfo propertyInfo = Previous.Type.GetProperty(Property.PropertyName);
+            Expression property = Expression.Property(Previous, propertyInfo);
+
+            if(Property.Next != null)
+            {
+                property = this.Visit(Property.Next, InputType, Previous);
+            }
+
+            return property;
         }
 
     }
