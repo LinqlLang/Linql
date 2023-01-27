@@ -29,8 +29,8 @@ namespace Linql.Server.Test
 
             List<Assembly> assemblies = new List<Assembly>()
             {
-                typeof(Boolean).Assembly, 
-                //typeof(Enumerable).Assembly, 
+                typeof(Boolean).Assembly,
+                typeof(Enumerable).Assembly,
                 typeof(Queryable).Assembly
             };
             this.Compiler = new LinqlCompiler(assemblies);
@@ -81,6 +81,20 @@ namespace Linql.Server.Test
             Assert.DoesNotThrow(() =>
             {
                 IEnumerable<DataModel> data = this.Compiler.Execute<IEnumerable<DataModel>>(search, this.Data);
+
+                Assert.That(data.Count(), Is.EqualTo(0));
+            });
+        }
+
+        [Test]
+        public void WhereFalseQueryable()
+        {
+            string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];
+            LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+
+            Assert.DoesNotThrow(() =>
+            {
+                IQueryable<DataModel> data = this.Compiler.Execute<IQueryable<DataModel>>(search, this.Data);
 
                 Assert.That(data.Count(), Is.EqualTo(0));
             });

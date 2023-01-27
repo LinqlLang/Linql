@@ -42,33 +42,42 @@ namespace Linql.Server
 
             Search.Expressions.ForEach(exp =>
             {
-                Type queryableType = Queryable.GetType().GetEnumerableType();
 
                 if (exp is LinqlFunction function)
                 {
-                    List<MethodInfo> methods = this.GetMethods(queryableType).ToList();
-                    MethodInfo foundMethod = this.FindMethod(queryableType, function, methods);
-
-                    List<object> methodArgs = new List<object>() { Queryable };
-
-                    List<LambdaExpression> argExpressions = function.Arguments.Select(r => this.VisitLambda(r as LinqlLambda, queryableType, typeof(Boolean))).ToList();
-
-                    if (foundMethod.GetParameters().Any(r => r.ParameterType.IsFunc()))
-                    {
-                        methodArgs.AddRange(argExpressions.Select(r => r.Compile()));
-                    }
-                    else
-                    {
-                        methodArgs.AddRange(argExpressions);
-                    }
-
-                    result = foundMethod.MakeGenericMethod(queryableType).Invoke(null, methodArgs.ToArray());
+                    result = this.TopLevelFunction(function, Queryable);
                 }
                 else
                 {
                     throw new Exception($"Linql Search did not start with a function, but started with {exp.GetType().Name}");
                 }
             });
+            return result;
+        }
+
+        protected object TopLevelFunction(LinqlFunction Function, IEnumerable Queryable)
+        {
+            Type queryableType = Queryable.GetType();
+            Type genericType = Queryable.GetType().GetEnumerableType();
+
+
+            List<MethodInfo> methods = this.GetMethods(queryableType).ToList();
+            MethodInfo foundMethod = this.FindMethod(queryableType, Function, methods);
+
+            List<object> methodArgs = new List<object>() { Queryable };
+
+            List<LambdaExpression> argExpressions = Function.Arguments.Select(r => this.VisitLambda(r as LinqlLambda, genericType, typeof(Boolean))).ToList();
+
+            if (foundMethod.GetParameters().Any(r => r.ParameterType.IsFunc()))
+            {
+                methodArgs.AddRange(argExpressions.Select(r => r.Compile()));
+            }
+            else
+            {
+                methodArgs.AddRange(argExpressions);
+            }
+
+            object result = foundMethod.MakeGenericMethod(genericType).Invoke(null, methodArgs.ToArray());
             return result;
         }
 
@@ -108,7 +117,18 @@ namespace Linql.Server
         protected IEnumerable<MethodInfo> GetExtensionMethods(Type extendedType)
         {
             IEnumerable<Type> types = this.ValidAssemblies.SelectMany(r => r.GetTypes()).Where(r => r.IsSealed && !r.IsGenericType && !r.IsNested);
-            List<MethodInfo> methods = types.SelectMany(r => r.GetMethods()).ToList();
+
+            List<MethodInfo> methods = types
+                .SelectMany(r => r.GetMethods())
+                .Where(s => 
+                s.GetParameters().Count() > 0 
+                &&
+                (s.GetParameters().FirstOrDefault().ParameterType.GetGenericTypeDefinitionSafe().IsAssignableFrom(extendedType.GetGenericTypeDefinitionSafe())
+                ||
+                extendedType.GetInterface(s.GetParameters().FirstOrDefault().ParameterType.GetGenericTypeDefinitionSafe().Name) != null
+                )
+                )
+                .ToList();
             return methods;
         }
 
@@ -121,11 +141,11 @@ namespace Linql.Server
             ||
             (!r.IsStatic && r.GetParameters().Count() == function.Arguments.Count())).ToList();
 
-            MethodInfo found = trimmedMethods.FirstOrDefault(r =>
+            List<MethodInfo> argMatchFunctions = trimmedMethods.Where(r =>
             {
                 IEnumerable<ParameterInfo> args = r.GetParameters();
 
-                List<LinqlExpression> argTypes = args.Skip(1).Select(s =>
+                IEnumerable<LinqlExpression> argTypes = args.Skip(1).Select(s =>
                 {
                     Type parameterType = s.ParameterType.GetGenericTypeDefinitionSafe();
                   
@@ -139,19 +159,55 @@ namespace Linql.Server
                     }
 
                     return null;
-                }).ToList();
+                });
 
-
-                bool foundMethod = function.Arguments.Zip(argTypes, (userArg, convertedArg) =>
+                bool foundMethod = function.Arguments.Count() == argTypes.Count() 
+                && function.Arguments.Zip(argTypes, (userArg, convertedArg) =>
                 {
                     return new { left = userArg, right = convertedArg };
-                }).All(s => s.left != null && s.right != null && s.left.GetType() == s.right.GetType());
+                })
+                .All(s => 
+                s.left != null 
+                && 
+                s.right != null 
+                && 
+                s.left.GetType() == s.right.GetType()
+                );
 
                 return foundMethod;
 
-            });
+            }).ToList();
 
-            if(found == null)
+
+            IEnumerable<MethodInfo> foundSingleMethods = argMatchFunctions
+                  .GroupBy(r => r.Name)
+                  .Where(r => r.Count() == 1)
+                  .SelectMany(r => r);
+            IEnumerable<MethodInfo> extensionOverrides;
+
+            if (typeof(IQueryable).IsAssignableFrom(QueryableType))
+            {
+
+                extensionOverrides = argMatchFunctions
+                    .GroupBy(r => r.Name)
+                    .Where(r => r.Count() > 1)
+                    .SelectMany(r => r)
+                    .Where(r => typeof(Expression).IsAssignableFrom(r.GetParameters().Skip(1).FirstOrDefault()?.ParameterType.GetGenericTypeDefinitionSafe()));
+            }
+            else
+            {
+                extensionOverrides = argMatchFunctions
+                   .GroupBy(r => r.Name)
+                   .Where(r => r.Count() > 1)
+                   .SelectMany(r => r)
+                   .Where(r => typeof(Func<,>).IsAssignableFrom(r.GetParameters().Skip(1).FirstOrDefault()?.ParameterType.GetGenericTypeDefinitionSafe()));
+            }
+
+            List<MethodInfo> allmethods = foundSingleMethods.ToList();
+            allmethods.AddRange(extensionOverrides);
+            MethodInfo found = allmethods.FirstOrDefault();
+
+            if (found == null)
             {
                 throw new Exception($"Unable to find function {function.FunctionName} on type {QueryableType.FullName}.");
             }
@@ -159,10 +215,6 @@ namespace Linql.Server
             return found;
 
         }
-
-        
-
-
 
     }
 }
