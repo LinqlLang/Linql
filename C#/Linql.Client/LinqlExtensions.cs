@@ -1,4 +1,5 @@
 ﻿using Linql.Client.Internal;
+using Linql.Core;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace Linql.Client
         {
             if (source.Provider is LinqlProvider linqlProvider)
             {
-                Linql.Core.LinqlSearch search = linqlProvider.BuildLinqlRequest(source.Expression);    
+                Linql.Core.LinqlSearch search = source.ToLinqlSearch();
                 string result = JsonSerializer.Serialize(search, linqlProvider.JsonOptions);
 
                 return result;
@@ -33,7 +34,7 @@ namespace Linql.Client
         {
             if (source.Provider is LinqlProvider linqlProvider)
             {
-                Linql.Core.LinqlSearch search = linqlProvider.BuildLinqlRequest(source.Expression);
+                Linql.Core.LinqlSearch search = source.ToLinqlSearch();
                 using (var stream = new MemoryStream())
                 {
                     await JsonSerializer.SerializeAsync(stream, search, typeof(Linql.Core.LinqlSearch), linqlProvider.JsonOptions);
@@ -49,5 +50,20 @@ namespace Linql.Client
                 throw new UnsupportedIQueryableException();
             }
         }
+
+        public static LinqlSearch ToLinqlSearch(this IQueryable source)
+        {
+            if (source.Provider is LinqlProvider linqlProvider)
+            {
+                Linql.Core.LinqlSearch search = linqlProvider.BuildLinqlRequest(source.Expression);
+               
+                return search;
+            }
+            else
+            {
+                throw new UnsupportedIQueryableException();
+            }
+        }
+
     }
 }
