@@ -32,6 +32,10 @@ namespace Linql.Server
             {
                 return this.VisitProperty(property, InputType, Previous);
             }
+            else if (Expression is LinqlBinary binary)
+            {
+                return this.VisitBinary(binary, InputType, Previous);
+            }
             return null;
         }
 
@@ -128,6 +132,26 @@ namespace Linql.Server
             }
 
             return property;
+        }
+
+        protected Expression VisitBinary(LinqlBinary Binary, Type InputType, Expression Previous = null)
+        {
+
+            LinqlCompiler leftC = new LinqlCompiler(this, new Dictionary<string, ParameterExpression>(this.Parameters));
+            LinqlCompiler rightC = new LinqlCompiler(this, new Dictionary<string, ParameterExpression>(this.Parameters));
+
+            Expression left = leftC.Visit(Binary.Left, InputType, Previous);
+            Expression right = leftC.Visit(Binary.Right, InputType, Previous);
+
+            return Expression.AndAlso(left, right);
+            //Expression property = Expression.Property(Previous, propertyInfo);
+
+            //if (Property.Next != null)
+            //{
+            //    property = this.Visit(Property.Next, InputType, Previous);
+            //}
+
+            //return property;
         }
 
     }

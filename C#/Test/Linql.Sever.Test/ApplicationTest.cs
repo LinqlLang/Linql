@@ -105,5 +105,19 @@ namespace Linql.Server.Test
             Assert.That(result.Count(), Is.EqualTo(this.Data.Count() / 2));
 
         }
+
+        [Test]
+        public async Task MultipleClauses()
+        {
+            string json = this.TestLoader.TestFiles["BooleanVar"];
+            LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+
+            IQueryable<DataModel> data = this.Data;
+
+            IQueryable<DataModel> result = this.Compiler.Execute<IQueryable<DataModel>>(search, data);
+            List<DataModel> compiledResult = result.ToList();
+            Assert.That(result.Count(), Is.EqualTo(0));
+
+        }
     }
 }
