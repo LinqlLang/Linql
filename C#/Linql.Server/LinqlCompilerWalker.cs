@@ -2,6 +2,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -22,7 +24,11 @@ namespace Linql.Server
             }
             else if(Expression is LinqlConstant constant)
             {
-                return this.VisitConstant(constant, Previous);
+                return this.VisitConstant(constant, InputType, Previous);
+            }
+            else if (Expression is LinqlObject obj)
+            {
+                return this.VisitObject(obj, InputType,Previous);
             }
             else if (Expression is LinqlParameter param)
             {
@@ -64,9 +70,9 @@ namespace Linql.Server
             return lambdaExp;
         }
 
-        protected Expression VisitConstant(LinqlConstant Constant, Expression Previous = null)
+        protected Expression VisitConstant(LinqlConstant Constant, Type InputType, Expression Previous = null)
         {
-            Type foundType = this.ValidAssemblies.SelectMany(r => r.ExportedTypes.Where(s => s.Name.Contains(Constant.ConstantType.TypeName))).FirstOrDefault();
+            Type foundType = this.GetLinqlType(Constant.ConstantType);
 
             object value = Constant.Value;
 
@@ -85,7 +91,13 @@ namespace Linql.Server
 
             if(foundType != null)
             {
-                return Expression.Constant(value, foundType);
+                Expression expression = Expression.Constant(value, foundType);
+
+                if (Constant.Next != null)
+                {
+                    expression = this.Visit(Constant.Next, InputType, expression);
+                }
+                return expression;
             }
             else
             {
@@ -93,6 +105,46 @@ namespace Linql.Server
             }
 
             
+        }
+
+        protected Expression VisitObject(LinqlObject Obj, Type InputType, Expression Previous = null)
+        {
+            Type foundType = this.GetLinqlType(Obj.Type);
+
+            if (foundType != null)
+            {
+                JsonElement jsonElement = (JsonElement) Obj.Value;
+                object value = jsonElement.Deserialize(foundType);
+                Expression expression = Expression.Constant(value, foundType);
+
+                if (Obj.Next != null)
+                {
+                    expression = this.Visit(Obj.Next, InputType, expression);
+                }
+                return expression;
+            }
+            else
+            {
+                throw new Exception($"Unable to determine type for constant with type {Obj.Type.TypeName} and value {Obj.Value}");
+            }
+        }
+
+        private Type GetLinqlType(LinqlType LinqlType)
+        {
+
+            Type foundType = this.GetTypeFromLinqlObject(LinqlType);
+
+            if (foundType == null)
+            {
+                throw new Exception($"Unable to find Type {LinqlType.TypeName} in the LinqlContext");
+            }
+
+            if (LinqlType.GenericParameters != null)
+            {
+                List<Type> genericArguments = LinqlType.GenericParameters.Select(r => this.GetLinqlType(LinqlType)).ToList();
+                foundType = foundType.MakeGenericType(genericArguments.ToArray());
+            }
+            return foundType;
         }
 
         protected Expression VisitParameter(LinqlParameter Param, Type InputType, Expression Previous = null)
@@ -143,15 +195,14 @@ namespace Linql.Server
             Expression left = leftC.Visit(Binary.Left, InputType, Previous);
             Expression right = leftC.Visit(Binary.Right, InputType, Previous);
 
-            return Expression.AndAlso(left, right);
-            //Expression property = Expression.Property(Previous, propertyInfo);
+            List<MethodInfo> foundMethods = typeof(Expression).GetMethods().Where(r => r.Name == Binary.BinaryName).ToList();
 
-            //if (Property.Next != null)
-            //{
-            //    property = this.Visit(Property.Next, InputType, Previous);
-            //}
+            MethodInfo binaryMethod = foundMethods.FirstOrDefault();
 
-            //return property;
+            Expression binaryExpression = (Expression) binaryMethod.Invoke(null, new object[] { left, right });
+
+            return binaryExpression;
+          
         }
 
     }

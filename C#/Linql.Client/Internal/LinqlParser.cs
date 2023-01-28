@@ -225,6 +225,7 @@ namespace Linql.Client.Internal
                         if (value is LinqlObject obj)
                         {
                             expression = new LinqlObject(obj.Type, obj.Value);
+                            
                         }
                         else
                         {
@@ -241,6 +242,10 @@ namespace Linql.Client.Internal
                     this.PushToStack(expression, m);
                 }
               
+            }
+            else if(previous is LinqlObject && m.Member.DeclaringType.GetGenericTypeDefinitionSafe() == typeof(LinqlObject<>))
+            {
+                //Ignore TypedValue
             }
             else
             {

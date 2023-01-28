@@ -123,6 +123,11 @@ namespace Linql.Server
             return methods;
         }
 
+        protected Type GetTypeFromLinqlObject(LinqlType Type)
+        {
+            return this.ValidAssemblies.SelectMany(s => s.GetTypes()).FirstOrDefault(r => r.Name == Type.TypeName);
+        }
+
         protected List<MethodInfo> GetMethods(Type Type)
         {
             List<MethodInfo> allMethods = Type.GetMethods().ToList();

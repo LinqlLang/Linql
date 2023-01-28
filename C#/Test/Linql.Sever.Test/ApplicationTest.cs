@@ -119,5 +119,32 @@ namespace Linql.Server.Test
             Assert.That(result.Count(), Is.EqualTo(0));
 
         }
+
+
+        [Test]
+        public void LinqlObjectNotLoaded()
+        {
+            string json = this.TestLoader.TestFiles["LinqlObject"];
+            IQueryable<DataModel> data = this.Data;
+            LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+            
+            Assert.Catch(() => this.Compiler.Execute<IQueryable<DataModel>>(search, data));
+
+          
+        }
+
+
+        [Test]
+        public void LinqlObject()
+        {
+            this.Compiler.ValidAssemblies.Add(typeof(DataModel).Assembly);
+            string json = this.TestLoader.TestFiles["LinqlObject"];
+            IQueryable<DataModel> data = this.Data;
+            LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+
+            Assert.DoesNotThrow(() => this.Compiler.Execute<IQueryable<DataModel>>(search, data));
+
+
+        }
     }
 }

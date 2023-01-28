@@ -5,9 +5,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
-namespace Linql.Server
+namespace Linql.Core
 {
-    internal static class TypeExtensions
+    public static class TypeExtensions
     {
         public static bool IsNullable(this Type Type)
         {
