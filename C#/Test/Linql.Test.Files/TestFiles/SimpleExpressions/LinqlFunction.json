@@ -1,0 +1,43 @@
+﻿{
+  "Type": {
+    "TypeName": "DataModel"
+  },
+  "Expressions": [
+    {
+      "$type": "LinqlFunction",
+      "FunctionName": "Where",
+      "Arguments": [
+        {
+          "$type": "LinqlLambda",
+          "Parameters": [
+            {
+              "$type": "LinqlParameter",
+              "ParameterName": "r"
+            }
+          ],
+          "Body": {
+            "$type": "LinqlFunction",
+            "FunctionName": "Contains",
+            "Arguments": [
+              {
+                "$type": "LinqlConstant",
+                "ConstantType": {
+                  "TypeName": "Int32"
+                },
+                "Value": 1
+              }
+            ],
+            "Object": {
+              "$type": "LinqlParameter",
+              "ParameterName": "r",
+              "Next": {
+                "$type": "LinqlProperty",
+                "PropertyName": "ListInteger"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

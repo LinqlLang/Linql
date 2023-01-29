@@ -47,6 +47,15 @@ namespace Linql.Client.Test
 
         }
 
+        [Test]
+        public async Task LinqlFunction()
+        {
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string output = await search.Where(r => r.ListInteger.Contains(1)).ToJsonAsync();
+            this.TestLoader.Compare(nameof(SimpleExpressions.LinqlFunction), output);
+
+        }
+
 
     }
 }

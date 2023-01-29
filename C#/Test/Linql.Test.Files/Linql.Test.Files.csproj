@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="TestFiles\SimpleExpressions\LinqlFunction.json" />
     <None Remove="TestFiles\SimpleExpressions\LinqlObject.json" />
   </ItemGroup>
 
