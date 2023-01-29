@@ -16,7 +16,7 @@ namespace Linql.Core
 
         public static Type GetGenericTypeDefinitionSafe(this Type Type)
         {
-            if(Type.IsConstructedGenericType)
+            if (Type.IsConstructedGenericType)
             {
                 return Type.GetGenericTypeDefinition();
             }
@@ -45,7 +45,10 @@ namespace Linql.Core
 
         public static bool IsFunc(this Type Type)
         {
-            return typeof(Func<,>).IsAssignableFrom(Type.GetGenericTypeDefinitionSafe());
+            return
+                typeof(Func<>).IsAssignableFrom(Type.GetGenericTypeDefinitionSafe())
+            ||
+                typeof(Func<,>).IsAssignableFrom(Type.GetGenericTypeDefinitionSafe());
         }
 
         public static bool IsExpression(this Type Type)

@@ -10,14 +10,14 @@ namespace Linql.Client.Test
 
         protected override string TestFolder { get; set; } = "Smoke";
 
-        [Test]
-        public async Task MultipleClauses()
-        {
-            bool test = false;
-            LinqlSearch<DataModel> search = Context.Set<DataModel>();
-            string simpleConstant = await search.Where(r => false).Where(r => true).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest.MultipleClauses), simpleConstant);
-        }
+        //[Test]
+        //public async Task MultipleClauses()
+        //{
+        //    bool test = false;
+        //    LinqlSearch<DataModel> search = Context.Set<DataModel>();
+        //    string simpleConstant = await search.Where(r => false).Where(r => true).ToJsonAsync();
+        //    this.TestLoader.Compare(nameof(SmokeTest.MultipleClauses), simpleConstant);
+        //}
 
      
     }

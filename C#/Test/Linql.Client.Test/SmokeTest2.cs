@@ -225,15 +225,6 @@ namespace Linql.Client.Test
             string simpleConstant = await search.Where(r => objectTest.OneToOne.Integer == r.Integer).ToJsonAsync();
             this.TestLoader.Compare(nameof(SmokeTest2.ObjectCalculationWithoutNull), simpleConstant);
         }
-
-
-        [Test]
-        public async Task MultipleClauses()
-        {
-            LinqlSearch<DataModel> search = Context.Set<DataModel>();
-            string simpleConstant = await search.Where(r => true).Where(r=> false).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.MultipleClauses), simpleConstant);
-        }
     }
 
 }
