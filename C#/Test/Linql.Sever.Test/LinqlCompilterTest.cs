@@ -10,13 +10,13 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Linql.Server.Test
 {
     internal class LinqlCompilterTest : LinqlCompiler
     {
         private TestFileLoader TestLoader = new TestFileLoader("Smoke", true);
+
 
         [OneTimeSetUp]
         public async Task Setup()

@@ -45,7 +45,6 @@ namespace Linql.Server
        
         public object Execute(LinqlSearch Search, IEnumerable Queryable)
         {
-            this.Parameters.Clear();
             object result = Queryable;
 
             Search.Expressions.ForEach(exp =>
@@ -75,6 +74,8 @@ namespace Linql.Server
 
         protected object TopLevelFunction(LinqlFunction Function, IEnumerable Queryable)
         {
+            this.Parameters.Clear();
+
             Type queryableType = Queryable.GetType();
             Type genericType = Queryable.GetType().GetEnumerableType();
 
@@ -94,6 +95,11 @@ namespace Linql.Server
             }
 
             object result = foundMethod.MakeGenericMethod(genericType).Invoke(null, methodArgs.ToArray());
+
+            if (Function.Next != null)
+            {
+                result = this.TopLevelFunction(Function.Next as LinqlFunction, result as IEnumerable);
+            }
             return result;
         }
 
