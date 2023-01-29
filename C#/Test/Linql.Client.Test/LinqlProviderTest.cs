@@ -6,6 +6,8 @@ namespace Linql.Client.Test
 {
     public class LinqlProviderTests
     {
+        protected LinqlProvider provider { get; set; } = new CustomLinqlProvider();
+
         [OneTimeSetUp]
         public void Setup()
         {
@@ -16,7 +18,7 @@ namespace Linql.Client.Test
         {
             try
             {
-                LinqlProvider provider = new CustomLinqlProvider(typeof(DataModel));
+                
                 object test = provider.CreateQuery(Expression.Constant(true));
                 Assert.IsNull(test);
             }
@@ -34,7 +36,6 @@ namespace Linql.Client.Test
         {
             try
             {
-                LinqlProvider provider = new CustomLinqlProvider(typeof(DataModel));
                 object test = provider.CreateQuery(Expression.Constant(true));
                 Assert.IsNull(test);
             }
@@ -53,7 +54,6 @@ namespace Linql.Client.Test
         {
             try
             {
-                LinqlProvider provider = new CustomLinqlProvider(typeof(DataModel));
                 object test = provider.Execute(Expression.Constant(true));
                 Assert.IsNull(test);
             }
@@ -71,7 +71,6 @@ namespace Linql.Client.Test
         {
             try
             {
-                LinqlProvider provider = new CustomLinqlProvider(typeof(DataModel));
                 bool test = provider.Execute<bool>(Expression.Constant(true));
                 Assert.IsFalse(test);
             }
@@ -87,7 +86,7 @@ namespace Linql.Client.Test
 
     internal class CustomLinqlProvider : LinqlProvider
     {
-        public CustomLinqlProvider(Type RootType) : base(RootType)
+        public CustomLinqlProvider() : base()
         {
             this.JsonOptions = new System.Text.Json.JsonSerializerOptions() { WriteIndented = true };
         }

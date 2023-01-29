@@ -8,18 +8,54 @@ namespace Linql.Client
     {
         protected HttpClient HttpClient { get; set; }
 
-        public LinqlContext(string BaseUrl = null)
+        public LinqlProvider Provider { get; set; }
+
+        public string BaseUrl
         {
-            if (BaseUrl != null)
+            get
             {
-                this.HttpClient = new HttpClient();
-                this.HttpClient.BaseAddress = new Uri(BaseUrl);
+                if(this.HttpClient != null)
+                {
+                    return this.HttpClient.BaseAddress.AbsoluteUri;
+                }
+                return null;
+            }
+            set
+            {
+                if(value == null)
+                {
+                    this.HttpClient = null;
+                }
+                else
+                {
+                    if(this.HttpClient == null)
+                    {
+                        this.HttpClient = new HttpClient();
+                    }
+                    this.HttpClient.BaseAddress = new Uri(value);
+                }
             }
         }
 
+        public LinqlContext(string BaseUrl = null, LinqlProvider Provider = null)
+        {
+            this.BaseUrl = BaseUrl;
+
+            if(Provider != null)
+            {
+                this.Provider = Provider;
+            }
+            else
+            {
+                this.Provider = new LinqlProvider();
+            }
+        }
+
+
+
         public virtual LinqlSearch<T> Set<T>()
         {
-            return new LinqlSearch<T>();
+            return new LinqlSearch<T>(this.Provider);
         }
 
 

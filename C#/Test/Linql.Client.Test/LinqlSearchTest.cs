@@ -110,7 +110,7 @@ namespace Linql.Client.Test
         {
             try
             {
-                LinqlSearch<DataModel> search = new LinqlSearch<DataModel>(new CustomLinqlProvider(typeof(DataModel)), null);
+                LinqlSearch<DataModel> search = new LinqlSearch<DataModel>(new CustomLinqlProvider(), null);
             }
             catch (Exception ex)
             {
@@ -129,6 +129,6 @@ namespace Linql.Client.Test
 
     internal class CustomLinqlSearch<T> : LinqlSearch<T>
     {
-        public CustomLinqlSearch() : base(new CustomLinqlProvider(typeof(T))) { }
+        public CustomLinqlSearch() : base(new CustomLinqlProvider()) { }
     }
 }

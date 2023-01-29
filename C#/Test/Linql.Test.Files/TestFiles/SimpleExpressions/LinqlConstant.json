@@ -1,0 +1,25 @@
+﻿{
+  "Type": { "TypeName": "DataModel" },
+  "Expressions": [
+    {
+      "$type": "LinqlFunction",
+      "FunctionName": "Where",
+      "Arguments": [
+        {
+          "$type": "LinqlLambda",
+          "Parameters": [
+            {
+              "$type": "LinqlParameter",
+              "ParameterName": "r"
+            }
+          ],
+          "Body": {
+            "$type": "LinqlConstant",
+            "ConstantType": { "TypeName": "Boolean" },
+            "Value": false
+          }
+        }
+      ]
+    }
+  ]
+}

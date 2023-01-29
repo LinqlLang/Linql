@@ -13,7 +13,7 @@ namespace Linql.Server
     public partial class LinqlCompiler
     {
 
-        public List<Assembly> ValidAssemblies { get; set; } = new List<Assembly>();
+        public HashSet<Assembly> ValidAssemblies { get; set; } = new HashSet<Assembly>();
 
         private readonly LinqlLambda StaticLambdaInstance = new LinqlLambda();
 
@@ -23,7 +23,7 @@ namespace Linql.Server
 
         protected Dictionary<string, ParameterExpression> Parameters { get; set; } = new Dictionary<string, ParameterExpression>();
 
-        public LinqlCompiler(List<Assembly> extensionAssemblies = null, bool UseCache = true, Dictionary<Type, List<MethodInfo>> MethodCache = null)
+        public LinqlCompiler(HashSet<Assembly> extensionAssemblies = null, bool UseCache = true, Dictionary<Type, List<MethodInfo>> MethodCache = null)
         {
             if (extensionAssemblies != null)
             {

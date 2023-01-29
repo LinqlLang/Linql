@@ -55,7 +55,7 @@ namespace Linql.Client
         {
             if (source.Provider is LinqlProvider linqlProvider)
             {
-                Linql.Core.LinqlSearch search = linqlProvider.BuildLinqlRequest(source.Expression);
+                Linql.Core.LinqlSearch search = linqlProvider.BuildLinqlRequest(source.Expression, source.GetType().GetEnumerableType());
                
                 return search;
             }

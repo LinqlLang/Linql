@@ -200,7 +200,6 @@ namespace Linql.Server
             MethodInfo binaryMethod = foundMethods.FirstOrDefault();
 
             Expression binaryExpression = (Expression) binaryMethod.Invoke(null, new object[] { left, right });
-
             return binaryExpression;
           
         }

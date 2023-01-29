@@ -27,7 +27,7 @@ namespace Linql.Server.Test
 
             Data = dataList.AsQueryable();
 
-            List<Assembly> assemblies = new List<Assembly>()
+            HashSet<Assembly> assemblies = new HashSet<Assembly>()
             {
                 typeof(Boolean).Assembly,
                 typeof(Enumerable).Assembly,
@@ -116,7 +116,7 @@ namespace Linql.Server.Test
 
             IQueryable<DataModel> result = this.Compiler.Execute<IQueryable<DataModel>>(search, data);
             List<DataModel> compiledResult = result.ToList();
-            Assert.That(result.Count(), Is.EqualTo(0));
+            Assert.That(result.Count(), Is.EqualTo(100));
 
         }
 
@@ -124,6 +124,8 @@ namespace Linql.Server.Test
         [Test]
         public void LinqlObjectNotLoaded()
         {
+            this.Compiler.ValidAssemblies.Remove(typeof(DataModel).Assembly);
+
             string json = this.TestLoader.TestFiles["LinqlObject"];
             IQueryable<DataModel> data = this.Data;
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);

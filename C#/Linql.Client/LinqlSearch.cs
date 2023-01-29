@@ -13,7 +13,7 @@ namespace Linql.Client
     {
         public LinqlSearch() : base(typeof(T))
         {
-            this.Provider = new LinqlProvider(typeof(T));
+            this.Provider = new LinqlProvider();
             Expression = Expression.Constant(this);
         }
 

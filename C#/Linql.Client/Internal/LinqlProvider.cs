@@ -11,18 +11,24 @@ namespace Linql.Client.Internal
     public class LinqlProvider : ExpressionVisitor, IQueryProvider
     {
 
-        protected Type RootType { get; set; }
 
         protected Linql.Core.LinqlSearch Search { get; set; }
 
-        public JsonSerializerOptions JsonOptions { get; protected set; } = new JsonSerializerOptions
-        {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
-        };
+        public JsonSerializerOptions JsonOptions { get; set; } 
 
-        public LinqlProvider(Type RootType)
+        public LinqlProvider(JsonSerializerOptions JsonOptions = null)
         {
-            this.RootType = RootType;
+            if(JsonOptions == null)
+            {
+               this.JsonOptions = new JsonSerializerOptions
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+                };
+            }
+            else
+            {
+                this.JsonOptions = JsonOptions;
+            }
         }
 
         public IQueryable CreateQuery(Expression expression)
@@ -45,9 +51,9 @@ namespace Linql.Client.Internal
             return default(TResult);
         }
 
-        public virtual Linql.Core.LinqlSearch BuildLinqlRequest(Expression expression)
+        public virtual Linql.Core.LinqlSearch BuildLinqlRequest(Expression expression, Type RootType)
         {
-            this.Search = new Linql.Core.LinqlSearch(this.RootType);
+            this.Search = new Linql.Core.LinqlSearch(RootType);
             LinqlParser parser = new LinqlParser(expression);
             LinqlExpression root = parser.Root;
 

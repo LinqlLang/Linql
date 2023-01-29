@@ -22,7 +22,7 @@ namespace Linql.Server.Test
         public async Task Setup()
         {
 
-            this.ValidAssemblies = new List<Assembly>()
+            this.ValidAssemblies = new HashSet<Assembly>()
             {
                 typeof(System.Boolean).Assembly,
                 typeof(Enumerable).Assembly,
