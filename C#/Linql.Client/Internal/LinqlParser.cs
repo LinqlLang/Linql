@@ -104,6 +104,13 @@ namespace Linql.Client.Internal
                 {
                     function.Arguments = function.Arguments.Skip(1).ToList();
                 }
+                else if(firstArg is LinqlFunction fun && m.Method.IsStatic == true)
+                {
+                    firstArg.Next = function;
+                    function.Arguments = function.Arguments.Skip(1).ToList();
+
+                    this.Root = firstArg;
+                }
             }
 
             return m;

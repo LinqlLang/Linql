@@ -66,5 +66,15 @@ namespace Linql.Client.Test
         }
 
 
+        [Test]
+        public async Task FunctionChaining()
+        {
+            bool test = false;
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string output = await search.Where(r => false).Where(r => true).ToJsonAsync();
+            this.TestLoader.Compare(nameof(SimpleExpressions.FunctionChaining), output);
+        }
+
+
     }
 }
