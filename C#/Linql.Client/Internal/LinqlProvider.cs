@@ -10,8 +10,6 @@ namespace Linql.Client.Internal
 {
     public class LinqlProvider : ExpressionVisitor, IQueryProvider
     {
-
-
         protected Linql.Core.LinqlSearch Search { get; set; }
 
         public JsonSerializerOptions JsonOptions { get; set; } 
@@ -71,5 +69,13 @@ namespace Linql.Client.Internal
             return this.Search;
         }
 
+    }
+
+    public class LinqlProviderPrettyPrint : LinqlProvider
+    {
+        public LinqlProviderPrettyPrint(JsonSerializerOptions JsonOptions = null) : base(JsonOptions)
+        {
+            this.JsonOptions.WriteIndented = true;
+        }
     }
 }

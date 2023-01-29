@@ -1,5 +1,7 @@
 ﻿{
-  "Type": { "TypeName": "DataModel" },
+  "Type": {
+    "TypeName": "DataModel"
+  },
   "Expressions": [
     {
       "$type": "LinqlFunction",
@@ -15,7 +17,9 @@
           ],
           "Body": {
             "$type": "LinqlConstant",
-            "ConstantType": { "TypeName": "Boolean" },
+            "ConstantType": {
+              "TypeName": "Boolean"
+            },
             "Value": false
           }
         }

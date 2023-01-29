@@ -1,12 +1,13 @@
 using Linql.Client.Internal;
 using Linql.Core.Test;
 using Linql.Test.Files;
+using System.Text.Json;
 
 namespace Linql.Client.Test
 {
     public class SimpleExpressions : TestFileTests
     {
-        protected LinqlContext Context { get; set; } = new LinqlContext();
+        protected LinqlContext Context { get; set; } = new LinqlContext(null, new LinqlProviderPrettyPrint());
 
         [Test]
         public async Task LinqlConstant()
