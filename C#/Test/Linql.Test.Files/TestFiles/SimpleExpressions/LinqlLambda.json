@@ -1,0 +1,60 @@
+﻿{
+  "Type": {
+    "TypeName": "DataModel"
+  },
+  "Expressions": [
+    {
+      "$type": "LinqlFunction",
+      "FunctionName": "Where",
+      "Arguments": [
+        {
+          "$type": "LinqlLambda",
+          "Parameters": [
+            {
+              "$type": "LinqlParameter",
+              "ParameterName": "r"
+            }
+          ],
+          "Body": {
+            "$type": "LinqlFunction",
+            "FunctionName": "Any",
+            "Arguments": [
+              {
+                "$type": "LinqlParameter",
+                "ParameterName": "r",
+                "Next": {
+                  "$type": "LinqlProperty",
+                  "PropertyName": "ListInteger"
+                }
+              },
+              {
+                "$type": "LinqlLambda",
+                "Parameters": [
+                  {
+                    "$type": "LinqlParameter",
+                    "ParameterName": "s"
+                  }
+                ],
+                "Body": {
+                  "$type": "LinqlBinary",
+                  "BinaryName": "GreaterThan",
+                  "Left": {
+                    "$type": "LinqlParameter",
+                    "ParameterName": "s"
+                  },
+                  "Right": {
+                    "$type": "LinqlConstant",
+                    "ConstantType": {
+                      "TypeName": "Int32"
+                    },
+                    "Value": 0
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

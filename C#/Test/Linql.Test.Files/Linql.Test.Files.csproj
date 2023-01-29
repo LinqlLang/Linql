@@ -18,14 +18,9 @@
 
   <ItemGroup>
     <Content Include="TestFiles\**\*.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <PackageCopyToOutput>true</PackageCopyToOutput>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="TestFiles\SimpleExpressions\LinqlFunction.json" />
-    <None Remove="TestFiles\SimpleExpressions\LinqlObject.json" />
   </ItemGroup>
 
   <ItemGroup>
