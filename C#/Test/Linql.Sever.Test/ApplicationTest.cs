@@ -13,6 +13,8 @@ namespace Linql.Server.Test
 
         public LinqlCompiler Compiler { get; set; }
 
+        protected override string TestFolder { get; set; } = "Smoke";
+
         [OneTimeSetUp]
         public override async Task Setup()
         {

@@ -1,0 +1,46 @@
+﻿{
+  "Type": {
+    "TypeName": "DataModel"
+  },
+  "Expressions": [
+    {
+      "$type": "LinqlFunction",
+      "FunctionName": "Where",
+      "Arguments": [
+        {
+          "$type": "LinqlLambda",
+          "Parameters": [
+            {
+              "$type": "LinqlParameter",
+              "ParameterName": "r"
+            }
+          ],
+          "Body": {
+            "$type": "LinqlBinary",
+            "BinaryName": "AndAlso",
+            "Left": {
+              "$type": "LinqlParameter",
+              "ParameterName": "r",
+              "Next": {
+                "$type": "LinqlProperty",
+                "PropertyName": "Boolean"
+              }
+            },
+            "Right": {
+              "$type": "LinqlParameter",
+              "ParameterName": "r",
+              "Next": {
+                "$type": "LinqlProperty",
+                "PropertyName": "OneToOne",
+                "Next": {
+                  "$type": "LinqlProperty",
+                  "PropertyName": "Boolean"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

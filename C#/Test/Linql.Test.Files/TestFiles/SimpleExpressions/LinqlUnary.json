@@ -1,0 +1,34 @@
+﻿{
+  "Type": {
+    "TypeName": "DataModel"
+  },
+  "Expressions": [
+    {
+      "$type": "LinqlFunction",
+      "FunctionName": "Where",
+      "Arguments": [
+        {
+          "$type": "LinqlLambda",
+          "Parameters": [
+            {
+              "$type": "LinqlParameter",
+              "ParameterName": "r"
+            }
+          ],
+          "Body": {
+            "$type": "LinqlUnary",
+            "UnaryName": "Not",
+            "Next": {
+              "$type": "LinqlParameter",
+              "ParameterName": "r",
+              "Next": {
+                "$type": "LinqlProperty",
+                "PropertyName": "Boolean"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -16,7 +16,7 @@ namespace Linql.Server.Test
 {
     internal class LinqlCompilterTest : LinqlCompiler
     {
-        private TestFileLoader TestLoader = new TestFileLoader(true);
+        private TestFileLoader TestLoader = new TestFileLoader("Smoke", true);
 
         [OneTimeSetUp]
         public async Task Setup()

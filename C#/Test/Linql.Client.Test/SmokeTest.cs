@@ -8,6 +8,8 @@ namespace Linql.Client.Test
     {
         protected LinqlContext Context { get; set; } = new LinqlContext();
 
+        protected override string TestFolder { get; set; } = "Smoke";
+
         [Test]
         //Should fail.
         public void IncorrectToJson()

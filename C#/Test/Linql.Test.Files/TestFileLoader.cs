@@ -12,10 +12,12 @@ namespace Linql.Test.Files
     {
         public TestFileLoader TestLoader { get; set; }
 
+        protected virtual string TestFolder { get; set; }
+
         [OneTimeSetUp]
         public virtual async Task Setup()
         {
-            TestLoader = new TestFileLoader(true);
+            TestLoader = new TestFileLoader(this.TestFolder, true);
             await TestLoader.LoadFiles();
         }
 
@@ -27,14 +29,17 @@ namespace Linql.Test.Files
 
         protected bool WriteOutput { get; set; }
 
-        public TestFileLoader(bool WriteOutput = false)
+        protected string BasePath { get; set; }
+
+        public TestFileLoader(string BasePath = "", bool WriteOutput = false)
         {
             this.WriteOutput = WriteOutput;
+            this.BasePath = BasePath;
         }
 
         public async Task LoadFiles()
         {
-            List<string> files = Directory.GetFiles("./TestFiles", "*", searchOption: SearchOption.AllDirectories).ToList();
+            List<string> files = Directory.GetFiles(Path.Combine("./TestFiles", this.BasePath), "*", searchOption: SearchOption.AllDirectories).ToList();
 
             foreach (string file in files)
             {
@@ -49,7 +54,7 @@ namespace Linql.Test.Files
         {
             if (WriteOutput)
             {
-                string directory = "./Output";
+                string directory = Path.Combine("./Output", this.BasePath);
                 Directory.CreateDirectory(directory);
                 File.WriteAllText($"{directory}/{TestName}.json", Output);
             }
