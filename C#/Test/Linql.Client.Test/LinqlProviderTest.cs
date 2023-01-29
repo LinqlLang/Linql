@@ -14,75 +14,71 @@ namespace Linql.Client.Test
         }
 
         [Test]
-        public void ProviderTests()
+        public void ConstructorEmpty()
         {
-            try
-            {
-                
-                object test = provider.CreateQuery(Expression.Constant(true));
-                Assert.IsNull(test);
-            }
-            catch (Exception ex)
-            {
-                Assert.IsTrue(false);
-                return;
-            }
 
+            Assert.DoesNotThrowAsync(async () =>
+            {
+                LinqlProvider provider = new LinqlProvider();
+                LinqlSearch<DataModel> search = new LinqlSearch<DataModel>(provider);
+                string json = await search.Where(r => true).ToJsonAsync();
+
+                Assert.False(json.Contains(Environment.NewLine));
+
+            });
 
         }
 
         [Test]
-        public void ProviderTests2()
+        public void ConstructorNotEmpty()
         {
-            try
-            {
-                object test = provider.CreateQuery(Expression.Constant(true));
-                Assert.IsNull(test);
-            }
-            catch (Exception ex)
-            {
-                Assert.IsTrue(false);
-                return;
-            }
 
+            Assert.DoesNotThrowAsync(async () =>
+            {
+                LinqlProvider provider = new LinqlProvider(new System.Text.Json.JsonSerializerOptions() { WriteIndented = true });
+                LinqlSearch<DataModel> search = new LinqlSearch<DataModel>(provider);
+                string json = await search.Where(r => true).ToJsonAsync();
+
+                Assert.True(json.Contains(Environment.NewLine));
+
+            });
 
         }
 
 
         [Test]
-        public void ProviderTests3()
+        public void CreateQuery()
         {
-            try
+            Assert.DoesNotThrow(() =>
+            {
+                object test = provider.CreateQuery(Expression.Constant(true));
+                Assert.IsNull(test);
+            });
+            
+        }
+
+        [Test]
+        public void Execute()
+        {
+            Assert.DoesNotThrow(() =>
             {
                 object test = provider.Execute(Expression.Constant(true));
                 Assert.IsNull(test);
-            }
-            catch (Exception ex)
-            {
-                Assert.IsTrue(false);
-                return;
-            }
-
-
+            });           
         }
 
         [Test]
-        public void ProviderTests4()
+        public void ExecuteGeneric()
         {
-            try
+            Assert.DoesNotThrow(() =>
             {
                 bool test = provider.Execute<bool>(Expression.Constant(true));
                 Assert.IsFalse(test);
-            }
-            catch (Exception ex)
-            {
-                Assert.IsTrue(false);
-                return;
-            }
-
-
+            });
+           
         }
     }
+
 
     internal class CustomLinqlProvider : LinqlProvider
     {
