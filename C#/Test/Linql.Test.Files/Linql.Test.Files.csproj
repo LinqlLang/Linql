@@ -23,9 +23,6 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="TestFiles\SimpleExpressions\FunctionChaining.json" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Linql.Client\Linql.Client.csproj" />

@@ -75,6 +75,14 @@ namespace Linql.Client.Test
             this.TestLoader.Compare(nameof(SimpleExpressions.FunctionChaining), output);
         }
 
+        [Test]
+        public async Task NullableCheck()
+        {
+            bool test = false;
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string output = await search.Where(r => r.OneToOneNullable.Integer.HasValue && r.OneToOneNullable.Integer.Value == 1).ToJsonAsync();
+            this.TestLoader.Compare(nameof(SimpleExpressions.NullableCheck), output);
+        }
 
     }
 }
