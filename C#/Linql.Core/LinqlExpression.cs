@@ -19,5 +19,14 @@ namespace Linql.Core
         public LinqlExpression Next { get; set; }
 
         public LinqlExpression() { }
+
+        public LinqlExpression GetLastExpressionInNextChain()
+        {
+            if(this.Next == null)
+            {
+                return this;
+            }
+            return this.Next.GetLastExpressionInNextChain();
+        }
     }
 }

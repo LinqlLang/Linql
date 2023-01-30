@@ -23,6 +23,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="TestFiles\SimpleExpressions\ToList.json" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <ProjectReference Include="..\..\Linql.Client\Linql.Client.csproj" />

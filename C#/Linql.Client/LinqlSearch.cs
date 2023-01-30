@@ -48,6 +48,12 @@ namespace Linql.Client
 
         public IEnumerator<T> GetEnumerator()
         {
+            if(this.Provider is LinqlProvider provider)
+            {
+                IEnumerable<T> result = provider.SendLinqlRequest<IEnumerable<T>>(this);
+                return result.GetEnumerator();
+
+            }
             throw new EnumerationIsNotSupportedException();
         }
 
@@ -55,5 +61,6 @@ namespace Linql.Client
         {
             throw new EnumerationIsNotSupportedException();
         }
+
     }
 }

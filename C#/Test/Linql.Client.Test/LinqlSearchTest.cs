@@ -26,25 +26,25 @@ namespace Linql.Client.Test
             Assert.That(search.Type.TypeName, Is.EqualTo("DataModel"));
         }
 
-        [Test]
-        public void GetEnumerator()
-        {
-            LinqlSearch<DataModel> search = new LinqlSearch<DataModel>();
+        //[Test]
+        //public void GetEnumerator()
+        //{
+        //    LinqlSearch<DataModel> search = new LinqlSearch<DataModel>();
 
-            try
-            {
-                foreach (DataModel item in search)
-                {
+        //    try
+        //    {
+        //        foreach (DataModel item in search)
+        //        {
 
-                }
-            }
-            catch (EnumerationIsNotSupportedException ex)
-            {
-                Assert.IsTrue(true);
-                return;
-            }
-            Assert.IsTrue(false);
-        }
+        //        }
+        //    }
+        //    catch (EnumerationIsNotSupportedException ex)
+        //    {
+        //        Assert.IsTrue(true);
+        //        return;
+        //    }
+        //    Assert.IsTrue(false);
+        //}
 
         [Test]
         public void GetEnumerator2()

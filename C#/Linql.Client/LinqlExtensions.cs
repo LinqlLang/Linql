@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -15,6 +17,9 @@ namespace Linql.Client
 {
     public static class LinqlExtensions
     {
+        private static MethodInfo ToListMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList));
+
+
         public static string ToJson(this IQueryable source)
         {
             if (source.Provider is LinqlProvider linqlProvider)
@@ -64,6 +69,26 @@ namespace Linql.Client
                 throw new UnsupportedIQueryableException();
             }
         }
+
+        public static IQueryable<TSource> AttachGenericFunction<TSource>(this IQueryable<TSource> source, MethodInfo method)
+        {
+         
+            return source.Provider.CreateQuery<TSource>(
+                Expression.Call(
+                    null,
+                    method,
+                    source.Expression
+                    ));
+        }
+
+        public static IQueryable<T> ToLinqlList<T>(this IQueryable<T> source)
+        {
+          
+            return source.AttachGenericFunction(LinqlExtensions.ToListMethod.MakeGenericMethod(typeof(T)));
+        }
+
+        public static List<TSource> ToList<TSource>(this IEnumerable source)
+      => source.OfType<TSource>().ToList();
 
     }
 }

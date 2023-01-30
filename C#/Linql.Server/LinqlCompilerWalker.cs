@@ -86,6 +86,11 @@ namespace Linql.Server
                     case JsonValueKind.False:
                         value = false;
                         break;
+                    case JsonValueKind.Number:
+                        value = json.GetInt32();
+                        break;
+                    default:
+                        throw new Exception($"No support for json ValueKind {json.ValueKind}");
                 }
             }
 
@@ -180,7 +185,7 @@ namespace Linql.Server
 
             if(Property.Next != null)
             {
-                property = this.Visit(Property.Next, InputType, Previous);
+                property = this.Visit(Property.Next, InputType, property);
             }
 
             return property;

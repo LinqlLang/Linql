@@ -57,7 +57,24 @@ namespace Linql.Server.Test
 
         }
 
-       
+        [Test]
+        public void ToList()
+        {
+
+            Assert.DoesNotThrow(() =>
+            {
+                string json = this.TestLoader.TestFiles["ToList"];
+                LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+
+                IEnumerable<DataModel> data = this.Compiler.Execute<IEnumerable<DataModel>>(search, this.Data);
+
+                Assert.That(data.Count(), Is.EqualTo(0));
+
+            });
+
+        }
+
+
 
     }
 

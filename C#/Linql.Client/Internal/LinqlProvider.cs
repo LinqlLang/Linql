@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace Linql.Client.Internal
 {
@@ -12,13 +13,15 @@ namespace Linql.Client.Internal
     {
         protected Linql.Core.LinqlSearch Search { get; set; }
 
-        public JsonSerializerOptions JsonOptions { get; set; } 
+        public JsonSerializerOptions JsonOptions { get; set; }
+
+        internal LinqlContext Context { get; set; }
 
         public LinqlProvider(JsonSerializerOptions JsonOptions = null)
         {
-            if(JsonOptions == null)
+            if (JsonOptions == null)
             {
-               this.JsonOptions = new JsonSerializerOptions
+                this.JsonOptions = new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
                 };
@@ -36,7 +39,7 @@ namespace Linql.Client.Internal
 
         public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
         {
-            return (IQueryable<TElement>)new LinqlSearch<TElement>(this, expression);
+            return new LinqlSearch<TElement>(this, expression);
         }
 
         public object Execute(Expression expression)
@@ -47,6 +50,20 @@ namespace Linql.Client.Internal
         public TResult Execute<TResult>(Expression expression)
         {
             return default(TResult);
+        }
+
+        public virtual async Task<TResult> SendLinqlRequestAsync<TResult>(IQueryable LinqlSearch)
+        {
+            LinqlSearch search = LinqlSearch.ToLinqlSearch();
+            return await this.Context.GetResult<TResult>(LinqlSearch, search);
+        }
+
+        public virtual TResult SendLinqlRequest<TResult>(IQueryable LinqlSearch)
+        {
+            LinqlSearch search = LinqlSearch.ToLinqlSearch();
+            Task<TResult> task = this.Context.GetResult<TResult>(LinqlSearch, search);
+            task.Wait();
+            return task.Result;
         }
 
         public virtual Linql.Core.LinqlSearch BuildLinqlRequest(Expression expression, Type RootType)
