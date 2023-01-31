@@ -1,11 +1,12 @@
-﻿using Linql.Core;
+﻿using Linql.Client;
+using Linql.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Linql.Client.Internal
+namespace Linql.Client
 {
     public class LinqlParser : ExpressionVisitor
     {
@@ -17,40 +18,40 @@ namespace Linql.Client.Internal
 
         protected void PushToStack(LinqlExpression LinqlExpression, Expression CSharpExpression)
         {
-            this.LinqlStack.Push(LinqlExpression);
-            this.ExpressionStack.Push(CSharpExpression);
+            LinqlStack.Push(LinqlExpression);
+            ExpressionStack.Push(CSharpExpression);
         }
 
         protected void PopStack()
         {
-            this.LinqlStack.Pop();
-            this.ExpressionStack.Pop();
+            LinqlStack.Pop();
+            ExpressionStack.Pop();
         }
 
         protected void AttachToExpression(LinqlExpression ExpressionToAttach)
         {
-            LinqlExpression previousExpression = this.LinqlStack.FirstOrDefault();
+            LinqlExpression previousExpression = LinqlStack.FirstOrDefault();
             if (previousExpression != null)
             {
                 previousExpression.Next = ExpressionToAttach;
             }
             else
             {
-                this.Root = ExpressionToAttach;
+                Root = ExpressionToAttach;
             }
 
         }
 
         protected void RemoveFromPrevious(LinqlExpression ExpressionToRemove)
         {
-            this.PopStack();
+            PopStack();
 
-            LinqlExpression previousExpression = this.LinqlStack.FirstOrDefault();
+            LinqlExpression previousExpression = LinqlStack.FirstOrDefault();
         }
 
         public LinqlParser(Expression LinqlExpression) : base()
         {
-            this.Visit(LinqlExpression);
+            Visit(LinqlExpression);
         }
 
 
@@ -63,14 +64,14 @@ namespace Linql.Client.Internal
         {
 
 
-            Expression previous = this.ExpressionStack.FirstOrDefault();
+            Expression previous = ExpressionStack.FirstOrDefault();
 
             object value = c.Value;
             LinqlType Type = new LinqlType(c.Type);
 
             LinqlConstant constant = new LinqlConstant(Type, value);
-            this.AttachToExpression(constant);
-            this.PushToStack(constant, c);
+            AttachToExpression(constant);
+            PushToStack(constant, c);
 
 
             return base.VisitConstant(c);
@@ -92,11 +93,11 @@ namespace Linql.Client.Internal
                 return argParser.Root;
             }).ToList();
 
-           
-            this.AttachToExpression(function);
-            this.PushToStack(function, m);
 
-            if (this.Root == function)
+            AttachToExpression(function);
+            PushToStack(function, m);
+
+            if (Root == function)
             {
                 LinqlExpression firstArg = function.Arguments.FirstOrDefault();
 
@@ -104,12 +105,12 @@ namespace Linql.Client.Internal
                 {
                     function.Arguments = function.Arguments.Skip(1).ToList();
                 }
-                else if(firstArg is LinqlFunction fun && m.Method.IsStatic == true)
+                else if (firstArg is LinqlFunction fun && m.Method.IsStatic == true)
                 {
                     firstArg.Next = function;
                     function.Arguments = function.Arguments.Skip(1).ToList();
 
-                    this.Root = firstArg;
+                    Root = firstArg;
                 }
             }
 
@@ -124,8 +125,8 @@ namespace Linql.Client.Internal
                 string unaryName = Enum.GetName(typeof(ExpressionType), node.NodeType);
 
                 LinqlUnary unary = new LinqlUnary(unaryName);
-                this.AttachToExpression(unary);
-                this.PushToStack(unary, node);
+                AttachToExpression(unary);
+                PushToStack(unary, node);
             }
             base.VisitUnary(node);
 
@@ -137,8 +138,8 @@ namespace Linql.Client.Internal
             string binaryName = Enum.GetName(typeof(ExpressionType), binary.NodeType);
             LinqlBinary linqlBinary = new LinqlBinary(binaryName);
 
-            this.AttachToExpression(linqlBinary);
-            this.PushToStack(linqlBinary, binary);
+            AttachToExpression(linqlBinary);
+            PushToStack(linqlBinary, binary);
 
             Expression left = binary.Left;
             Expression right = binary.Right;
@@ -156,8 +157,8 @@ namespace Linql.Client.Internal
         {
             LinqlLambda linqlLambda = new LinqlLambda();
 
-            this.AttachToExpression(linqlLambda);
-            this.PushToStack(linqlLambda, lambda);
+            AttachToExpression(linqlLambda);
+            PushToStack(linqlLambda, lambda);
 
             LinqlParser bodyParser = new LinqlParser(lambda.Body);
 
@@ -182,8 +183,8 @@ namespace Linql.Client.Internal
         {
 
             LinqlParameter param = new LinqlParameter(parameter.Name);
-            this.AttachToExpression(param);
-            this.PushToStack(param, parameter);
+            AttachToExpression(param);
+            PushToStack(param, parameter);
             Expression expression = base.VisitParameter(parameter);
 
             return parameter;
@@ -195,7 +196,7 @@ namespace Linql.Client.Internal
 
             LinqlProperty property = new LinqlProperty(m.Member.Name);
 
-            if (m.Member.MemberType == System.Reflection.MemberTypes.Field)
+            if (m.Member.MemberType == MemberTypes.Field)
             {
                 ExpressionStack.Push(m);
             }
@@ -203,7 +204,7 @@ namespace Linql.Client.Internal
             //LinqlParser parser = new LinqlParser(m.Expression);
             //LinqlExpression root = parser.Root;
             base.VisitMember(m);
-            LinqlExpression previous = this.LinqlStack.First();
+            LinqlExpression previous = LinqlStack.First();
 
             if (previous is LinqlConstant constant && constant.Value != null)
             {
@@ -211,7 +212,7 @@ namespace Linql.Client.Internal
 
                 object value = constant.Value;
 
-                if(value != null)
+                if (value != null)
                 {
                     FieldInfo field = m.Member.DeclaringType.GetField(m.Member.Name);
 
@@ -232,7 +233,7 @@ namespace Linql.Client.Internal
                         if (value is LinqlObject obj)
                         {
                             expression = new LinqlObject(obj.Type, obj.Value);
-                            
+
                         }
                         else
                         {
@@ -243,21 +244,21 @@ namespace Linql.Client.Internal
                     {
                         expression = new LinqlConstant(new LinqlType(typeof(object)), null);
                     }
-                    LinqlExpression previousExpression = this.LinqlStack.FirstOrDefault();
-                    this.RemoveFromPrevious(previousExpression);
-                    this.AttachToExpression(expression);
-                    this.PushToStack(expression, m);
+                    LinqlExpression previousExpression = LinqlStack.FirstOrDefault();
+                    RemoveFromPrevious(previousExpression);
+                    AttachToExpression(expression);
+                    PushToStack(expression, m);
                 }
-              
+
             }
-            else if(previous is LinqlObject && m.Member.DeclaringType.GetGenericTypeDefinitionSafe() == typeof(LinqlObject<>))
+            else if (previous is LinqlObject && m.Member.DeclaringType.GetGenericTypeDefinitionSafe() == typeof(LinqlObject<>))
             {
                 //Ignore TypedValue
             }
             else
             {
-                this.AttachToExpression(property);
-                this.PushToStack(property, m);
+                AttachToExpression(property);
+                PushToStack(property, m);
             }
 
 

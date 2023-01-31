@@ -13,22 +13,22 @@ namespace Linql.Client
     {
         public LinqlSearch() : base(typeof(T))
         {
-            this.Provider = new LinqlProvider();
+            this.Provider = new LinqlContext();
             Expression = Expression.Constant(this);
         }
 
-        public LinqlSearch(IQueryProvider Provider): base(typeof(T))
+        public LinqlSearch(ALinqlContext Provider): base(typeof(T))
         {
             if(Provider == null)
             {
                 throw new Exception("Provider cannot be null");
             }
-           this.Provider = Provider;
+            this.Provider = Provider;
             Expression = Expression.Constant(this);
         }
 
 
-        public LinqlSearch(IQueryProvider Provider, Expression Expression) : this(Provider)
+        public LinqlSearch(ALinqlContext Provider, Expression Expression) : this(Provider)
         {
             if(Expression == null)
             {
@@ -48,9 +48,9 @@ namespace Linql.Client
 
         public IEnumerator<T> GetEnumerator()
         {
-            if(this.Provider is LinqlProvider provider)
+            if(this.Provider is ALinqlContext provider)
             {
-                IEnumerable<T> result = provider.SendLinqlRequest<IEnumerable<T>>(this);
+                IEnumerable<T> result = provider.SendRequest<IEnumerable<T>>(this);
                 return result.GetEnumerator();
 
             }

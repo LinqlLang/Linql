@@ -6,27 +6,15 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
+using System.IO;
 
 namespace Linql.Client
 {
-    public class LinqlContext
+    public class LinqlContext : ALinqlContext
     {
-        protected HttpClient HttpClient { get; set; }
-
-        private LinqlProvider mProvider { get; set; }
-
-        public LinqlProvider Provider
-        {
-            get
-            {
-                return this.mProvider;
-            }
-            set
-            {
-                this.mProvider = value;
-                this.mProvider.Context = this;
-            }
-        }
+        protected  HttpClient HttpClient { get; set; }
+        protected JsonSerializerOptions JsonOptions { get; set; }
 
         public string BaseUrl
         {
@@ -55,21 +43,25 @@ namespace Linql.Client
             }
         }
 
-        public LinqlContext(string BaseUrl = null, LinqlProvider Provider = null)
+        public LinqlContext(string BaseUrl = null, JsonSerializerOptions JsonOptions = null)
         {
             this.BaseUrl = BaseUrl;
 
-            if(Provider != null)
+            if (JsonOptions == null)
             {
-                this.Provider = Provider;
+                this.JsonOptions = new JsonSerializerOptions
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+                };
             }
             else
             {
-                this.Provider = new LinqlProvider();
+                this.JsonOptions = JsonOptions;
             }
         }
 
-        public virtual async Task<TResult> GetResult<TResult>(IQueryable Query, LinqlSearch Search)
+
+        private async Task<TResult> GetResult<TResult>(IQueryable Query, LinqlSearch Search)
         {
             if(this.HttpClient == null)
             {
@@ -82,26 +74,46 @@ namespace Linql.Client
             
         }
 
-        protected virtual async Task<TResult> MakeLinqlRequest<TResult>(string Endpoint, LinqlSearch Search)
+        private async Task<TResult> MakeLinqlRequest<TResult>(string Endpoint, LinqlSearch Search)
         {
             string search = JsonSerializer.Serialize(Search);
             StringContent requestContent = new StringContent(search, Encoding.UTF8, "application/json");
             HttpResponseMessage response = await this.HttpClient.PostAsync(Endpoint, requestContent);
             var contentStream = await response.Content.ReadAsStreamAsync();
-            var result = await JsonSerializer.DeserializeAsync<TResult>(contentStream, this.Provider.JsonOptions);
+            var result = await JsonSerializer.DeserializeAsync<TResult>(contentStream, this.JsonOptions);
             return result;
         }
 
-        protected virtual string GetEndpoint(Type QueryableType)
+        protected override async Task<TResult> SendRequestAsync<TResult>(IQueryable LinqlSearch)
         {
-            return $"linql/{QueryableType.Name}";
-        }
-       
-        public virtual LinqlSearch<T> Set<T>()
-        {
-            return new LinqlSearch<T>(this.Provider);
+            LinqlSearch search = LinqlSearch.ToLinqlSearch();
+            return await this.GetResult<TResult>(LinqlSearch, search);
         }
 
+        public override TResult SendRequest<TResult>(IQueryable LinqlSearch)
+        {
+            LinqlSearch search = LinqlSearch.ToLinqlSearch();
+            Task<TResult> task = this.GetResult<TResult>(LinqlSearch, search);
+            task.Wait();
+            return task.Result;
+        }
 
+        public override string ToJson(LinqlSearch Search)
+        {
+            return JsonSerializer.Serialize(Search, this.JsonOptions);
+        }
+
+        public override async Task<string> ToJsonAsync(LinqlSearch Search)
+        {
+            using (var stream = new MemoryStream())
+            {
+                await JsonSerializer.SerializeAsync(stream, Search, typeof(LinqlSearch), this.JsonOptions);
+                stream.Position = 0;
+                using (var reader = new StreamReader(stream))
+                {
+                    return await reader.ReadToEndAsync();
+                }
+            }
+        }
     }
 }

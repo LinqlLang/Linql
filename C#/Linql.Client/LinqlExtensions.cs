@@ -1,16 +1,12 @@
 ﻿using Linql.Client.Internal;
 using Linql.Core;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Linql.Client
@@ -22,10 +18,10 @@ namespace Linql.Client
 
         public static string ToJson(this IQueryable source)
         {
-            if (source.Provider is LinqlProvider linqlProvider)
+            if (source.Provider is ALinqlContext linqlProvider)
             {
-                Linql.Core.LinqlSearch search = source.ToLinqlSearch();
-                string result = JsonSerializer.Serialize(search, linqlProvider.JsonOptions);
+                LinqlSearch search = source.ToLinqlSearch();
+                string result = linqlProvider.ToJson(search);
 
                 return result;
             }
@@ -37,18 +33,11 @@ namespace Linql.Client
 
         public static async Task<string> ToJsonAsync(this IQueryable source)
         {
-            if (source.Provider is LinqlProvider linqlProvider)
+            if (source.Provider is ALinqlContext linqlProvider)
             {
-                Linql.Core.LinqlSearch search = source.ToLinqlSearch();
-                using (var stream = new MemoryStream())
-                {
-                    await JsonSerializer.SerializeAsync(stream, search, typeof(Linql.Core.LinqlSearch), linqlProvider.JsonOptions);
-                    stream.Position = 0;
-                    using (var reader = new StreamReader(stream))
-                    {
-                        return await reader.ReadToEndAsync();
-                    }
-                }
+               LinqlSearch search = source.ToLinqlSearch();
+                string result = await linqlProvider.ToJsonAsync(search);
+                return result;
             }
             else
             {
@@ -58,9 +47,9 @@ namespace Linql.Client
 
         public static LinqlSearch ToLinqlSearch(this IQueryable source)
         {
-            if (source.Provider is LinqlProvider linqlProvider)
+            if (source.Provider is ALinqlContext linqlProvider)
             {
-                Linql.Core.LinqlSearch search = linqlProvider.BuildLinqlRequest(source.Expression, source.GetType().GetEnumerableType());
+                LinqlSearch search = linqlProvider.BuildLinqlRequest(source.Expression, source.GetType().GetEnumerableType());
                
                 return search;
             }
