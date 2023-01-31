@@ -87,20 +87,20 @@ namespace Linql.Client
             return await this.GetResult<TResult>(Type, LinqlSearch);
         }
 
-        public override TResult SendRequest<TResult>(Type Type, LinqlSearch LinqlSearch)
-        {
-            Task <TResult> task = this.GetResult<TResult>(Type, LinqlSearch);
-            task.Wait();
-            return task.Result;
-        }
+        //public override TResult SendRequest<TResult>(Type Type, LinqlSearch LinqlSearch)
+        //{
+        //    Task <TResult> task = this.GetResult<TResult>(Type, LinqlSearch);
+        //    task.Wait();
+        //    return task.Result;
+        //}
 
 
-        public override async Task<TResult> SendRequestAsync<TResult>(IQueryable LinqlSearch)
-        {
-            LinqlSearch search = LinqlSearch.ToLinqlSearch();
-            Type type = LinqlSearch.GetType().GetEnumerableType();
-            return await this.GetResult<TResult>(type, search);
-        }
+        //public override async Task<TResult> SendRequestAsync<TResult>(IQueryable LinqlSearch)
+        //{
+        //    LinqlSearch search = LinqlSearch.ToLinqlSearch();
+        //    Type type = LinqlSearch.GetType().GetEnumerableType();
+        //    return await this.GetResult<TResult>(type, search);
+        //}
 
         public override TResult SendRequest<TResult>(IQueryable LinqlSearch)
         {

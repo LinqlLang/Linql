@@ -66,13 +66,13 @@ namespace Linql.Client
             return search;
         }
 
-        public abstract Task<TResult> SendRequestAsync<TResult>(IQueryable LinqlSearch);
+        //public abstract Task<TResult> SendRequestAsync<TResult>(IQueryable LinqlSearch);
 
         public abstract TResult SendRequest<TResult>(IQueryable LinqlSearch);
 
         public abstract Task<TResult> SendRequestAsync<TResult>(Type Type, LinqlSearch LinqlSearch);
 
-        public abstract TResult SendRequest<TResult>(Type Type, LinqlSearch LinqlSearch);
+        //public abstract TResult SendRequest<TResult>(Type Type, LinqlSearch LinqlSearch);
 
         public abstract string ToJson(LinqlSearch Search);
 

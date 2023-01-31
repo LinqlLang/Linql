@@ -125,6 +125,24 @@ namespace Linql.Client.Test
 
 
         //[Test]
+        //public async Task ToListAsync_IQueryable()
+        //{
+
+        //    Assert.DoesNotThrowAsync(async () =>
+        //    {
+        //        LinqlContext context = new MockLinqlContext("http://localhost");
+
+        //        bool test = false;
+        //        LinqlSearch<DataModel> search = context.Set<DataModel>();
+        //        List<DataModel> output = await search.Where(r => r.OneToOneNullable.Integer.HasValue && r.OneToOneNullable.Integer.Value == 1).ToListAsync();
+
+        //        Assert.That(output.Count(), Is.EqualTo(0));
+        //    });
+
+        //}
+
+
+        //[Test]
         //public async Task ToList_Should_Throw_When_BaseUrl_Set()
         //{
 

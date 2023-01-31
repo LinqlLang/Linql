@@ -105,13 +105,13 @@ namespace Linql.Client
                 {
                     function.Arguments = function.Arguments.Skip(1).ToList();
                 }
-                else if (firstArg is LinqlFunction fun && m.Method.IsStatic == true)
-                {
-                    firstArg.Next = function;
-                    function.Arguments = function.Arguments.Skip(1).ToList();
+                //else if (firstArg is LinqlFunction fun && m.Method.IsStatic == true)
+                //{
+                //    firstArg.Next = function;
+                //    function.Arguments = function.Arguments.Skip(1).ToList();
 
-                    Root = firstArg;
-                }
+                //    Root = firstArg;
+                //}
             }
 
             return m;
