@@ -42,6 +42,34 @@ namespace Linql.Server.Test
         }
 
         [Test]
+        public void Find_Where_EnumerableQuery()
+        {
+            string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];
+            LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+            LinqlFunction function = search.Expressions.FirstOrDefault() as LinqlFunction;
+
+            MethodInfo methodToComapre = typeof(Queryable).GetMethods().First(r => r.Name == "Where");
+
+            MethodInfo foundMethod = this.FindMethod(typeof(EnumerableQuery<DataModel>), function);
+
+            Assert.That(foundMethod, Is.EqualTo(methodToComapre));
+        }
+
+        [Test]
+        public void Find_Where_List()
+        {
+            string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];
+            LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+            LinqlFunction function = search.Expressions.FirstOrDefault() as LinqlFunction;
+
+            MethodInfo methodToComapre = typeof(Enumerable).GetMethods().First(r => r.Name == "Where");
+
+            MethodInfo foundMethod = this.FindMethod(typeof(List<DataModel>), function);
+
+            Assert.That(foundMethod, Is.EqualTo(methodToComapre));
+        }
+
+        [Test]
         public void FindWhereEnumerable()
         {
             string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];

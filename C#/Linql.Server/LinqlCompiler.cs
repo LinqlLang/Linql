@@ -163,12 +163,7 @@ namespace Linql.Server
         {
             List<MethodInfo> candidates = this.GetMethodsForType(QueryableType).ToList();
 
-            List<MethodInfo> trimmedMethods = candidates
-                .Where(r => r.Name.Contains(function.FunctionName))
-                .Where(r =>
-            (r.IsStatic && r.GetParameters().Count() == function.Arguments.Count() + 1)
-            ||
-            (!r.IsStatic && r.GetParameters().Count() == function.Arguments.Count())).ToList();
+            List<MethodInfo> trimmedMethods = candidates.Where(r => r.Name.Contains(function.FunctionName)).ToList();
 
             List<MethodInfo> argMatchFunctions = trimmedMethods.Where(r =>
             {

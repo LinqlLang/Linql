@@ -1,6 +1,7 @@
-﻿{
+{
   "Type": {
-    "TypeName": "DataModel"
+    "TypeName": "DataModel",
+    "GenericParameters": null
   },
   "Expressions": [
     {
@@ -12,7 +13,8 @@
           "Parameters": [
             {
               "$type": "LinqlParameter",
-              "ParameterName": "r"
+              "ParameterName": "r",
+              "Next": null
             }
           ],
           "Body": {
@@ -21,18 +23,29 @@
             "Left": {
               "$type": "LinqlObject",
               "Type": {
-                "TypeName": "DataModel"
+                "TypeName": "DataModel",
+                "GenericParameters": null
               },
               "Value": {
+                "Integer": 0,
                 "String": "",
+                "Boolean": false,
+                "Decimal": 0,
+                "Long": 0,
+                "DateTime": "0001-01-01T00:00:00",
+                "DateTimeOffset": "0001-01-01T00:00:00+00:00",
+                "Guid": "00000000-0000-0000-0000-000000000000",
                 "ListInteger": [],
                 "ListString": [],
                 "ListRecusrive": [],
-                "ListNullableModel": []
+                "ListNullableModel": [],
+                "OneToOne": null,
+                "OneToOneNullable": null
               },
               "Next": {
                 "$type": "LinqlProperty",
-                "PropertyName": "Integer"
+                "PropertyName": "Integer",
+                "Next": null
               }
             },
             "Right": {
@@ -40,12 +53,17 @@
               "ParameterName": "r",
               "Next": {
                 "$type": "LinqlProperty",
-                "PropertyName": "Integer"
+                "PropertyName": "Integer",
+                "Next": null
               }
-            }
-          }
+            },
+            "Next": null
+          },
+          "Next": null
         }
-      ]
+      ],
+      "Object": null,
+      "Next": null
     }
   ]
 }

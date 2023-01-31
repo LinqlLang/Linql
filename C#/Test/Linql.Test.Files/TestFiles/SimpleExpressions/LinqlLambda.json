@@ -1,6 +1,7 @@
-﻿{
+{
   "Type": {
-    "TypeName": "DataModel"
+    "TypeName": "DataModel",
+    "GenericParameters": null
   },
   "Expressions": [
     {
@@ -12,7 +13,8 @@
           "Parameters": [
             {
               "$type": "LinqlParameter",
-              "ParameterName": "r"
+              "ParameterName": "r",
+              "Next": null
             }
           ],
           "Body": {
@@ -24,7 +26,8 @@
                 "ParameterName": "r",
                 "Next": {
                   "$type": "LinqlProperty",
-                  "PropertyName": "ListInteger"
+                  "PropertyName": "ListInteger",
+                  "Next": null
                 }
               },
               {
@@ -32,7 +35,8 @@
                 "Parameters": [
                   {
                     "$type": "LinqlParameter",
-                    "ParameterName": "s"
+                    "ParameterName": "s",
+                    "Next": null
                   }
                 ],
                 "Body": {
@@ -40,21 +44,31 @@
                   "BinaryName": "GreaterThan",
                   "Left": {
                     "$type": "LinqlParameter",
-                    "ParameterName": "s"
+                    "ParameterName": "s",
+                    "Next": null
                   },
                   "Right": {
                     "$type": "LinqlConstant",
                     "ConstantType": {
-                      "TypeName": "Int32"
+                      "TypeName": "Int32",
+                      "GenericParameters": null
                     },
-                    "Value": 0
-                  }
-                }
+                    "Value": 0,
+                    "Next": null
+                  },
+                  "Next": null
+                },
+                "Next": null
               }
-            ]
-          }
+            ],
+            "Object": null,
+            "Next": null
+          },
+          "Next": null
         }
-      ]
+      ],
+      "Object": null,
+      "Next": null
     }
   ]
 }

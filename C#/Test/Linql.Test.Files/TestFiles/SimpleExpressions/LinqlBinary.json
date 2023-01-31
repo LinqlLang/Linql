@@ -1,6 +1,7 @@
-﻿{
+{
   "Type": {
-    "TypeName": "DataModel"
+    "TypeName": "DataModel",
+    "GenericParameters": null
   },
   "Expressions": [
     {
@@ -12,7 +13,8 @@
           "Parameters": [
             {
               "$type": "LinqlParameter",
-              "ParameterName": "r"
+              "ParameterName": "r",
+              "Next": null
             }
           ],
           "Body": {
@@ -23,7 +25,8 @@
               "ParameterName": "r",
               "Next": {
                 "$type": "LinqlProperty",
-                "PropertyName": "Boolean"
+                "PropertyName": "Boolean",
+                "Next": null
               }
             },
             "Right": {
@@ -34,13 +37,18 @@
                 "PropertyName": "OneToOne",
                 "Next": {
                   "$type": "LinqlProperty",
-                  "PropertyName": "Boolean"
+                  "PropertyName": "Boolean",
+                  "Next": null
                 }
               }
-            }
-          }
+            },
+            "Next": null
+          },
+          "Next": null
         }
-      ]
+      ],
+      "Object": null,
+      "Next": null
     }
   ]
 }

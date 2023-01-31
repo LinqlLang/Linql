@@ -1,9 +1,9 @@
 using Linql.Core.Test;
 using Linql.Test.Files;
 
-namespace Linql.Client.Test
+namespace Linql.Client.Test.ExpressionTests
 {
-    public class SmokeTest2 : TestFileTests
+    public class SmokeTest : TestFileTests
     {
         protected LinqlContext Context { get; set; } = new LinqlContext();
 
@@ -19,7 +19,7 @@ namespace Linql.Client.Test
             {
                 listType.AsQueryable().ToJson();
             }
-            catch(System.Exception ex)
+            catch (System.Exception ex)
             {
                 Assert.IsTrue(true);
                 return;
@@ -52,7 +52,7 @@ namespace Linql.Client.Test
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string empty = search.ToJson();
 
-            this.TestLoader.Compare(nameof(SmokeTest2.EmptySearch), empty);
+            TestLoader.Compare(nameof(SmokeTest.EmptySearch), empty);
         }
 
         [Test]
@@ -60,7 +60,7 @@ namespace Linql.Client.Test
         {
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => true).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.SimpleConstant), simpleConstant);
+            TestLoader.Compare(nameof(SmokeTest.SimpleConstant), simpleConstant);
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace Linql.Client.Test
         {
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => r.Boolean).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.SimpleBooleanProperty), simpleConstant);
+            TestLoader.Compare(nameof(SmokeTest.SimpleBooleanProperty), simpleConstant);
         }
 
         [Test]
@@ -76,7 +76,7 @@ namespace Linql.Client.Test
         {
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => !r.Boolean).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.BooleanNegate), simpleConstant);
+            TestLoader.Compare(nameof(SmokeTest.BooleanNegate), simpleConstant);
         }
 
         [Test]
@@ -84,15 +84,15 @@ namespace Linql.Client.Test
         {
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => r.OneToOne.Boolean).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.SimpleBooleanPropertyChaining), simpleConstant);
+            TestLoader.Compare(nameof(SmokeTest.SimpleBooleanPropertyChaining), simpleConstant);
         }
-        
+
         [Test]
         public async Task SimpleBooleanPropertyEquals()
         {
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => r.Boolean == false).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.SimpleBooleanPropertyEquals), simpleConstant);
+            TestLoader.Compare(nameof(SmokeTest.SimpleBooleanPropertyEquals), simpleConstant);
         }
 
         [Test]
@@ -100,7 +100,7 @@ namespace Linql.Client.Test
         {
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => false == r.Boolean).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.SimpleBooleanPropertyEqualsSwap), simpleConstant);
+            TestLoader.Compare(nameof(SmokeTest.SimpleBooleanPropertyEqualsSwap), simpleConstant);
         }
 
         [Test]
@@ -108,7 +108,7 @@ namespace Linql.Client.Test
         {
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => false == true).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.TwoBooleans), simpleConstant);
+            TestLoader.Compare(nameof(SmokeTest.TwoBooleans), simpleConstant);
         }
 
         [Test]
@@ -117,7 +117,7 @@ namespace Linql.Client.Test
             bool test = false;
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => false == test).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.BooleanVar), simpleConstant);
+            TestLoader.Compare(nameof(SmokeTest.BooleanVar), simpleConstant);
         }
 
         [Test]
@@ -126,22 +126,22 @@ namespace Linql.Client.Test
             DataModel test = new DataModel();
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => test.Boolean).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.ComplexBoolean), simpleConstant);
+            TestLoader.Compare(nameof(SmokeTest.ComplexBoolean), simpleConstant);
         }
 
         [Test]
         public async Task ComplexBooleanAsArgument()
         {
             DataModel test = new DataModel();
-            await this.InternalComplexBooleanAsArgument(test);
-         
+            await InternalComplexBooleanAsArgument(test);
+
         }
 
         private async Task InternalComplexBooleanAsArgument(DataModel test)
         {
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => test.Boolean).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.ComplexBoolean), simpleConstant);
+            TestLoader.Compare(nameof(SmokeTest.ComplexBoolean), simpleConstant);
         }
 
         [Test]
@@ -150,7 +150,7 @@ namespace Linql.Client.Test
             DataModel test = new DataModel();
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => r.Boolean && r.Boolean && r.Boolean).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.ThreeBooleans), simpleConstant);
+            TestLoader.Compare(nameof(SmokeTest.ThreeBooleans), simpleConstant);
         }
 
         [Test]
@@ -159,7 +159,7 @@ namespace Linql.Client.Test
             List<int> integers = new List<int>() { 1, 2, 3 };
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => integers.Contains(r.Integer)).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.ListInt), simpleConstant);
+            TestLoader.Compare(nameof(SmokeTest.ListInt), simpleConstant);
         }
 
 
@@ -169,15 +169,15 @@ namespace Linql.Client.Test
             List<int> integers = new List<int>() { 1, 2, 3 };
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => r.ListInteger.Contains(1)).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.ListIntFromProperty), simpleConstant);
+            TestLoader.Compare(nameof(SmokeTest.ListIntFromProperty), simpleConstant);
         }
 
         [Test]
         public async Task InnerLambda()
         {
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
-            string simpleConstant = await search.Where(r => r.ListInteger.Any(s => s ==1)).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.InnerLambda), simpleConstant);
+            string simpleConstant = await search.Where(r => r.ListInteger.Any(s => s == 1)).ToJsonAsync();
+            TestLoader.Compare(nameof(SmokeTest.InnerLambda), simpleConstant);
         }
 
         [Test]
@@ -185,7 +185,7 @@ namespace Linql.Client.Test
         {
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => r.OneToOneNullable.Integer.HasValue).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.NullableHasValue), simpleConstant);
+            TestLoader.Compare(nameof(SmokeTest.NullableHasValue), simpleConstant);
         }
 
         [Test]
@@ -193,7 +193,7 @@ namespace Linql.Client.Test
         {
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => r.OneToOneNullable.Integer.HasValue && r.OneToOneNullable.Integer.Value == 1).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.NullableValue), simpleConstant);
+            TestLoader.Compare(nameof(SmokeTest.NullableValue), simpleConstant);
         }
 
         [Test]
@@ -203,7 +203,7 @@ namespace Linql.Client.Test
             Assert.That(objectTest.TypedValue, Is.EqualTo(objectTest.Value));
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => objectTest.TypedValue.Integer == r.Integer).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.LinqlObject), simpleConstant);
+            TestLoader.Compare(nameof(SmokeTest.LinqlObject), simpleConstant);
         }
 
         [Test]
@@ -212,7 +212,7 @@ namespace Linql.Client.Test
             DataModel objectTest = new DataModel();
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => objectTest.OneToOne.Integer == r.Integer).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.ObjectCalculationWithNull), simpleConstant);
+            TestLoader.Compare(nameof(SmokeTest.ObjectCalculationWithNull), simpleConstant);
         }
 
         [Test]
@@ -222,7 +222,7 @@ namespace Linql.Client.Test
             objectTest.OneToOne = new DataModel();
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string simpleConstant = await search.Where(r => objectTest.OneToOne.Integer == r.Integer).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SmokeTest2.ObjectCalculationWithoutNull), simpleConstant);
+            TestLoader.Compare(nameof(SmokeTest.ObjectCalculationWithoutNull), simpleConstant);
         }
     }
 

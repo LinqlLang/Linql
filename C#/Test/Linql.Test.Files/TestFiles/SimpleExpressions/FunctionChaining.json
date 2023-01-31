@@ -1,6 +1,7 @@
-﻿{
+{
   "Type": {
-    "TypeName": "DataModel"
+    "TypeName": "DataModel",
+    "GenericParameters": null
   },
   "Expressions": [
     {
@@ -12,18 +13,23 @@
           "Parameters": [
             {
               "$type": "LinqlParameter",
-              "ParameterName": "r"
+              "ParameterName": "r",
+              "Next": null
             }
           ],
           "Body": {
             "$type": "LinqlConstant",
             "ConstantType": {
-              "TypeName": "Boolean"
+              "TypeName": "Boolean",
+              "GenericParameters": null
             },
-            "Value": false
-          }
+            "Value": false,
+            "Next": null
+          },
+          "Next": null
         }
       ],
+      "Object": null,
       "Next": {
         "$type": "LinqlFunction",
         "FunctionName": "Where",
@@ -33,18 +39,24 @@
             "Parameters": [
               {
                 "$type": "LinqlParameter",
-                "ParameterName": "r"
+                "ParameterName": "r",
+                "Next": null
               }
             ],
             "Body": {
               "$type": "LinqlConstant",
               "ConstantType": {
-                "TypeName": "Boolean"
+                "TypeName": "Boolean",
+                "GenericParameters": null
               },
-              "Value": true
-            }
+              "Value": true,
+              "Next": null
+            },
+            "Next": null
           }
-        ]
+        ],
+        "Object": null,
+        "Next": null
       }
     }
   ]

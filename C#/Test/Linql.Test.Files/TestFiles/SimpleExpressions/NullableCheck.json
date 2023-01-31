@@ -1,6 +1,7 @@
-﻿{
+{
   "Type": {
-    "TypeName": "DataModel"
+    "TypeName": "DataModel",
+    "GenericParameters": null
   },
   "Expressions": [
     {
@@ -12,7 +13,8 @@
           "Parameters": [
             {
               "$type": "LinqlParameter",
-              "ParameterName": "r"
+              "ParameterName": "r",
+              "Next": null
             }
           ],
           "Body": {
@@ -29,7 +31,8 @@
                   "PropertyName": "Integer",
                   "Next": {
                     "$type": "LinqlProperty",
-                    "PropertyName": "HasValue"
+                    "PropertyName": "HasValue",
+                    "Next": null
                   }
                 }
               }
@@ -48,7 +51,8 @@
                     "PropertyName": "Integer",
                     "Next": {
                       "$type": "LinqlProperty",
-                      "PropertyName": "Value"
+                      "PropertyName": "Value",
+                      "Next": null
                     }
                   }
                 }
@@ -56,14 +60,21 @@
               "Right": {
                 "$type": "LinqlConstant",
                 "ConstantType": {
-                  "TypeName": "Int32"
+                  "TypeName": "Int32",
+                  "GenericParameters": null
                 },
-                "Value": 1
-              }
-            }
-          }
+                "Value": 1,
+                "Next": null
+              },
+              "Next": null
+            },
+            "Next": null
+          },
+          "Next": null
         }
-      ]
+      ],
+      "Object": null,
+      "Next": null
     }
   ]
 }
