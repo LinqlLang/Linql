@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace Linql.Server.Test
 {
-    public class ApplicationTest : TestFileTests
+    public class Application_Test : TestFileTests
     {
         public IQueryable<DataModel> Data { get; set; }
 
@@ -147,6 +147,20 @@ namespace Linql.Server.Test
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
 
             Assert.DoesNotThrow(() => this.Compiler.Execute<IQueryable<DataModel>>(search, data));
+
+
+        }
+
+
+        [Test]
+        public void ListWithLInqlObject()
+        {
+            this.Compiler.ValidAssemblies.Add(typeof(DataModel).Assembly);
+            string json = this.TestLoader.TestFiles["LinqlObject"];
+            List<DataModel> data = this.Data.ToList();
+            LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+
+            Assert.DoesNotThrow(() => this.Compiler.Execute<IEnumerable<DataModel>>(search, data));
 
 
         }

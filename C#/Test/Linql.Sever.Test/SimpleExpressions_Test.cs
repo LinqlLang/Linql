@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace Linql.Server.Test
 {
-    internal class SimpleExpressionsTest : TestFileTests
+    internal class SimpleExpressions_Test : TestFileTests
     {
         protected override string TestFolder { get; set; } = "SimpleExpressions";
 

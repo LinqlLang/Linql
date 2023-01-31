@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace Linql.Server.Test
 {
-    internal class LinqlCompilterTest : LinqlCompiler
+    internal class LinqlCompiler_Test : LinqlCompiler
     {
         private TestFileLoader TestLoader = new TestFileLoader("Smoke", true);
 
@@ -19,6 +19,7 @@ namespace Linql.Server.Test
             {
                 typeof(System.Boolean).Assembly,
                 typeof(Enumerable).Assembly,
+                typeof(List<>).Assembly,
                 typeof(Queryable).Assembly
             };
 
@@ -186,6 +187,43 @@ namespace Linql.Server.Test
 
         }
 
+
+        [Test]
+        public void Invalid_LinqlExpresion_Derivation()
+        {
+            Assert.Catch(() => this.Visit(new FakeLinqlExpression(), null, null));
+        }
+
+        [Test]
+        public void Invalid_LinqlLambda_Null_InputType()
+        {
+            Assert.Catch(() => this.VisitLambda(null, null, null));
+        }
+
+        [Test]
+        public void Invalid_LinqlConstant()
+        {
+            List<int> list = new List<int>();
+            LinqlConstant constant = new LinqlConstant(typeof(List<int>).ToLinqlType(), list);
+            string serialized = JsonSerializer.Serialize<LinqlExpression>(constant);
+
+            LinqlExpression converted = JsonSerializer.Deserialize<LinqlExpression>(serialized);
+
+            if(converted is LinqlConstant linqlConstant)
+            {
+                Assert.Catch(() => this.VisitConstant(linqlConstant, null));
+
+            }
+            else
+            {
+                Assert.Fail();
+            }
+        }
+
+    }
+
+    internal class FakeLinqlExpression : LinqlExpression
+    {
 
     }
 

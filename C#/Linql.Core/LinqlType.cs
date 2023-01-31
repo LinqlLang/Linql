@@ -10,7 +10,7 @@ namespace Linql.Core
     {
         public string TypeName { get; set; }
 
-        public List<LinqlType> GenericParameters { get; protected set; }
+        public List<LinqlType> GenericParameters { get; set; }
 
         public LinqlType() { }
 

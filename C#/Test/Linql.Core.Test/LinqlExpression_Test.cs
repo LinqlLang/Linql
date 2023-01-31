@@ -167,6 +167,14 @@ namespace Linql.Core.Test
         }
 
         [Test]
+        public void LinqlType_LinqlGeneric()
+        {
+            LinqlType type = new LinqlType(typeof(List<int>));
+            Assert.That(type.TypeName, Is.EqualTo("List"));
+            Assert.That(type.GenericParameters[0].TypeName, Is.EqualTo("Int32"));
+        }
+
+        [Test]
         public void LinqlUnary()
         {
             LinqlConstant constant = new LinqlConstant(typeof(bool).ToLinqlType(), false);

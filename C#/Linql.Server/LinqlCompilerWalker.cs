@@ -18,11 +18,8 @@ namespace Linql.Server
     {
         protected Expression Visit(LinqlExpression Expression, Type InputType, Expression Previous = null)
         {
-            if(Expression is LinqlLambda lambda)
-            {
-                //return this.VisitLambda(lambda, InputType);
-            }
-            else if(Expression is LinqlConstant constant)
+           
+            if (Expression is LinqlConstant constant)
             {
                 return this.VisitConstant(constant, InputType, Previous);
             }
@@ -42,7 +39,12 @@ namespace Linql.Server
             {
                 return this.VisitBinary(binary, InputType, Previous);
             }
-            return null;
+            else
+            {
+                throw new Exception($"{this.GetType().Name} does not support expression of type {Expression.GetType().Name}");
+            }
+           
+            
         }
 
 
@@ -146,7 +148,7 @@ namespace Linql.Server
 
             if (LinqlType.GenericParameters != null)
             {
-                List<Type> genericArguments = LinqlType.GenericParameters.Select(r => this.GetLinqlType(LinqlType)).ToList();
+                List<Type> genericArguments = LinqlType.GenericParameters.Select(r => this.GetLinqlType(r)).ToList();
                 foundType = foundType.MakeGenericType(genericArguments.ToArray());
             }
             return foundType;

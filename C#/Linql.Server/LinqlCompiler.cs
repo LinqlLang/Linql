@@ -131,7 +131,13 @@ namespace Linql.Server
 
         protected Type GetTypeFromLinqlObject(LinqlType Type)
         {
-            return this.ValidAssemblies.SelectMany(s => s.GetTypes()).FirstOrDefault(r => r.Name == Type.TypeName);
+            string typeName = Type.TypeName;
+            if(Type.TypeName == "List")
+            {
+                typeName = typeof(List<>).Name;
+            }
+
+            return this.ValidAssemblies.SelectMany(s => s.GetTypes()).FirstOrDefault(r => r.Name == typeName);
         }
 
         protected List<MethodInfo> GetMethods(Type Type)
