@@ -19,7 +19,7 @@ namespace Linql.Client
         {
             if (Provider == null)
             {
-                throw new Exception("Provider cannot be null");
+                throw new System.Exception("Provider cannot be null");
             }
             this.Provider = Provider;
             Expression = Expression.Constant(this);
@@ -30,7 +30,7 @@ namespace Linql.Client
         {
             if (Expression == null)
             {
-                throw new Exception("Expression cannot be null");
+                throw new System.Exception("Expression cannot be null");
             }
             this.Expression = Expression;
         }
@@ -55,7 +55,7 @@ namespace Linql.Client
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new EnumerationIsNotSupportedException();
+            throw new System.Exception("Typeless IEnumerator GetEnumerator method is not supported for LinqlSearches");
         }
 
     }

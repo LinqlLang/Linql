@@ -1,4 +1,6 @@
-﻿using Linql.Core;
+﻿using Linql.Client.Exception;
+using Linql.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,7 +20,7 @@ namespace Linql.Client
             }
             else
             {
-                throw new UnsupportedIQueryableException();
+                throw new UnsupportedExtensionProvider(source.Provider);
             }
         }
 
@@ -32,22 +34,26 @@ namespace Linql.Client
             }
             else
             {
-                throw new UnsupportedIQueryableException();
+                throw new UnsupportedExtensionProvider(source.Provider);
             }
         }
 
         public static LinqlSearch ToLinqlSearch(this IQueryable source)
         {
+            ALinqlContext context;
             if (source.Provider is ALinqlContext linqlProvider)
             {
-                LinqlSearch search = linqlProvider.BuildLinqlRequest(source.Expression, source.GetType().GetEnumerableType());
+                context = linqlProvider;
                
-                return search;
             }
             else
             {
-                throw new UnsupportedIQueryableException();
+                context = new LinqlContext();
             }
+
+            LinqlSearch search = context.BuildLinqlRequest(source.Expression, source.GetType().GetEnumerableType());
+
+            return search;
         }
 
         public static async Task<List<T>> ToListAsync<T>(this IQueryable<T> source)
@@ -65,7 +71,7 @@ namespace Linql.Client
             }
             else
             {
-                throw new UnsupportedIQueryableException();
+                throw new UnsupportedExtensionProvider(source.Provider);
             }
         }
 

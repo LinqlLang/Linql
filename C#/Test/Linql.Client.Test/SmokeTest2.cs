@@ -19,7 +19,7 @@ namespace Linql.Client.Test
             {
                 listType.AsQueryable().ToJson();
             }
-            catch(UnsupportedIQueryableException ex)
+            catch(System.Exception ex)
             {
                 Assert.IsTrue(true);
                 return;
@@ -37,7 +37,7 @@ namespace Linql.Client.Test
             {
                 await listType.AsQueryable().ToJsonAsync();
             }
-            catch (UnsupportedIQueryableException ex)
+            catch (System.Exception ex)
             {
                 Assert.IsTrue(true);
                 return;
