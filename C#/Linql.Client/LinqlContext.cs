@@ -1,13 +1,12 @@
-﻿using Linql.Client.Internal;
-using Linql.Core;
+﻿using Linql.Core;
 using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text.Json;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.IO;
+using System.Threading.Tasks;
 
 namespace Linql.Client
 {
@@ -61,20 +60,19 @@ namespace Linql.Client
         }
 
 
-        protected virtual async Task<TResult> GetResult<TResult>(IQueryable Query, LinqlSearch Search)
+        protected virtual async Task<TResult> GetResult<TResult>(Type Type, LinqlSearch Search)
         {
             if(this.HttpClient == null)
             {
                 throw new Exception("No HttpClient was configured in this LinqlContext.  Please pass a BaseUrl string into the constructor or derive and override the HttpClient property.");
             }
 
-            Type enumerableType = Query.GetType().GetEnumerableType();
-            string url = this.GetEndpoint(enumerableType);
-            return await this.SendLinqlRequest< TResult>(url, Search);
+            string url = this.GetEndpoint(Type);
+            return await this.SendHttpRequest< TResult>(url, Search);
             
         }
 
-        protected virtual async Task<TResult> SendLinqlRequest<TResult>(string Endpoint, LinqlSearch Search)
+        protected virtual async Task<TResult> SendHttpRequest<TResult>(string Endpoint, LinqlSearch Search)
         {
             string search = JsonSerializer.Serialize(Search);
             StringContent requestContent = new StringContent(search, Encoding.UTF8, "application/json");
@@ -84,16 +82,31 @@ namespace Linql.Client
             return result;
         }
 
+        public override async Task<TResult> SendRequestAsync<TResult>(Type Type, LinqlSearch LinqlSearch)
+        {
+            return await this.GetResult<TResult>(Type, LinqlSearch);
+        }
+
+        public override TResult SendRequest<TResult>(Type Type, LinqlSearch LinqlSearch)
+        {
+            Task <TResult> task = this.GetResult<TResult>(Type, LinqlSearch);
+            task.Wait();
+            return task.Result;
+        }
+
+
         public override async Task<TResult> SendRequestAsync<TResult>(IQueryable LinqlSearch)
         {
             LinqlSearch search = LinqlSearch.ToLinqlSearch();
-            return await this.GetResult<TResult>(LinqlSearch, search);
+            Type type = LinqlSearch.GetType().GetEnumerableType();
+            return await this.GetResult<TResult>(type, search);
         }
 
         public override TResult SendRequest<TResult>(IQueryable LinqlSearch)
         {
             LinqlSearch search = LinqlSearch.ToLinqlSearch();
-            Task<TResult> task = this.GetResult<TResult>(LinqlSearch, search);
+            Type type = LinqlSearch.GetType().GetEnumerableType();
+            Task<TResult> task = this.GetResult<TResult>(type, search);
             task.Wait();
             return task.Result;
         }

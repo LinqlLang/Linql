@@ -1,11 +1,4 @@
-﻿using Linql.Client.Internal;
-using Linql.Core;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
+﻿using Linql.Core;
 
 namespace Linql.Client
 {

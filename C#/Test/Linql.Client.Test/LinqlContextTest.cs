@@ -1,5 +1,6 @@
 using Linql.Core.Test;
 using RichardSzalay.MockHttp;
+using System.Collections;
 using System.Text;
 
 namespace Linql.Client.Test
@@ -78,9 +79,67 @@ namespace Linql.Client.Test
                 bool test = false;
                 LinqlSearch<DataModel> search = context.Set<DataModel>();
                 List<DataModel> output = search.Where(r => r.OneToOneNullable.Integer.HasValue && r.OneToOneNullable.Integer.Value == 1).ToList();
+
+                Assert.That(output.Count(), Is.EqualTo(0));
             });
 
         }
+
+        [Test]
+        public async Task ToList_Enumeration_Not_Supported_Except_for_LinqlSearches()
+        {
+
+            Assert.Catch(() =>
+            {
+
+                LinqlContext context = new MockLinqlContext();
+
+                //bool test = false;
+                LinqlSearch<DataModel> search = context.Set<DataModel>();
+                IEnumerable enumerable = (IEnumerable) search.AsEnumerable();
+                enumerable.GetEnumerator();
+                //List<DataModel> output = search.Where(r => r.OneToOneNullable.Integer.HasValue && r.OneToOneNullable.Integer.Value == 1).ToList();
+
+                //Assert.That(output.Count(), Is.EqualTo(0));
+            });
+
+        }
+
+
+        [Test]
+        public async Task ToListAsync_Should_Work()
+        {
+
+            Assert.DoesNotThrowAsync(async () =>
+            {
+                LinqlContext context = new MockLinqlContext("http://localhost");
+
+                bool test = false;
+                LinqlSearch<DataModel> search = context.Set<DataModel>();
+                List<DataModel> output = await search.Where(r => r.OneToOneNullable.Integer.HasValue && r.OneToOneNullable.Integer.Value == 1).ToListAsync();
+
+                Assert.That(output.Count(), Is.EqualTo(0));
+            });
+
+        }
+
+
+        //[Test]
+        //public async Task ToList_Should_Throw_When_BaseUrl_Set()
+        //{
+
+        //    Assert.Catch(() =>
+        //    {
+        //        LinqlContext context = new MockLinqlContext();
+
+        //        bool test = false;
+        //        LinqlSearch<DataModel> search = context.Set<DataModel>();
+        //        List<DataModel> output = search.Where(r => r.OneToOneNullable.Integer.HasValue && r.OneToOneNullable.Integer.Value == 1).ToList();
+
+        //        Assert.That(output.Count(), Is.EqualTo(0));
+        //    });
+
+        //}
     }
 
 

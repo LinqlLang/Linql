@@ -1,11 +1,9 @@
-﻿using Linql.Client.Internal;
-using Linql.Core;
+﻿using Linql.Core;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace Linql.Client
 {
@@ -17,9 +15,9 @@ namespace Linql.Client
             Expression = Expression.Constant(this);
         }
 
-        public LinqlSearch(ALinqlContext Provider): base(typeof(T))
+        public LinqlSearch(ALinqlContext Provider) : base(typeof(T))
         {
-            if(Provider == null)
+            if (Provider == null)
             {
                 throw new Exception("Provider cannot be null");
             }
@@ -30,7 +28,7 @@ namespace Linql.Client
 
         public LinqlSearch(ALinqlContext Provider, Expression Expression) : this(Provider)
         {
-            if(Expression == null)
+            if (Expression == null)
             {
                 throw new Exception("Expression cannot be null");
             }
@@ -48,13 +46,11 @@ namespace Linql.Client
 
         public IEnumerator<T> GetEnumerator()
         {
-            if(this.Provider is ALinqlContext provider)
-            {
-                IEnumerable<T> result = provider.SendRequest<IEnumerable<T>>(this);
-                return result.GetEnumerator();
+            ALinqlContext provider = this.Provider as ALinqlContext;
+            IEnumerable<T> result = provider.SendRequest<IEnumerable<T>>(this);
+            return result.GetEnumerator();
 
-            }
-            throw new EnumerationIsNotSupportedException();
+
         }
 
         IEnumerator IEnumerable.GetEnumerator()

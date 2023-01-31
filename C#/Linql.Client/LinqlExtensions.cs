@@ -1,21 +1,12 @@
-﻿using Linql.Client.Internal;
-using Linql.Core;
-using System.Collections;
+﻿using Linql.Core;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Linql.Client
 {
     public static class LinqlExtensions
     {
-        private static MethodInfo ToListMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList));
-
-
         public static string ToJson(this IQueryable source)
         {
             if (source.Provider is ALinqlContext linqlProvider)
@@ -59,25 +50,25 @@ namespace Linql.Client
             }
         }
 
-        public static IQueryable<TSource> AttachGenericFunction<TSource>(this IQueryable<TSource> source, MethodInfo method)
+        public static async Task<List<T>> ToListAsync<T>(this IQueryable<T> source)
         {
-         
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-                    method,
-                    source.Expression
-                    ));
+            if (source.Provider is ALinqlContext linqlProvider)
+            {
+                LinqlSearch search = linqlProvider.BuildLinqlRequest(source.Expression, source.GetType().GetEnumerableType());
+
+                LinqlExpression expression = search.Expressions.FirstOrDefault();
+                LinqlExpression lastExpression = expression.GetLastExpressionInNextChain();
+
+                lastExpression.Next = new LinqlFunction("ToListAsync");
+
+                return await linqlProvider.SendRequestAsync<List<T>>(typeof(T), search);
+            }
+            else
+            {
+                throw new UnsupportedIQueryableException();
+            }
         }
 
-        public static IQueryable<T> ToLinqlList<T>(this IQueryable<T> source)
-        {
-          
-            return source.AttachGenericFunction(LinqlExtensions.ToListMethod.MakeGenericMethod(typeof(T)));
-        }
-
-        public static List<TSource> ToList<TSource>(this IEnumerable source)
-      => source.OfType<TSource>().ToList();
 
     }
 }
