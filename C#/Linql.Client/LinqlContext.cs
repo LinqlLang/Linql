@@ -16,7 +16,7 @@ namespace Linql.Client
         protected  HttpClient HttpClient { get; set; }
         protected JsonSerializerOptions JsonOptions { get; set; }
 
-        public string BaseUrl
+        public virtual string BaseUrl
         {
             get
             {
@@ -26,7 +26,7 @@ namespace Linql.Client
                 }
                 return null;
             }
-            set
+             set
             {
                 if(value == null)
                 {
@@ -61,7 +61,7 @@ namespace Linql.Client
         }
 
 
-        private async Task<TResult> GetResult<TResult>(IQueryable Query, LinqlSearch Search)
+        protected virtual async Task<TResult> GetResult<TResult>(IQueryable Query, LinqlSearch Search)
         {
             if(this.HttpClient == null)
             {
@@ -70,11 +70,11 @@ namespace Linql.Client
 
             Type enumerableType = Query.GetType().GetEnumerableType();
             string url = this.GetEndpoint(enumerableType);
-            return await this.MakeLinqlRequest< TResult>(url, Search);
+            return await this.SendLinqlRequest< TResult>(url, Search);
             
         }
 
-        private async Task<TResult> MakeLinqlRequest<TResult>(string Endpoint, LinqlSearch Search)
+        protected virtual async Task<TResult> SendLinqlRequest<TResult>(string Endpoint, LinqlSearch Search)
         {
             string search = JsonSerializer.Serialize(Search);
             StringContent requestContent = new StringContent(search, Encoding.UTF8, "application/json");
@@ -84,7 +84,7 @@ namespace Linql.Client
             return result;
         }
 
-        protected override async Task<TResult> SendRequestAsync<TResult>(IQueryable LinqlSearch)
+        public override async Task<TResult> SendRequestAsync<TResult>(IQueryable LinqlSearch)
         {
             LinqlSearch search = LinqlSearch.ToLinqlSearch();
             return await this.GetResult<TResult>(LinqlSearch, search);

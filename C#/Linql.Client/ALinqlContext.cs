@@ -66,7 +66,7 @@ namespace Linql.Client
             return search;
         }
 
-        protected abstract Task<TResult> SendRequestAsync<TResult>(IQueryable LinqlSearch);
+        public abstract Task<TResult> SendRequestAsync<TResult>(IQueryable LinqlSearch);
 
         public abstract TResult SendRequest<TResult>(IQueryable LinqlSearch);
 
