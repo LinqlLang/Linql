@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Linql.Client.Test
 {
-    public class LinqlContextTests
+    public class LinqlContext_Test
     {
         [OneTimeSetUp]
         public void Setup()

@@ -1,9 +1,9 @@
 using Linql.Core.Test;
 using Linql.Test.Files;
 
-namespace Linql.Client.Test
+namespace Linql.Client.Test.Expressions
 {
-    public class SimpleExpressions : TestFileTests
+    public class SimpleExpressions_Test : TestFileTests
     {
         protected LinqlContext Context { get; set; } = new LinqlContext(null, new JsonSerializerOptions() { WriteIndented = true });
 
@@ -14,7 +14,7 @@ namespace Linql.Client.Test
         {
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string output = await search.Where(r => false).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SimpleExpressions.LinqlConstant), output);
+            this.TestLoader.Compare(nameof(SimpleExpressions_Test.LinqlConstant), output);
         }
 
         [Test]
@@ -22,7 +22,7 @@ namespace Linql.Client.Test
         {
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string output = await search.Where(r => r.Boolean && r.OneToOne.Boolean).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SimpleExpressions.LinqlBinary), output);
+            this.TestLoader.Compare(nameof(SimpleExpressions_Test.LinqlBinary), output);
         }
 
         [Test]
@@ -30,7 +30,7 @@ namespace Linql.Client.Test
         {
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string output = await search.Where(r => !r.Boolean).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SimpleExpressions.LinqlUnary), output);
+            this.TestLoader.Compare(nameof(SimpleExpressions_Test.LinqlUnary), output);
         }
 
         [Test]
@@ -40,7 +40,7 @@ namespace Linql.Client.Test
             Assert.That(objectTest.TypedValue, Is.EqualTo(objectTest.Value));
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string output = await search.Where(r => objectTest.TypedValue.Integer == r.Integer).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SimpleExpressions.LinqlObject), output);
+            this.TestLoader.Compare(nameof(SimpleExpressions_Test.LinqlObject), output);
 
         }
 
@@ -49,7 +49,7 @@ namespace Linql.Client.Test
         {
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string output = await search.Where(r => r.ListInteger.Contains(1)).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SimpleExpressions.LinqlFunction), output);
+            this.TestLoader.Compare(nameof(SimpleExpressions_Test.LinqlFunction), output);
 
         }
 
@@ -58,7 +58,7 @@ namespace Linql.Client.Test
         {
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string output = await search.Where(r => r.ListInteger.Any(s => s > 0)).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SimpleExpressions.LinqlLambda), output);
+            this.TestLoader.Compare(nameof(SimpleExpressions_Test.LinqlLambda), output);
 
         }
 
@@ -69,7 +69,7 @@ namespace Linql.Client.Test
             bool test = false;
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string output = await search.Where(r => false).Where(r => true).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SimpleExpressions.FunctionChaining), output);
+            this.TestLoader.Compare(nameof(SimpleExpressions_Test.FunctionChaining), output);
         }
 
         [Test]
@@ -78,7 +78,7 @@ namespace Linql.Client.Test
             bool test = false;
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string output = await search.Where(r => r.OneToOneNullable.Integer.HasValue && r.OneToOneNullable.Integer.Value == 1).ToJsonAsync();
-            this.TestLoader.Compare(nameof(SimpleExpressions.NullableCheck), output);
+            this.TestLoader.Compare(nameof(SimpleExpressions_Test.NullableCheck), output);
         }
 
         //[Test]

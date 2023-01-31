@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 
 namespace Linql.Client.Test
 {
-    public class ALinqlContextTest
+    public class ALinqlContext_Test
     {
         [OneTimeSetUp]
         public void Setup()

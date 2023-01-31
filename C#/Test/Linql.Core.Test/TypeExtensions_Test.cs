@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Linql.Core.Test
 {
-    public class TypeExtensionTests
+    public class TypeExtensions_Test
     {
         [Test]
         public void IsNullable()

@@ -2,7 +2,7 @@ using Linql.Core.Test;
 
 namespace Linql.Client.Test
 {
-    public class LinqlSearchTest
+    public class LinqlSearch_Test
     {
         [OneTimeSetUp]
         public void Setup()

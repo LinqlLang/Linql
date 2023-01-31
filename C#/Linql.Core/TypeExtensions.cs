@@ -55,5 +55,10 @@ namespace Linql.Core
         {
             return typeof(Expression).IsAssignableFrom(Type.GetGenericTypeDefinitionSafe());
         }
+
+        public static LinqlType ToLinqlType(this Type Type)
+        {
+            return new LinqlType(Type);
+        }
     }
 }
