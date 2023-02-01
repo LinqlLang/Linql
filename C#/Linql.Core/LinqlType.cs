@@ -8,6 +8,8 @@ namespace Linql.Core
 {
     public class LinqlType 
     {
+        readonly static string ListType = "List";
+
         public string TypeName { get; set; }
 
         public List<LinqlType> GenericParameters { get; set; }
@@ -22,14 +24,23 @@ namespace Linql.Core
             {
                 this.TypeName = nameof(LinqlSearch);
             }
+            else if (typeof(string).IsAssignableFrom(Type))
+            {
+                this.TypeName = Type.Name;
+            }
             else if (typeof(IEnumerable).IsAssignableFrom(Type))
             {
-                this.TypeName = "List";
+                this.TypeName = LinqlType.ListType;
             }
             else
             {
                 this.TypeName = Type.Name;
             }
+        }
+
+        public bool IsList()
+        {
+            return this.TypeName == LinqlType.ListType;
         }
     }
 }

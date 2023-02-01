@@ -224,6 +224,33 @@ namespace Linql.Client.Test.Expressions
             string simpleConstant = await search.Where(r => objectTest.OneToOne.Integer == r.Integer).ToJsonAsync();
             TestLoader.Compare(nameof(Smoke_Test.ObjectCalculationWithoutNull), simpleConstant);
         }
+
+        [Test]
+        public async Task List_Int_Contains()
+        {
+            List<int> intList = new List<int>() { 1, 2, 3 };
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string contains = await search.Where(r => intList.Contains(r.Integer)).ToJsonAsync();
+            TestLoader.Compare(nameof(Smoke_Test.List_Int_Contains), contains);
+        }
+
+        [Test]
+        public async Task String_Contains()
+        {
+            
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string contains = await search.Where(r => "3".ToLowerInvariant().Contains(r.String)).ToJsonAsync();
+            TestLoader.Compare(nameof(Smoke_Test.String_Contains), contains);
+        }
+
+        [Test]
+        public async Task List_Int_Count()
+        {
+            List<int> intList = new List<int>() { 1, 2, 3 };
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string contains = await search.Where(r => intList.Count == 1).ToJsonAsync();
+            TestLoader.Compare(nameof(Smoke_Test.List_Int_Count), contains);
+        }
     }
 
 }

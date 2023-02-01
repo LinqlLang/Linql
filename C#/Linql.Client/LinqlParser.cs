@@ -74,6 +74,7 @@ namespace Linql.Client
             PushToStack(constant, c);
 
 
+
             return base.VisitConstant(c);
         }
 
@@ -206,7 +207,7 @@ namespace Linql.Client
             base.VisitMember(m);
             LinqlExpression previous = LinqlStack.First();
 
-            if (previous is LinqlConstant constant && constant.Value != null)
+            if (previous is LinqlConstant constant && constant.Value != null && !constant.ConstantType.IsList())
             {
                 LinqlExpression expression;
 
@@ -214,6 +215,7 @@ namespace Linql.Client
 
                 if (value != null)
                 {
+
                     FieldInfo field = m.Member.DeclaringType.GetField(m.Member.Name);
 
                     if (field != null)
@@ -225,30 +227,31 @@ namespace Linql.Client
                         PropertyInfo propertyInfo = m.Member.DeclaringType.GetProperty(m.Member.Name);
                         value = propertyInfo.GetValue(value);
                     }
+                }
 
-                    if (value != null)
+                if (value != null)
+                {
+                    LinqlType Type = new LinqlType(value.GetType());
+
+                    if (value is LinqlObject obj)
                     {
-                        LinqlType Type = new LinqlType(value.GetType());
+                        expression = new LinqlObject(obj.Type, obj.Value);
 
-                        if (value is LinqlObject obj)
-                        {
-                            expression = new LinqlObject(obj.Type, obj.Value);
-
-                        }
-                        else
-                        {
-                            expression = new LinqlConstant(Type, value);
-                        }
                     }
                     else
                     {
-                        expression = new LinqlConstant(new LinqlType(typeof(object)), null);
+                        expression = new LinqlConstant(Type, value);
                     }
-                    LinqlExpression previousExpression = LinqlStack.FirstOrDefault();
-                    RemoveFromPrevious(previousExpression);
-                    AttachToExpression(expression);
-                    PushToStack(expression, m);
                 }
+                else
+                {
+                    expression = new LinqlConstant(new LinqlType(typeof(object)), null);
+                }
+                LinqlExpression previousExpression = LinqlStack.FirstOrDefault();
+                RemoveFromPrevious(previousExpression);
+                AttachToExpression(expression);
+                PushToStack(expression, m);
+
 
             }
             else if (previous is LinqlObject && m.Member.DeclaringType.GetGenericTypeDefinitionSafe() == typeof(LinqlObject<>))

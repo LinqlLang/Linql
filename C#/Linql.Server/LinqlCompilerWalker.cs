@@ -100,10 +100,10 @@ namespace Linql.Server
             {
                 Expression expression = Expression.Constant(value, foundType);
 
-                if (Constant.Next != null)
-                {
-                    expression = this.Visit(Constant.Next, InputType, expression);
-                }
+                //if (Constant.Next != null)
+                //{
+                //    expression = this.Visit(Constant.Next, InputType, expression);
+                //}
                 return expression;
             }
             else
