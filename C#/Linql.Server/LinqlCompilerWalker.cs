@@ -18,14 +18,14 @@ namespace Linql.Server
     {
         protected Expression Visit(LinqlExpression Expression, Type InputType, Expression Previous = null)
         {
-           
+
             if (Expression is LinqlConstant constant)
             {
                 return this.VisitConstant(constant, InputType, Previous);
             }
             else if (Expression is LinqlObject obj)
             {
-                return this.VisitObject(obj, InputType,Previous);
+                return this.VisitObject(obj, InputType, Previous);
             }
             else if (Expression is LinqlParameter param)
             {
@@ -43,14 +43,14 @@ namespace Linql.Server
             {
                 throw new Exception($"{this.GetType().Name} does not support expression of type {Expression.GetType().Name}");
             }
-           
-            
+
+
         }
 
 
         protected LambdaExpression VisitLambda(LinqlLambda Lambda, Type InputType, Type FunctionType, Expression Previous = null)
         {
-            if(InputType == null)
+            if (InputType == null)
             {
                 throw new Exception("Input type cannot be null when trying to create a Lambda function");
             }
@@ -67,7 +67,7 @@ namespace Linql.Server
             Expression body = bodyCompiler.Visit(Lambda.Body, InputType);
 
             Type functionTypeConstructed = typeof(Func<,>).MakeGenericType(InputType, FunctionType);
-            
+
             LambdaExpression lambdaExp = Expression.Lambda(functionTypeConstructed, body, parameters);
             return lambdaExp;
         }
@@ -78,9 +78,10 @@ namespace Linql.Server
 
             object value = Constant.Value;
 
-            if(value is JsonElement json)
+            if (value is JsonElement json)
             {
-                switch (json.ValueKind) {
+                switch (json.ValueKind)
+                {
 
                     case JsonValueKind.True:
                         value = true;
@@ -96,44 +97,25 @@ namespace Linql.Server
                 }
             }
 
-            if(foundType != null)
-            {
-                Expression expression = Expression.Constant(value, foundType);
-
-                //if (Constant.Next != null)
-                //{
-                //    expression = this.Visit(Constant.Next, InputType, expression);
-                //}
-                return expression;
-            }
-            else
-            {
-                throw new Exception($"Unable to determine type for constant with type {Constant.ConstantType.TypeName} and value {Constant.Value}");
-            }
-
-            
+            Expression expression = Expression.Constant(value, foundType);
+            return expression;        
         }
 
         protected Expression VisitObject(LinqlObject Obj, Type InputType, Expression Previous = null)
         {
             Type foundType = this.GetLinqlType(Obj.Type);
 
-            if (foundType != null)
-            {
-                JsonElement jsonElement = (JsonElement) Obj.Value;
-                object value = jsonElement.Deserialize(foundType);
-                Expression expression = Expression.Constant(value, foundType);
 
-                if (Obj.Next != null)
-                {
-                    expression = this.Visit(Obj.Next, InputType, expression);
-                }
-                return expression;
-            }
-            else
+            JsonElement jsonElement = (JsonElement)Obj.Value;
+            object value = jsonElement.Deserialize(foundType);
+            Expression expression = Expression.Constant(value, foundType);
+
+            if (Obj.Next != null)
             {
-                throw new Exception($"Unable to determine type for constant with type {Obj.Type.TypeName} and value {Obj.Value}");
+                expression = this.Visit(Obj.Next, InputType, expression);
             }
+            return expression;
+
         }
 
         private Type GetLinqlType(LinqlType LinqlType)
@@ -169,7 +151,7 @@ namespace Linql.Server
 
             if (Param.Next != null)
             {
-                parameter = this.Visit(Param.Next, InputType, parameter); 
+                parameter = this.Visit(Param.Next, InputType, parameter);
             }
 
             return parameter;
@@ -177,7 +159,7 @@ namespace Linql.Server
 
         protected Expression VisitProperty(LinqlProperty Property, Type InputType, Expression Previous = null)
         {
-            if(Previous == null)
+            if (Previous == null)
             {
                 throw new Exception("Attempted to access a property on a null Expression");
             }
@@ -185,7 +167,7 @@ namespace Linql.Server
             PropertyInfo propertyInfo = Previous.Type.GetProperty(Property.PropertyName);
             Expression property = Expression.Property(Previous, propertyInfo);
 
-            if(Property.Next != null)
+            if (Property.Next != null)
             {
                 property = this.Visit(Property.Next, InputType, property);
             }
@@ -206,9 +188,9 @@ namespace Linql.Server
 
             MethodInfo binaryMethod = foundMethods.FirstOrDefault();
 
-            Expression binaryExpression = (Expression) binaryMethod.Invoke(null, new object[] { left, right });
+            Expression binaryExpression = (Expression)binaryMethod.Invoke(null, new object[] { left, right });
             return binaryExpression;
-          
+
         }
 
     }

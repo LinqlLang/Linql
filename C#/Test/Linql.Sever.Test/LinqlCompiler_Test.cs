@@ -101,8 +101,8 @@ namespace Linql.Server.Test
 
             this.ValidAssemblies.Remove(typeof(Queryable).Assembly);
             string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];
-            
-            
+
+
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
             LinqlFunction function = search.Expressions.FirstOrDefault() as LinqlFunction;
 
@@ -209,7 +209,7 @@ namespace Linql.Server.Test
 
             LinqlExpression converted = JsonSerializer.Deserialize<LinqlExpression>(serialized);
 
-            if(converted is LinqlConstant linqlConstant)
+            if (converted is LinqlConstant linqlConstant)
             {
                 Assert.Catch(() => this.VisitConstant(linqlConstant, null));
 
@@ -219,6 +219,35 @@ namespace Linql.Server.Test
                 Assert.Fail();
             }
         }
+
+        [Test]
+        public void Invalid_LinqlConstant_Type()
+        {
+            List<int> list = new List<int>();
+            LinqlConstant constant = new LinqlConstant(typeof(List<int>).ToLinqlType(), list);
+            constant.ConstantType.TypeName = "dummy type";
+            Assert.Catch(() => this.VisitConstant(constant, null));
+        }
+
+
+        [Test]
+        public void Invalid_LinqlProperty()
+        {
+            LinqlProperty property = new LinqlProperty();
+            Assert.Catch(() => this.VisitProperty(property, null));
+        }
+
+
+        [Test]
+        public void Invalid_LinqlObject_Type()
+        {
+            LinqlObject obj = new LinqlObject();
+            obj.Value = "test";
+            obj.Type = new LinqlType();
+            obj.Type.TypeName = "DummyType";
+            Assert.Catch(() => this.VisitObject(obj, null));
+        }
+
 
     }
 
