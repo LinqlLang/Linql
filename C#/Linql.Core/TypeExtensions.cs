@@ -60,5 +60,10 @@ namespace Linql.Core
         {
             return new LinqlType(Type);
         }
+
+        public static bool IsAssignableFromOrImplements(this Type Type, Type TypeToCompare)
+        {
+            return Type.IsAssignableFrom(TypeToCompare) || TypeToCompare.GetInterface(Type.Name) != null;
+        }
     }
 }

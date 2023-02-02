@@ -120,6 +120,12 @@ namespace Linql.Server.Test.Expressions
             this.TestFile(nameof(SimpleConstant), 100);
         }
 
+        [Test]
+        public void InnerLambda()
+        {
+            this.TestFile(nameof(InnerLambda), 100);
+        }
+
 
 
         //[Test]
