@@ -39,10 +39,18 @@ namespace Linql.Server
             {
                 return this.VisitBinary(binary, InputType, Previous);
             }
-            else if (Expression is LinqlFunction function)
+            else if (Expression is LinqlUnary unary)
             {
-                return this.VisitFunction(function, Previous);
+                return this.VisitUnary(unary, InputType, Previous);
             }
+            //else if (Expression is LinqlFunction function)
+            //{
+            //    return this.VisitFunction(function, InputType);
+            //}
+            //else if (Expression is LinqlLambda lam)
+            //{
+            //    return this.VisitFunction(function, InputType);
+            //}
             else
             {
                 throw new Exception($"{this.GetType().Name} does not support expression of type {Expression.GetType().Name}");
@@ -105,19 +113,19 @@ namespace Linql.Server
             return expression;        
         }
 
-        protected Expression VisitFunction(LinqlFunction Function, Expression Previous = null)
+        protected Expression VisitFunction(LinqlFunction Function, Type InputType)
         {
-            if(Previous == null)
-            {
-                throw new Exception("Previous cannot be null when trying to create a MethodCall");
-            }
 
-            Type inputType = Previous.Type;
+            throw new Exception("Need to think about functions");
+            //List<Expression> expressions = new List<Expression>();
+           
+            //Function.Arguments.ForEach(r =>
+            //{ 
+            //this.Visit(r, InputType))
+            //    .ToList();
 
-            MethodInfo foundMethod = this.FindMethod(Previous.Type, Function);
+            //MethodInfo foundMethod = this.FindMethod(InputType, Function);
 
-
-            List<Expression> argExpressions = Function.Arguments.Select(r => this.Visit(r, inputType)).ToList();
 
             //if (foundMethod.GetParameters().Any(r => r.ParameterType.IsFunc()))
             //{
@@ -150,6 +158,29 @@ namespace Linql.Server
             {
                 expression = this.Visit(Obj.Next, InputType, expression);
             }
+            return expression;
+
+        }
+
+        protected Expression VisitUnary(LinqlUnary Unary, Type InputType, Expression Previous = null)
+        {
+            MethodInfo expressionType = typeof(Expression).GetMethod(Unary.UnaryName, new Type[] { typeof(Expression) });
+
+            //Expression.Negate
+
+            if(expressionType == null)
+            {
+                throw new Exception($"Unable to find Unary Method {Unary.UnaryName}");
+            }
+            if(Unary.Next == null)
+            {
+                throw new Exception($"Unary {Unary.UnaryName} cannot be the last statement of an expression.  It must have a Next value.");
+            }
+
+            Expression expression = this.Visit(Unary.Next, InputType, null);
+
+            expression = (Expression)expressionType.Invoke(null, new object[] { expression });
+            
             return expression;
 
         }
@@ -217,8 +248,8 @@ namespace Linql.Server
             LinqlCompiler leftC = new LinqlCompiler(this, new Dictionary<string, ParameterExpression>(this.Parameters));
             LinqlCompiler rightC = new LinqlCompiler(this, new Dictionary<string, ParameterExpression>(this.Parameters));
 
-            Expression left = leftC.Visit(Binary.Left, InputType, Previous);
-            Expression right = rightC.Visit(Binary.Right, InputType, Previous);
+            Expression left = leftC.Visit(Binary.Left, InputType);
+            Expression right = rightC.Visit(Binary.Right, InputType);
 
             List<MethodInfo> foundMethods = typeof(Expression).GetMethods().Where(r => r.Name == Binary.BinaryName).ToList();
 

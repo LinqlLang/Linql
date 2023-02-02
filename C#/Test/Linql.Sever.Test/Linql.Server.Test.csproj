@@ -21,6 +21,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="TestFiles\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Linql.Client\Linql.Client.csproj" />
     <ProjectReference Include="..\..\Linql.Server\Linql.Server.csproj" />
     <ProjectReference Include="..\Linql.Core.Test\Linql.Core.Test.csproj" />

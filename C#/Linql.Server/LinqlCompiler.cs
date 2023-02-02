@@ -47,7 +47,7 @@ namespace Linql.Server
         {
             object result = Queryable;
 
-            Search.Expressions.ForEach(exp =>
+            Search.Expressions?.ForEach(exp =>
             {
 
                 if (exp is LinqlFunction function)

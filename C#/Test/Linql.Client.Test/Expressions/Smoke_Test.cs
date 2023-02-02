@@ -207,6 +207,17 @@ namespace Linql.Client.Test.Expressions
         }
 
         [Test]
+        public async Task LinqlObject_NonZero()
+        {
+            LinqlObject<DataModel> objectTest = new LinqlObject<DataModel>(new DataModel());
+            objectTest.TypedValue.Integer = 1;
+            Assert.That(objectTest.TypedValue, Is.EqualTo(objectTest.Value));
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string simpleConstant = await search.Where(r => objectTest.TypedValue.Integer == r.Integer).ToJsonAsync();
+            TestLoader.Compare(nameof(Smoke_Test.LinqlObject_NonZero), simpleConstant);
+        }
+
+        [Test]
         public async Task ObjectCalculationWithNull()
         {
             DataModel objectTest = new DataModel();

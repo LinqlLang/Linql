@@ -80,7 +80,7 @@ namespace Linql.Server.Test
 
             Assert.DoesNotThrow(() =>
             {
-                string json = this.TestLoader.TestFiles["Inner_Lambda"];
+                string json = this.TestLoader.TestFiles["InnerLambda"];
                 LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
 
                 IEnumerable<DataModel> data = this.Compiler.Execute<IEnumerable<DataModel>>(search, this.Data);
