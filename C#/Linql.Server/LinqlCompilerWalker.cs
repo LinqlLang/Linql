@@ -43,10 +43,10 @@ namespace Linql.Server
             {
                 return this.VisitUnary(unary, InputType, Previous);
             }
-            //else if (Expression is LinqlFunction function)
-            //{
-            //    return this.VisitFunction(function, InputType);
-            //}
+            else if (Expression is LinqlFunction function)
+            {
+                return this.VisitFunction(function, InputType);
+            }
             //else if (Expression is LinqlLambda lam)
             //{
             //    return this.VisitFunction(function, InputType);
@@ -104,45 +104,46 @@ namespace Linql.Server
                     case JsonValueKind.Number:
                         value = json.GetInt32();
                         break;
+                    case JsonValueKind.Array:
+                        value = json.Deserialize(foundType);
+                        break;
                     default:
                         throw new Exception($"No support for json ValueKind {json.ValueKind}");
                 }
             }
 
             Expression expression = Expression.Constant(value, foundType);
-            return expression;        
+            return expression;
         }
 
         protected Expression VisitFunction(LinqlFunction Function, Type InputType)
         {
 
-            throw new Exception("Need to think about functions");
-            //List<Expression> expressions = new List<Expression>();
-           
-            //Function.Arguments.ForEach(r =>
-            //{ 
-            //this.Visit(r, InputType))
-            //    .ToList();
+            List<Expression> argExpressions = Function.Arguments.Select(r => this.Visit(r, InputType)).ToList();
+       
 
-            //MethodInfo foundMethod = this.FindMethod(InputType, Function);
+            Expression objectExpression = null;
 
+            if (Function.Object != null)
+            {
+                LinqlCompiler objectCompiler = new LinqlCompiler(this, new Dictionary<string, ParameterExpression>(this.Parameters));
+                objectExpression = objectCompiler.Visit(Function.Object, InputType);
+            }
+            else
+            {
+                objectExpression = argExpressions.FirstOrDefault();
+            }
 
-            //if (foundMethod.GetParameters().Any(r => r.ParameterType.IsFunc()))
-            //{
-            //    methodArgs.AddRange(argExpressions.Select(r => r.Compile()));
-            //}
-            //else
-            //{
-            //    methodArgs.AddRange(argExpressions);
-            //}
+            MethodInfo foundMethod = this.FindMethod(objectExpression.Type, Function, argExpressions);
 
-            //object result = foundMethod.MakeGenericMethod(genericType).Invoke(null, methodArgs.ToArray());
+            if (foundMethod.IsStatic)
+            {
+                objectExpression = null;
+            }
 
-            //if (Function.Next != null)
-            //{
-            //    result = this.TopLevelFunction(Function.Next as LinqlFunction, result as IEnumerable);
-            //}
-            return null;
+            Expression functionExp = Expression.Call(objectExpression, foundMethod, argExpressions);
+
+            return functionExp;
         }
 
         protected Expression VisitObject(LinqlObject Obj, Type InputType, Expression Previous = null)
@@ -168,11 +169,11 @@ namespace Linql.Server
 
             //Expression.Negate
 
-            if(expressionType == null)
+            if (expressionType == null)
             {
                 throw new Exception($"Unable to find Unary Method {Unary.UnaryName}");
             }
-            if(Unary.Next == null)
+            if (Unary.Next == null)
             {
                 throw new Exception($"Unary {Unary.UnaryName} cannot be the last statement of an expression.  It must have a Next value.");
             }
@@ -180,7 +181,7 @@ namespace Linql.Server
             Expression expression = this.Visit(Unary.Next, InputType, null);
 
             expression = (Expression)expressionType.Invoke(null, new object[] { expression });
-            
+
             return expression;
 
         }

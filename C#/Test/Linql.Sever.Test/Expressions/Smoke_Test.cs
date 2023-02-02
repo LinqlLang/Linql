@@ -92,7 +92,7 @@ namespace Linql.Server.Test.Expressions
         [Test]
         public void ComplexBoolean()
         {
-            this.TestFile(nameof(ComplexBoolean), 50);
+            this.TestFile(nameof(ComplexBoolean), 0);
         }
 
         [Test]

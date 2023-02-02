@@ -246,5 +246,29 @@ namespace Linql.Server
 
         }
 
+        protected MethodInfo FindMethod(Type FunctionObjectType, LinqlFunction function, List<Expression> Args)
+        {
+            IEnumerable<Type> argTypes = Args.Select(r => r.Type);
+            IEnumerable<MethodInfo> candidates = this.GetMethodsForType(FunctionObjectType);
+
+            IEnumerable<MethodInfo> trimmedMethods = candidates.Where(r => r.Name.Contains(function.FunctionName));
+
+            IEnumerable<MethodInfo> argMatchFunctions = trimmedMethods.Where(r =>
+            {
+                List<Type> parameterTypes = r.GetParameters().Select(s => s.ParameterType).ToList();
+                return parameterTypes.SequenceEqual(argTypes);
+            });
+
+            MethodInfo found = argMatchFunctions.FirstOrDefault();
+
+            if (found == null)
+            {
+                throw new Exception($"Unable to find function {function.FunctionName} on type {FunctionObjectType.FullName} with args of type {argTypes}.");
+            }
+
+            return found;
+
+        }
+
     }
 }
