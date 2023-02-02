@@ -92,24 +92,7 @@ namespace Linql.Server
 
             if (value is JsonElement json)
             {
-                switch (json.ValueKind)
-                {
-
-                    case JsonValueKind.True:
-                        value = true;
-                        break;
-                    case JsonValueKind.False:
-                        value = false;
-                        break;
-                    case JsonValueKind.Number:
-                        value = json.GetInt32();
-                        break;
-                    case JsonValueKind.Array:
-                        value = json.Deserialize(foundType);
-                        break;
-                    default:
-                        throw new Exception($"No support for json ValueKind {json.ValueKind}");
-                }
+                value = json.Deserialize(foundType);
             }
 
             Expression expression = Expression.Constant(value, foundType);

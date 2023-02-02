@@ -114,6 +114,13 @@ namespace Linql.Server.Test.Expressions
         }
 
 
+        [Test]
+        public void SimpleConstant()
+        {
+            this.TestFile(nameof(SimpleConstant), 100);
+        }
+
+
 
         //[Test]
         //public async Task SimpleConstant()
