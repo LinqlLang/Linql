@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <None Remove="TestFiles\SimpleExpressions\ToList.json" />
+    <None Remove="TestFiles\Smoke\Inner_Lambda.json" />
     <None Remove="TestFiles\Smoke\List_Int_Contains.json" />
     <None Remove="TestFiles\Smoke\List_Int_Count.json" />
     <None Remove="TestFiles\Smoke\String_Contains.json" />

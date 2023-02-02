@@ -74,6 +74,23 @@ namespace Linql.Server.Test
 
         }
 
+        [Test]
+        public void Inner_Lambda()
+        {
+
+            Assert.DoesNotThrow(() =>
+            {
+                string json = this.TestLoader.TestFiles["Inner_Lambda"];
+                LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+
+                IEnumerable<DataModel> data = this.Compiler.Execute<IEnumerable<DataModel>>(search, this.Data);
+
+                Assert.That(data.Count(), Is.EqualTo(0));
+
+            });
+
+        }
+
 
 
     }

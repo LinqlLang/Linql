@@ -39,6 +39,10 @@ namespace Linql.Server
             {
                 return this.VisitBinary(binary, InputType, Previous);
             }
+            else if (Expression is LinqlFunction function)
+            {
+                return this.VisitFunction(function, Previous);
+            }
             else
             {
                 throw new Exception($"{this.GetType().Name} does not support expression of type {Expression.GetType().Name}");
@@ -99,6 +103,38 @@ namespace Linql.Server
 
             Expression expression = Expression.Constant(value, foundType);
             return expression;        
+        }
+
+        protected Expression VisitFunction(LinqlFunction Function, Expression Previous = null)
+        {
+            if(Previous == null)
+            {
+                throw new Exception("Previous cannot be null when trying to create a MethodCall");
+            }
+
+            Type inputType = Previous.Type;
+
+            MethodInfo foundMethod = this.FindMethod(Previous.Type, Function);
+
+
+            List<Expression> argExpressions = Function.Arguments.Select(r => this.Visit(r, inputType)).ToList();
+
+            //if (foundMethod.GetParameters().Any(r => r.ParameterType.IsFunc()))
+            //{
+            //    methodArgs.AddRange(argExpressions.Select(r => r.Compile()));
+            //}
+            //else
+            //{
+            //    methodArgs.AddRange(argExpressions);
+            //}
+
+            //object result = foundMethod.MakeGenericMethod(genericType).Invoke(null, methodArgs.ToArray());
+
+            //if (Function.Next != null)
+            //{
+            //    result = this.TopLevelFunction(Function.Next as LinqlFunction, result as IEnumerable);
+            //}
+            return null;
         }
 
         protected Expression VisitObject(LinqlObject Obj, Type InputType, Expression Previous = null)
@@ -182,7 +218,7 @@ namespace Linql.Server
             LinqlCompiler rightC = new LinqlCompiler(this, new Dictionary<string, ParameterExpression>(this.Parameters));
 
             Expression left = leftC.Visit(Binary.Left, InputType, Previous);
-            Expression right = leftC.Visit(Binary.Right, InputType, Previous);
+            Expression right = rightC.Visit(Binary.Right, InputType, Previous);
 
             List<MethodInfo> foundMethods = typeof(Expression).GetMethods().Where(r => r.Name == Binary.BinaryName).ToList();
 
