@@ -68,7 +68,7 @@ namespace Linql.Server.Test
 
                 IEnumerable<DataModel> data = this.Compiler.Execute<IEnumerable<DataModel>>(search, this.Data);
 
-                Assert.That(data.Count(), Is.EqualTo(0));
+                Assert.That(data.Count(), Is.EqualTo(50));
 
             });
 

@@ -96,6 +96,11 @@ namespace Linql.Server
             }
 
             Expression expression = Expression.Constant(value, foundType);
+
+            if(Constant.Next != null && value != null)
+            {
+                expression = this.Visit(Constant.Next, InputType, expression);
+            }
             return expression;
         }
 
@@ -108,7 +113,12 @@ namespace Linql.Server
                 Expression argExpression;
                 if (r is LinqlLambda lambda)
                 {
-                    Type inputType = argExpressions.FirstOrDefault()?.Type;
+                    Type inputType = InputType;
+
+                    if (argExpressions.Count > 0)
+                    {
+                        inputType = argExpressions.FirstOrDefault().Type;
+                    }
                     argExpression  = this.VisitLambda(r as LinqlLambda, inputType.GetEnumerableType());
                 }
                 else
@@ -260,9 +270,23 @@ namespace Linql.Server
 
             MethodInfo binaryMethod = foundMethods.FirstOrDefault();
 
+            left = this.HandleNullConstants(left, right);
+            right = this.HandleNullConstants(right, left);
+
             Expression binaryExpression = (Expression)binaryMethod.Invoke(null, new object[] { left, right });
             return binaryExpression;
 
+        }
+
+        private Expression HandleNullConstants(Expression ExpressionToCheck, Expression CorrespondingExpression)
+        {
+            Expression expressionToCheck = ExpressionToCheck;
+            if (expressionToCheck is ConstantExpression constant && constant.Value == null && CorrespondingExpression.Type.IsValueType)
+            {
+                object nonNullInstance = Activator.CreateInstance(CorrespondingExpression.Type);
+                expressionToCheck = Expression.Constant(nonNullInstance);
+            }
+            return expressionToCheck;
         }
 
     }

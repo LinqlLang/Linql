@@ -24,6 +24,12 @@ namespace Linql.Server.Test
             this.ListString = Enumerable.Range(1, 100).Select(r => $"StringValue{Index}{r}").ToList();
             this.Long = (long)this.Decimal;
             this.OneToOneNullable = new NullableModel();
+
+            if (this.Boolean == true)
+            {
+                this.OneToOneNullable.Integer = 1;
+            }
+
             this.String = $"MainString{Index}";
 
             if (Recursive == true)

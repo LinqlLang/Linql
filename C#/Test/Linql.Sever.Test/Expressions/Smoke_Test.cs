@@ -126,7 +126,41 @@ namespace Linql.Server.Test.Expressions
             this.TestFile(nameof(InnerLambda), 100);
         }
 
+        [Test]
+        public void List_Int_Count()
+        {
+            this.TestFile(nameof(List_Int_Count), 0);
+        }
 
+        [Test]
+        public void ListInt()
+        {
+            this.TestFile(nameof(ListInt), 3);
+        }
+
+        [Test]
+        public void ListIntFromProperty()
+        {
+            this.TestFile(nameof(ListIntFromProperty), 100);
+        }
+
+        [Test]
+        public void NullableHasValue()
+        {
+            this.TestFile(nameof(NullableHasValue), 50);
+        }
+
+        [Test]
+        public void NullableValue()
+        {
+            this.TestFile(nameof(NullableValue), 50);
+        }
+
+        [Test]
+        public void ObjectCalculationWithNull()
+        {
+            this.TestFile(nameof(ObjectCalculationWithNull), 0);
+        }
 
         //[Test]
         //public async Task SimpleConstant()
