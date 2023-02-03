@@ -83,7 +83,7 @@ namespace Linql.Server
             {
                 if (r is LinqlLambda lambda)
                 {
-                    return this.VisitLambda(r as LinqlLambda, genericType, typeof(Boolean));
+                    return this.VisitLambda(r as LinqlLambda, genericType);
                 }
                 else
                 {
@@ -96,9 +96,6 @@ namespace Linql.Server
             argTypes.AddRange(argExpressions.Select(r => r.Type));
 
             MethodInfo foundMethod = this.FindMethod(queryableType, Function, argTypes);
-            //this.Visit(Function, queryableType);
-
-            //MethodInfo foundMethod = this.FindMethod(queryableType, Function);
 
             List<object> methodArgs = new List<object>() { Queryable };
 
