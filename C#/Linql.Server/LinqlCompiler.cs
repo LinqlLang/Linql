@@ -210,16 +210,18 @@ namespace Linql.Server
                 {
                     return false;
                 }
-    
+
                 return parameterTypes
                 .Zip(ArgTypes, (left, right) => new { left = left, right = right })
                 .All(s =>
-                s.left.IsAssignableFromOrImplements(s.right)
-                ||
-                s.left.GetGenericTypeDefinitionSafe() == s.right.GetGenericTypeDefinitionSafe()
-                ||
-                (s.left.IsExpression() && s.right.IsFunc())
-                );
+                {
+                    bool implements = s.left.IsAssignableFromOrImplements(s.right.GetGenericTypeDefinitionSafe());
+                    bool reverseImplements = s.right.IsAssignableFromOrImplements(s.left.GetGenericTypeDefinitionSafe());
+                    bool genericsMatch = s.left.GetGenericTypeDefinitionSafe() == s.right.GetGenericTypeDefinitionSafe();
+                    bool isExpressionType = s.left.IsExpression() && s.right.IsFunc();
+
+                    return implements || reverseImplements || genericsMatch || isExpressionType;
+                });
 
             });
 
