@@ -48,8 +48,18 @@ namespace Linql.Client
 
         public virtual LinqlSearch BuildLinqlRequest(Expression expression, Type RootType)
         {
-            LinqlSearch search = new LinqlSearch(RootType);
+           
             LinqlParser parser = new LinqlParser(expression);
+
+            Type rootType = RootType;
+
+            if(parser.LinqlSearchRootType != null)
+            {
+                rootType = parser.LinqlSearchRootType;
+            }
+
+            LinqlSearch search = new LinqlSearch(rootType);
+
             LinqlExpression root = parser.Root;
 
             if (!(root is LinqlConstant constant && constant.ConstantType.TypeName == nameof(LinqlSearch)))
@@ -66,19 +76,13 @@ namespace Linql.Client
             return search;
         }
 
-        //public abstract Task<TResult> SendRequestAsync<TResult>(IQueryable LinqlSearch);
-
         public abstract TResult SendRequest<TResult>(IQueryable LinqlSearch);
 
         public abstract Task<TResult> SendRequestAsync<TResult>(Type Type, LinqlSearch LinqlSearch);
-
-        //public abstract TResult SendRequest<TResult>(Type Type, LinqlSearch LinqlSearch);
 
         public abstract string ToJson(LinqlSearch Search);
 
         public abstract Task<string> ToJsonAsync(LinqlSearch Search);
 
-
-        //$endregion
     }
 }

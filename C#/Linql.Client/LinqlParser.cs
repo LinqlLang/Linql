@@ -16,6 +16,8 @@ namespace Linql.Client
 
         public LinqlExpression Root { get; protected set; }
 
+        public Type LinqlSearchRootType { get; set; }
+
         protected void PushToStack(LinqlExpression LinqlExpression, Expression CSharpExpression)
         {
             LinqlStack.Push(LinqlExpression);
@@ -62,8 +64,6 @@ namespace Linql.Client
 
         protected override Expression VisitConstant(ConstantExpression c)
         {
-
-
             Expression previous = ExpressionStack.FirstOrDefault();
 
             object value = c.Value;
@@ -73,7 +73,10 @@ namespace Linql.Client
             AttachToExpression(constant);
             PushToStack(constant, c);
 
-
+            if(c.Type.GetGenericTypeDefinitionSafe() == typeof(LinqlSearch<>))
+            {
+                this.LinqlSearchRootType = c.Type.GetGenericArguments().FirstOrDefault();
+            }
 
             return base.VisitConstant(c);
         }
@@ -91,6 +94,12 @@ namespace Linql.Client
             function.Arguments = m.Arguments.Select(r =>
             {
                 LinqlParser argParser = new LinqlParser(r);
+
+                if(argParser.LinqlSearchRootType!= null)
+                {
+                    this.LinqlSearchRootType = argParser.LinqlSearchRootType;
+                }
+
                 return argParser.Root;
             }).ToList();
 

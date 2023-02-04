@@ -271,6 +271,15 @@ namespace Linql.Client.Test.Expressions
             string contains = await search.Where(r => r.ListRecusrive.Any(s => s.ListInteger.Contains(1))).ToJsonAsync();
             TestLoader.Compare(nameof(Smoke_Test.Inner_Lambda), contains);
         }
+
+        [Test]
+        public async Task Select_Test()
+        {
+
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string contains = await search.Select(r => r.Integer).ToJsonAsync();
+            TestLoader.Compare(nameof(Smoke_Test.Select_Test), contains);
+        }
     }
 
 }
