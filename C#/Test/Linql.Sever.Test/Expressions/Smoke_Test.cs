@@ -225,6 +225,29 @@ namespace Linql.Server.Test.Expressions
             });
             
         }
+
+        [Test]
+        public void SelectMany()
+        {
+
+            Assert.DoesNotThrow(() =>
+            {
+                string json = this.TestLoader.TestFiles[nameof(SelectMany)];
+                LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+
+                //this.Data.SelectMany(r => r.ListInteger)
+
+                object data = this.Compiler.Execute(search, this.Data);
+
+                Assert.True(data.GetType().IsEnumerable());
+
+                IEnumerable<int> intData = this.Compiler.Execute<IEnumerable<int>>(search, this.Data);
+
+                Assert.That(intData.FirstOrDefault(), Is.EqualTo(1));
+
+            });
+
+        }
     }
 
 }

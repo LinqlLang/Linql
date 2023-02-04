@@ -280,6 +280,15 @@ namespace Linql.Client.Test.Expressions
             string contains = await search.Select(r => r.Integer).ToJsonAsync();
             TestLoader.Compare(nameof(Smoke_Test.Select_Test), contains);
         }
+
+        [Test]
+        public async Task SelectMany()
+        {
+
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string contains = await search.SelectMany(r => r.ListInteger).ToJsonAsync();
+            TestLoader.Compare(nameof(Smoke_Test.SelectMany), contains);
+        }
     }
 
 }

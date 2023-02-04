@@ -118,24 +118,7 @@ namespace Linql.Server
                 methodArgs.AddRange(argExpressions);
             }
 
-            MethodInfo madeMethod = foundMethod;
-
-            if(foundMethod.GetGenericArguments().Count() == 2)
-            {
-                List<Type> genericArgs = new List<Type>() { genericType };
-                object lastArg = methodArgs.LastOrDefault();
-                
-                if(lastArg is LambdaExpression exp)
-                {
-                    genericArgs.Add(exp.ReturnType);
-                }
-
-                madeMethod = madeMethod.MakeGenericMethod(genericArgs.ToArray());
-            }
-            else
-            {
-                madeMethod = madeMethod.MakeGenericMethod(genericType);
-            }
+            MethodInfo madeMethod = this.CompileGenericMethod(foundMethod, genericType, methodArgs);
 
             object result = madeMethod.Invoke(null, methodArgs.ToArray());
 
@@ -144,6 +127,64 @@ namespace Linql.Server
                 result = this.TopLevelFunction(Function.Next as LinqlFunction, result as IEnumerable);
             }
             return result;
+        }
+
+        protected MethodInfo CompileGenericMethod(MethodInfo GenericMethod, Type SourceType, List<object> MethodArgs)
+        {
+            MethodInfo madeMethod = GenericMethod;
+            IEnumerable<Type> funGenericArgs = GenericMethod.GetGenericArguments();
+            IEnumerable<ParameterInfo> funParameters = GenericMethod.GetParameters().Skip(1);
+            IEnumerable<Type> methodArgTypes = MethodArgs.Select(r => r.GetType());
+
+            Dictionary<string, Type> genericArgMapping = new Dictionary<string, Type>();
+            genericArgMapping.Add(funGenericArgs.FirstOrDefault().Name, SourceType);
+
+             funParameters
+                .Zip(methodArgTypes.Skip(1), (left, right) => new { parameter = left, argumentType = right })
+                .ToList().ForEach(r => this.LoadGenericTypesFromArguments(r.parameter.ParameterType, r.argumentType, genericArgMapping));
+
+            List<Type> genericArgs = genericArgMapping.Select(r => r.Value).ToList();
+           
+            //IEnumerable<Type> genericArgs = MethodArgs.Skip(1).ToList();
+
+            //if (lastArg is LambdaExpression exp)
+            //{
+            //    if (funLastParameter.ParameterType.IsEnumerable())
+            //    {
+            //        genericArgs.Add(exp.ReturnType.GetEnumerableType());
+            //    }
+            //    else
+            //    {
+            //        genericArgs.Add(exp.ReturnType);
+            //    }
+            //}
+
+            madeMethod = madeMethod.MakeGenericMethod(genericArgs.ToArray());
+            return madeMethod;
+        }
+
+        protected void LoadGenericTypesFromArguments(Type ParameterType, Type ArgumentType, Dictionary<string, Type> GenericArgMapping)
+        {
+
+            List<Type> GenericTypes = new List<Type>();
+            bool areExpressions = ParameterType.IsExpression() && ArgumentType.IsExpression();
+            bool areFunctions = ParameterType.IsFunc() && ArgumentType.IsFunc();
+
+            bool implements = ParameterType.IsAssignableFromOrImplements(ArgumentType);
+
+            if (areExpressions || areFunctions || implements)
+            {
+                IEnumerable<Type> parameterArgs = ParameterType.GetGenericArguments();
+                IEnumerable<Type> argumentTypeArgs = ArgumentType.GetGenericArguments();
+                parameterArgs
+                               .Zip(argumentTypeArgs, (left, right) => new { parameter = left, argumentType = right })
+                               .ToList().ForEach(r => this.LoadGenericTypesFromArguments(r.parameter, r.argumentType, GenericArgMapping));
+
+            }
+            else if(ParameterType.IsConstructedGenericType == false && !GenericArgMapping.ContainsKey(ParameterType.Name))
+            {
+                GenericArgMapping.Add(ParameterType.Name, ArgumentType);
+            }
         }
 
         public T Execute<T>(LinqlSearch Search, IEnumerable Queryable)

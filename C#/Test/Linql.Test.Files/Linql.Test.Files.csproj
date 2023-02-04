@@ -29,6 +29,7 @@
     <None Remove="TestFiles\Smoke\LinqlObject_NonZero.json" />
     <None Remove="TestFiles\Smoke\List_Int_Contains.json" />
     <None Remove="TestFiles\Smoke\List_Int_Count.json" />
+    <None Remove="TestFiles\Smoke\SelectMany.json" />
     <None Remove="TestFiles\Smoke\Select_Test.json" />
     <None Remove="TestFiles\Smoke\String_Contains.json" />
   </ItemGroup>

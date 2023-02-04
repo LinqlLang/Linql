@@ -78,6 +78,8 @@ namespace Linql.Server
 
             Expression body = bodyCompiler.Visit(Lambda.Body, InputType);
 
+            //body = Expression.Convert(body, typeof(IEnumerable<int>));
+
             Type functionTypeConstructed = typeof(Func<,>).MakeGenericType(InputType, body.Type);
 
             LambdaExpression lambdaExp = Expression.Lambda(functionTypeConstructed, body, parameters);
