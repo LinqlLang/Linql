@@ -118,7 +118,26 @@ namespace Linql.Server
                 methodArgs.AddRange(argExpressions);
             }
 
-            object result = foundMethod.MakeGenericMethod(genericType).Invoke(null, methodArgs.ToArray());
+            MethodInfo madeMethod = foundMethod;
+
+            if(foundMethod.GetGenericArguments().Count() == 2)
+            {
+                List<Type> genericArgs = new List<Type>() { genericType };
+                object lastArg = methodArgs.LastOrDefault();
+                
+                if(lastArg is LambdaExpression exp)
+                {
+                    genericArgs.Add(exp.ReturnType);
+                }
+
+                madeMethod = madeMethod.MakeGenericMethod(genericArgs.ToArray());
+            }
+            else
+            {
+                madeMethod = madeMethod.MakeGenericMethod(genericType);
+            }
+
+            object result = madeMethod.Invoke(null, methodArgs.ToArray());
 
             if (Function.Next != null)
             {

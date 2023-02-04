@@ -204,6 +204,27 @@ namespace Linql.Server.Test.Expressions
         {
             this.TestFile(nameof(String_Contains), 0);
         }
+
+        [Test]
+        public void Select_Test()
+        {
+
+            Assert.DoesNotThrow(() =>
+            {
+                string json = this.TestLoader.TestFiles[nameof(Select_Test)];
+                LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+
+                object data = this.Compiler.Execute(search, this.Data);
+
+                Assert.True(data.GetType().IsEnumerable());
+
+                IEnumerable<int> intData = this.Compiler.Execute<IEnumerable<int>>(search, this.Data);
+
+                Assert.That(intData.FirstOrDefault(), Is.EqualTo(1));
+
+            });
+            
+        }
     }
 
 }
