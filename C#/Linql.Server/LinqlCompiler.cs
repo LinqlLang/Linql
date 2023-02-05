@@ -91,34 +91,17 @@ namespace Linql.Server
                 }
             }).ToList();
 
-            List<Type> argTypes = new List<Type>();
-            argTypes.Add(queryableType);
+            List<Type> argTypes = new List<Type>
+            {
+                queryableType
+            };
             argTypes.AddRange(argExpressions.Select(r => r.Type));
 
             MethodInfo foundMethod = this.FindMethod(queryableType, Function, argTypes);
 
-            List<object> methodArgs = new List<object>() { Queryable };
+            MethodInfo madeMethod = this.CompileGenericMethod(foundMethod, genericType, argExpressions);
 
-            if (foundMethod.GetParameters().Any(r => r.ParameterType.IsFunc()))
-            {
-                methodArgs.AddRange(argExpressions.Select<Expression, object>(r =>
-                {
-                    if (r is LambdaExpression lam)
-                    {
-                        return lam.Compile();
-                    }
-                    else
-                    {
-                        return r;
-                    }
-                }));
-            }
-            else
-            {
-                methodArgs.AddRange(argExpressions);
-            }
-
-            MethodInfo madeMethod = this.CompileGenericMethod(foundMethod, genericType, methodArgs);
+            List<object> methodArgs = this.CompileArguments(Queryable, madeMethod, argExpressions);
 
             object result = madeMethod.Invoke(null, methodArgs.ToArray());
 
@@ -129,36 +112,66 @@ namespace Linql.Server
             return result;
         }
 
-        protected MethodInfo CompileGenericMethod(MethodInfo GenericMethod, Type SourceType, List<object> MethodArgs)
+        protected List<object> CompileArguments(object InputObject, MethodInfo foundMethod, List<Expression> ArgExpressions)
+        {
+            List<object> methodArgs = new List<object>() { InputObject };
+            IEnumerable<ParameterInfo> parameters = foundMethod.GetParameters().Skip(1);
+
+            parameters.Zip(ArgExpressions, (left, right) => new { parameter = left, arg = right })
+                .ToList()
+                .ForEach(r =>
+                {
+                    if(r.arg is LambdaExpression lam)
+                    {
+                        LambdaExpression convertedLambda = this.ConvertBodyType(r.parameter.ParameterType, lam);
+                       
+                        if (r.parameter.ParameterType.IsFunc())
+                        {
+                            methodArgs.Add(convertedLambda.Compile());
+                        }
+                        else
+                        {
+                            methodArgs.Add(convertedLambda);
+                        }
+                    }
+                    else
+                    {
+                        methodArgs.Add(r.arg);
+                    }
+                   
+                });
+
+            return methodArgs;
+        }
+
+        private LambdaExpression ConvertBodyType(Type MethodBodyType, LambdaExpression Lambda)
+        {
+            Type bodyType = MethodBodyType.GetGenericArguments().FirstOrDefault()?.GetGenericArguments()?.LastOrDefault();
+
+            if(bodyType != null && bodyType != Lambda.Body.Type)
+            {
+                return Expression.Lambda(Expression.Convert(Lambda.Body, bodyType), Lambda.Parameters);
+            }
+
+            return Lambda;
+        }
+
+        protected MethodInfo CompileGenericMethod(MethodInfo GenericMethod, Type SourceType, List<Expression> MethodArgs)
         {
             MethodInfo madeMethod = GenericMethod;
             IEnumerable<Type> funGenericArgs = GenericMethod.GetGenericArguments();
             IEnumerable<ParameterInfo> funParameters = GenericMethod.GetParameters().Skip(1);
-            IEnumerable<Type> methodArgTypes = MethodArgs.Select(r => r.GetType());
+            IEnumerable<Type> methodArgTypes = MethodArgs.Select(r => typeof(Expression<>).MakeGenericType(r.Type));
 
             Dictionary<string, Type> genericArgMapping = new Dictionary<string, Type>();
             genericArgMapping.Add(funGenericArgs.FirstOrDefault().Name, SourceType);
 
              funParameters
-                .Zip(methodArgTypes.Skip(1), (left, right) => new { parameter = left, argumentType = right })
+                .Zip(methodArgTypes, (left, right) => new { parameter = left, argumentType = right })
                 .ToList().ForEach(r => this.LoadGenericTypesFromArguments(r.parameter.ParameterType, r.argumentType, genericArgMapping));
 
             List<Type> genericArgs = genericArgMapping.Select(r => r.Value).ToList();
            
-            //IEnumerable<Type> genericArgs = MethodArgs.Skip(1).ToList();
-
-            //if (lastArg is LambdaExpression exp)
-            //{
-            //    if (funLastParameter.ParameterType.IsEnumerable())
-            //    {
-            //        genericArgs.Add(exp.ReturnType.GetEnumerableType());
-            //    }
-            //    else
-            //    {
-            //        genericArgs.Add(exp.ReturnType);
-            //    }
-            //}
-
             madeMethod = madeMethod.MakeGenericMethod(genericArgs.ToArray());
             return madeMethod;
         }
@@ -170,7 +183,7 @@ namespace Linql.Server
             bool areExpressions = ParameterType.IsExpression() && ArgumentType.IsExpression();
             bool areFunctions = ParameterType.IsFunc() && ArgumentType.IsFunc();
 
-            bool implements = ParameterType.IsAssignableFromOrImplements(ArgumentType);
+            bool implements = ParameterType.GetGenericTypeDefinitionSafe().IsAssignableFromOrImplements(ArgumentType.GetGenericTypeDefinitionSafe());
 
             if (areExpressions || areFunctions || implements)
             {
