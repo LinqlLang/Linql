@@ -1,0 +1,1 @@
+{"Type":{"TypeName":"DataModel"},"Expressions":[{"$type":"LinqlFunction","FunctionName":"FirstOrDefaultAsync"}]}

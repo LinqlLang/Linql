@@ -25,6 +25,8 @@
 
   <ItemGroup>
     <None Remove="TestFiles\SimpleExpressions\ToList.json" />
+    <None Remove="TestFiles\Smoke\FirstOrDefault.json" />
+    <None Remove="TestFiles\Smoke\FirstOrDefaultWithPredicate.json" />
     <None Remove="TestFiles\Smoke\Inner_Lambda.json" />
     <None Remove="TestFiles\Smoke\LinqlObject_NonZero.json" />
     <None Remove="TestFiles\Smoke\List_Int_Contains.json" />

@@ -289,7 +289,37 @@ namespace Linql.Server.Test.Expressions
             });
         }
 
-    
+
+        [Test]
+        public void FirstOrDefault()
+        {
+            Assert.DoesNotThrow(() =>
+            {
+                string json = this.TestLoader.TestFiles[nameof(FirstOrDefault)];
+                LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+
+                DataModel data = this.Compiler.Execute<DataModel>(search, this.Data);
+
+                Assert.That(data.Integer, Is.EqualTo(1));
+
+            });
+        }
+
+        [Test]
+        public void FirstOrDefaultWithPredicate()
+        {
+            Assert.DoesNotThrow(() =>
+            {
+                string json = this.TestLoader.TestFiles[nameof(FirstOrDefaultWithPredicate)];
+                LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+
+                DataModel data = this.Compiler.Execute<DataModel>(search, this.Data);
+
+                Assert.That(data.Integer, Is.EqualTo(1));
+
+            });
+        }
+
     }
 
 }

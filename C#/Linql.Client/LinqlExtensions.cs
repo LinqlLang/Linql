@@ -64,10 +64,19 @@ namespace Linql.Client
             {
                 search = linqlProvider.BuildLinqlRequest(source.Expression, source.GetType().GetEnumerableType());
 
-                LinqlExpression expression = search.Expressions.FirstOrDefault();
-                LinqlExpression lastExpression = expression.GetLastExpressionInNextChain();
-
+                LinqlExpression expression = search.Expressions?.FirstOrDefault();
                 LinqlFunction customFunction = new LinqlFunction(FunctionName);
+
+                if (expression != null)
+                {
+                    LinqlExpression lastExpression = expression.GetLastExpressionInNextChain();
+                    lastExpression.Next = customFunction;
+                }
+                else
+                {
+                    search.Expressions = new List<LinqlExpression>();
+                    search.Expressions.Add(customFunction);
+                }
 
                 if (Predicate != null) 
                 {
@@ -75,7 +84,7 @@ namespace Linql.Client
                     customFunction.Arguments = new List<LinqlExpression>() { parser.Root };
                 }
 
-                lastExpression.Next = customFunction;
+              
             }
             else
             {
@@ -110,14 +119,14 @@ namespace Linql.Client
             return await source.ExecuteCustomLinqlFunction<T, List<T>>("ToListAsync");
         }
 
-        public static LinqlSearch FirstOrDefaultAsyncSearch(this IQueryable source)
+        public static LinqlSearch FirstOrDefaultAsyncSearch<T>(this IQueryable<T> source, Expression<Func<T, bool>> Predicate = null)
         {
-            return source.CustomLinqlFunction("FirstOrDefaultAsync");
+            return source.CustomLinqlFunction("FirstOrDefaultAsync", Predicate);
         }
 
-        public static async Task<T> FirstOrDefaultAsync<T>(this IQueryable<T> source)
+        public static async Task<T> FirstOrDefaultAsync<T>(this IQueryable<T> source, Expression<Func<T, bool>> Predicate = null)
         {
-            return await source.ExecuteCustomLinqlFunction<T, T>("ToListAsync");
+            return await source.ExecuteCustomLinqlFunction<T, T>("FirstOrDefaultAsync", Predicate);
         }
 
 
