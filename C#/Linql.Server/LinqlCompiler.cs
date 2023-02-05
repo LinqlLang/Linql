@@ -112,7 +112,7 @@ namespace Linql.Server
             return result;
         }
 
-        protected List<object> CompileArguments(object InputObject, MethodInfo foundMethod, List<Expression> ArgExpressions)
+        protected List<object> CompileArguments(object InputObject, MethodInfo foundMethod, IEnumerable<Expression> ArgExpressions)
         {
             List<object> methodArgs = new List<object>() { InputObject };
             IEnumerable<ParameterInfo> parameters = foundMethod.GetParameters().Skip(1);
@@ -156,7 +156,7 @@ namespace Linql.Server
             return Lambda;
         }
 
-        protected MethodInfo CompileGenericMethod(MethodInfo GenericMethod, Type SourceType, List<Expression> MethodArgs)
+        protected MethodInfo CompileGenericMethod(MethodInfo GenericMethod, Type SourceType, IEnumerable<Expression> MethodArgs)
         {
             MethodInfo madeMethod = GenericMethod;
             IEnumerable<Type> funGenericArgs = GenericMethod.GetGenericArguments();
@@ -180,15 +180,21 @@ namespace Linql.Server
         {
 
             List<Type> GenericTypes = new List<Type>();
-            bool areExpressions = ParameterType.IsExpression() && ArgumentType.IsExpression();
-            bool areFunctions = ParameterType.IsFunc() && ArgumentType.IsFunc();
+            bool areExpressions = (ParameterType.IsExpression() || ParameterType.IsFunc()) && (ArgumentType.IsExpression() || ArgumentType.IsFunc());
 
             bool implements = ParameterType.GetGenericTypeDefinitionSafe().IsAssignableFromOrImplements(ArgumentType.GetGenericTypeDefinitionSafe());
 
-            if (areExpressions || areFunctions || implements)
+            if (areExpressions || implements)
             {
+                Type argumentType = ArgumentType; 
+
+                if(ParameterType.IsFunc() && argumentType.IsExpression())
+                {
+                    argumentType = argumentType.GetGenericArguments().FirstOrDefault();
+                }
+
                 IEnumerable<Type> parameterArgs = ParameterType.GetGenericArguments();
-                IEnumerable<Type> argumentTypeArgs = ArgumentType.GetGenericArguments();
+                IEnumerable<Type> argumentTypeArgs = argumentType.GetGenericArguments();
                 parameterArgs
                                .Zip(argumentTypeArgs, (left, right) => new { parameter = left, argumentType = right })
                                .ToList().ForEach(r => this.LoadGenericTypesFromArguments(r.parameter, r.argumentType, GenericArgMapping));

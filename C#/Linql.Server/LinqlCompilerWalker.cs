@@ -152,7 +152,7 @@ namespace Linql.Server
 
             if (foundMethod.IsGenericMethod)
             {
-                foundMethod = foundMethod.MakeGenericMethod(genericMethodType.GetEnumerableType());
+               foundMethod = this.CompileGenericMethod(foundMethod, argExpressions.FirstOrDefault().Type.GetEnumerableType(), argExpressions.Skip(1));
             }
 
             Expression functionExp = Expression.Call(objectExpression, foundMethod, argExpressions);
