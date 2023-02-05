@@ -155,6 +155,8 @@ namespace Linql.Server.Test
         [Test]
         public void ListWithLInqlObject()
         {
+
+            this.Data.FirstOrDefault(r => r.Boolean);
             this.Compiler.ValidAssemblies.Add(typeof(DataModel).Assembly);
             string json = this.TestLoader.TestFiles["LinqlObject"];
             List<DataModel> data = this.Data.ToList();

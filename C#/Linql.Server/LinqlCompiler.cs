@@ -79,17 +79,22 @@ namespace Linql.Server
             Type queryableType = Queryable.GetType();
             Type genericType = Queryable.GetType().GetEnumerableType();
 
-            List<Expression> argExpressions = Function.Arguments.Select(r =>
+            List<Expression> argExpressions = new List<Expression>();
+
+            if (Function.Arguments != null)
             {
-                if (r is LinqlLambda lambda)
+                argExpressions = Function.Arguments.Select(r =>
                 {
-                    return this.VisitLambda(r as LinqlLambda, genericType);
-                }
-                else
-                {
-                    return this.Visit(r, genericType);
-                }
+                    if (r is LinqlLambda lambda)
+                    {
+                        return this.VisitLambda(r as LinqlLambda, genericType);
+                    }
+                    else
+                    {
+                        return this.Visit(r, genericType);
+                    }
             }).ToList();
+            }
 
             List<Type> argTypes = new List<Type>
             {
@@ -121,10 +126,10 @@ namespace Linql.Server
                 .ToList()
                 .ForEach(r =>
                 {
-                    if(r.arg is LambdaExpression lam)
+                    if (r.arg is LambdaExpression lam)
                     {
                         LambdaExpression convertedLambda = this.ConvertBodyType(r.parameter.ParameterType, lam);
-                       
+
                         if (r.parameter.ParameterType.IsFunc())
                         {
                             methodArgs.Add(convertedLambda.Compile());
@@ -138,7 +143,7 @@ namespace Linql.Server
                     {
                         methodArgs.Add(r.arg);
                     }
-                   
+
                 });
 
             return methodArgs;
@@ -148,7 +153,7 @@ namespace Linql.Server
         {
             Type bodyType = MethodBodyType.GetGenericArguments().FirstOrDefault()?.GetGenericArguments()?.LastOrDefault();
 
-            if(bodyType != null && bodyType != Lambda.Body.Type)
+            if (bodyType != null && bodyType != Lambda.Body.Type)
             {
                 return Expression.Lambda(Expression.Convert(Lambda.Body, bodyType), Lambda.Parameters);
             }
@@ -166,12 +171,12 @@ namespace Linql.Server
             Dictionary<string, Type> genericArgMapping = new Dictionary<string, Type>();
             genericArgMapping.Add(funGenericArgs.FirstOrDefault().Name, SourceType);
 
-             funParameters
-                .Zip(methodArgTypes, (left, right) => new { parameter = left, argumentType = right })
-                .ToList().ForEach(r => this.LoadGenericTypesFromArguments(r.parameter.ParameterType, r.argumentType, genericArgMapping));
+            funParameters
+               .Zip(methodArgTypes, (left, right) => new { parameter = left, argumentType = right })
+               .ToList().ForEach(r => this.LoadGenericTypesFromArguments(r.parameter.ParameterType, r.argumentType, genericArgMapping));
 
             List<Type> genericArgs = genericArgMapping.Select(r => r.Value).ToList();
-           
+
             madeMethod = madeMethod.MakeGenericMethod(genericArgs.ToArray());
             return madeMethod;
         }
@@ -186,9 +191,9 @@ namespace Linql.Server
 
             if (areExpressions || implements)
             {
-                Type argumentType = ArgumentType; 
+                Type argumentType = ArgumentType;
 
-                if(ParameterType.IsFunc() && argumentType.IsExpression())
+                if (ParameterType.IsFunc() && argumentType.IsExpression())
                 {
                     argumentType = argumentType.GetGenericArguments().FirstOrDefault();
                 }
@@ -200,7 +205,7 @@ namespace Linql.Server
                                .ToList().ForEach(r => this.LoadGenericTypesFromArguments(r.parameter, r.argumentType, GenericArgMapping));
 
             }
-            else if(ParameterType.IsConstructedGenericType == false && !GenericArgMapping.ContainsKey(ParameterType.Name))
+            else if (ParameterType.IsConstructedGenericType == false && !GenericArgMapping.ContainsKey(ParameterType.Name))
             {
                 GenericArgMapping.Add(ParameterType.Name, ArgumentType);
             }
@@ -280,6 +285,11 @@ namespace Linql.Server
             IEnumerable<MethodInfo> candidates = this.GetMethodsForType(FunctionObjectType);
 
             IEnumerable<MethodInfo> trimmedMethods = candidates.Where(r => r.Name.Contains(function.FunctionName));
+
+            if (trimmedMethods.Any() == false && function.FunctionName.Contains("Async"))
+            {
+                trimmedMethods = candidates.Where(r => r.Name.Contains(function.FunctionName.Replace("Async", "")));
+            }
 
             IEnumerable<MethodInfo> argMatchFunctions = trimmedMethods.Where(r =>
             {

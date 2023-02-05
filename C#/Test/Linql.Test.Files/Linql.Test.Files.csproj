@@ -33,6 +33,7 @@
     <None Remove="TestFiles\Smoke\SelectManyDouble.json" />
     <None Remove="TestFiles\Smoke\Select_Test.json" />
     <None Remove="TestFiles\Smoke\String_Contains.json" />
+    <None Remove="TestFiles\Smoke\ToListAsync.json" />
   </ItemGroup>
 
 

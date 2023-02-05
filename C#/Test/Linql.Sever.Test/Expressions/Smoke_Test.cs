@@ -2,6 +2,7 @@ using Linql.Client;
 using Linql.Core;
 using Linql.Core.Test;
 using Linql.Test.Files;
+using System.Collections;
 using System.Reflection;
 using System.Text.Json;
 
@@ -272,6 +273,23 @@ namespace Linql.Server.Test.Expressions
             });
 
         }
+
+        [Test]
+        public void ToListAsync()
+        {
+            Assert.DoesNotThrow(() =>
+            {
+                string json = this.TestLoader.TestFiles[nameof(ToListAsync)];
+                LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+
+                IEnumerable<int> data = this.Compiler.Execute<IEnumerable<int>>(search, this.Data);
+
+                Assert.That(data.Count(), Is.EqualTo(1000000));
+
+            });
+        }
+
+    
     }
 
 }

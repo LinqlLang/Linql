@@ -298,6 +298,16 @@ namespace Linql.Client.Test.Expressions
             string contains = await search.SelectMany(r => r.ListRecusrive.SelectMany(s => s.ListInteger)).ToJsonAsync();
             TestLoader.Compare(nameof(Smoke_Test.SelectManyDouble), contains);
         }
+
+        [Test]
+        public async Task ToListAsync()
+        {
+
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            LinqlSearch jsonSearch = search.SelectMany(r => r.ListRecusrive.SelectMany(s => s.ListInteger)).ToListAsyncSearch();
+            string value = JsonSerializer.Serialize(jsonSearch, new JsonSerializerOptions() { WriteIndented = false, DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault });
+            TestLoader.Compare(nameof(Smoke_Test.ToListAsync), value);
+        }
     }
 
 }

@@ -181,8 +181,6 @@ namespace Linql.Server
         {
             MethodInfo expressionType = typeof(Expression).GetMethod(Unary.UnaryName, new Type[] { typeof(Expression) });
 
-            //Expression.Negate
-
             if (expressionType == null)
             {
                 throw new Exception($"Unable to find Unary Method {Unary.UnaryName}");
