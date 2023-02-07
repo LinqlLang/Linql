@@ -5,48 +5,61 @@
   },
   "Expressions": [
     {
-      "$type": "LinqlFunction",
-      "FunctionName": "Where",
-      "Arguments": [
-        {
-          "$type": "LinqlLambda",
-          "Parameters": [
-            {
-              "$type": "LinqlParameter",
-              "ParameterName": "r",
-              "Next": null
-            }
-          ],
-          "Body": {
-            "$type": "LinqlFunction",
-            "FunctionName": "Contains",
-            "Arguments": [
+      "$type": "LinqlConstant",
+      "ConstantType": {
+        "TypeName": "LinqlSearch",
+        "GenericParameters": [
+          {
+            "TypeName": "DataModel",
+            "GenericParameters": null
+          }
+        ]
+      },
+      "Value": null,
+      "Next": {
+        "$type": "LinqlFunction",
+        "FunctionName": "Where",
+        "Arguments": [
+          {
+            "$type": "LinqlLambda",
+            "Parameters": [
               {
-                "$type": "LinqlConstant",
-                "ConstantType": {
-                  "TypeName": "Int32",
-                  "GenericParameters": null
-                },
-                "Value": 1,
+                "$type": "LinqlParameter",
+                "ParameterName": "r",
                 "Next": null
               }
             ],
-            "Object": {
+            "Body": {
               "$type": "LinqlParameter",
               "ParameterName": "r",
               "Next": {
                 "$type": "LinqlProperty",
                 "PropertyName": "ListInteger",
-                "Next": null
+                "Next": {
+                  "$type": "LinqlFunction",
+                  "FunctionName": "Contains",
+                  "Arguments": [
+                    {
+                      "$type": "LinqlConstant",
+                      "ConstantType": {
+                        "TypeName": "Int32",
+                        "GenericParameters": null
+                      },
+                      "Value": 1,
+                      "Next": null
+                    }
+                  ],
+                  "Object": null,
+                  "Next": null
+                }
               }
             },
             "Next": null
-          },
-          "Next": null
-        }
-      ],
-      "Object": null,
-      "Next": null
+          }
+        ],
+        "Object": null,
+        "Next": null
+      }
     }
   ]
 }

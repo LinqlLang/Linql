@@ -9,6 +9,12 @@ namespace Linql.Core
         public List<LinqlExpression> Parameters { get; set; }
 
         public LinqlExpression Body { get; set; }
-    
+
+        public override string ToString()
+        {
+            return this.Body.ToString();
+        }
+
+
     }
 }

@@ -1,1 +1,1 @@
-{"Type":{"TypeName":"DataModel"}}
+{"Type":{"TypeName":"DataModel"},"Expressions":[{"$type":"LinqlConstant","ConstantType":{"TypeName":"LinqlSearch","GenericParameters":[{"TypeName":"DataModel"}]}}]}

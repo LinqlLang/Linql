@@ -89,18 +89,13 @@ namespace Linql.Client
         protected override Expression VisitMethodCall(MethodCallExpression m)
         {
             LinqlFunction function = new LinqlFunction(m.Method.Name);
+            LinqlExpression functionCallee;
 
-            if (m.Object != null)
-            {
-                LinqlParser objectParser = new LinqlParser(m.Object);
-                LinqlExpression parsedObject = objectParser.Root;
-                function.Object = parsedObject;
-            }
             function.Arguments = m.Arguments.Select(r =>
             {
                 LinqlParser argParser = new LinqlParser(r);
 
-                if(argParser.LinqlSearchRootType!= null)
+                if (argParser.LinqlSearchRootType != null)
                 {
                     this.LinqlSearchRootType = argParser.LinqlSearchRootType;
                 }
@@ -108,30 +103,25 @@ namespace Linql.Client
                 return argParser.Root;
             }).ToList();
 
-
-            AttachToExpression(function);
-            PushToStack(function, m);
-
-            if (m.Method.IsStatic)
+            if (m.Object != null)
             {
-                LinqlExpression firstArg = function.Arguments.FirstOrDefault();
-                function.Arguments = function.Arguments.Skip(1).ToList();
-                firstArg.Next = function;
-                Root = firstArg;
-                //if (firstArg is LinqlConstant linqlConstant && linqlConstant.ConstantType.TypeName == nameof(LinqlSearch))
-                //{
-                //    function.Arguments = function.Arguments.Skip(1).ToList();
-                //    firstArg.Next = function;
-                //    Root =
-                //}
-                //else if (firstArg is LinqlFunction fun && m.Method.IsStatic == true)
-                //{
-                //    firstArg.Next = function;
-                //    function.Arguments = function.Arguments.Skip(1).ToList();
-
-                //    Root = firstArg;
-                //}
+                LinqlParser objectParser = new LinqlParser(m.Object);
+                LinqlExpression parsedObject = objectParser.Root;
+                functionCallee = parsedObject;
             }
+            else
+            {
+                functionCallee = function.Arguments.FirstOrDefault();
+                function.Arguments = function.Arguments.Skip(1).ToList();
+            }
+           
+
+            //AttachToExpression(function);
+            //PushToStack(function, m);
+
+            LinqlExpression attachTo = functionCallee.GetLastExpressionInNextChain();
+            attachTo.Next = function;
+            Root = functionCallee;
 
             return m;
         }

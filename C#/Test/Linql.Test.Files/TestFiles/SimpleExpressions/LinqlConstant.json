@@ -5,32 +5,45 @@
   },
   "Expressions": [
     {
-      "$type": "LinqlFunction",
-      "FunctionName": "Where",
-      "Arguments": [
-        {
-          "$type": "LinqlLambda",
-          "Parameters": [
-            {
-              "$type": "LinqlParameter",
-              "ParameterName": "r",
+      "$type": "LinqlConstant",
+      "ConstantType": {
+        "TypeName": "LinqlSearch",
+        "GenericParameters": [
+          {
+            "TypeName": "DataModel",
+            "GenericParameters": null
+          }
+        ]
+      },
+      "Value": null,
+      "Next": {
+        "$type": "LinqlFunction",
+        "FunctionName": "Where",
+        "Arguments": [
+          {
+            "$type": "LinqlLambda",
+            "Parameters": [
+              {
+                "$type": "LinqlParameter",
+                "ParameterName": "r",
+                "Next": null
+              }
+            ],
+            "Body": {
+              "$type": "LinqlConstant",
+              "ConstantType": {
+                "TypeName": "Boolean",
+                "GenericParameters": null
+              },
+              "Value": false,
               "Next": null
-            }
-          ],
-          "Body": {
-            "$type": "LinqlConstant",
-            "ConstantType": {
-              "TypeName": "Boolean",
-              "GenericParameters": null
             },
-            "Value": false,
             "Next": null
-          },
-          "Next": null
-        }
-      ],
-      "Object": null,
-      "Next": null
+          }
+        ],
+        "Object": null,
+        "Next": null
+      }
     }
   ]
 }

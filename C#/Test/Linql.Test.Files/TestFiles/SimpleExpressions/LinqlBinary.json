@@ -5,50 +5,63 @@
   },
   "Expressions": [
     {
-      "$type": "LinqlFunction",
-      "FunctionName": "Where",
-      "Arguments": [
-        {
-          "$type": "LinqlLambda",
-          "Parameters": [
-            {
-              "$type": "LinqlParameter",
-              "ParameterName": "r",
-              "Next": null
-            }
-          ],
-          "Body": {
-            "$type": "LinqlBinary",
-            "BinaryName": "AndAlso",
-            "Left": {
-              "$type": "LinqlParameter",
-              "ParameterName": "r",
-              "Next": {
-                "$type": "LinqlProperty",
-                "PropertyName": "Boolean",
+      "$type": "LinqlConstant",
+      "ConstantType": {
+        "TypeName": "LinqlSearch",
+        "GenericParameters": [
+          {
+            "TypeName": "DataModel",
+            "GenericParameters": null
+          }
+        ]
+      },
+      "Value": null,
+      "Next": {
+        "$type": "LinqlFunction",
+        "FunctionName": "Where",
+        "Arguments": [
+          {
+            "$type": "LinqlLambda",
+            "Parameters": [
+              {
+                "$type": "LinqlParameter",
+                "ParameterName": "r",
                 "Next": null
               }
-            },
-            "Right": {
-              "$type": "LinqlParameter",
-              "ParameterName": "r",
-              "Next": {
-                "$type": "LinqlProperty",
-                "PropertyName": "OneToOne",
+            ],
+            "Body": {
+              "$type": "LinqlBinary",
+              "BinaryName": "AndAlso",
+              "Left": {
+                "$type": "LinqlParameter",
+                "ParameterName": "r",
                 "Next": {
                   "$type": "LinqlProperty",
                   "PropertyName": "Boolean",
                   "Next": null
                 }
-              }
+              },
+              "Right": {
+                "$type": "LinqlParameter",
+                "ParameterName": "r",
+                "Next": {
+                  "$type": "LinqlProperty",
+                  "PropertyName": "OneToOne",
+                  "Next": {
+                    "$type": "LinqlProperty",
+                    "PropertyName": "Boolean",
+                    "Next": null
+                  }
+                }
+              },
+              "Next": null
             },
             "Next": null
-          },
-          "Next": null
-        }
-      ],
-      "Object": null,
-      "Next": null
+          }
+        ],
+        "Object": null,
+        "Next": null
+      }
     }
   ]
 }

@@ -5,41 +5,33 @@
   },
   "Expressions": [
     {
-      "$type": "LinqlFunction",
-      "FunctionName": "Where",
-      "Arguments": [
-        {
-          "$type": "LinqlLambda",
-          "Parameters": [
-            {
-              "$type": "LinqlParameter",
-              "ParameterName": "r",
-              "Next": null
-            }
-          ],
-          "Body": {
-            "$type": "LinqlBinary",
-            "BinaryName": "AndAlso",
-            "Left": {
-              "$type": "LinqlParameter",
-              "ParameterName": "r",
-              "Next": {
-                "$type": "LinqlProperty",
-                "PropertyName": "OneToOneNullable",
-                "Next": {
-                  "$type": "LinqlProperty",
-                  "PropertyName": "Integer",
-                  "Next": {
-                    "$type": "LinqlProperty",
-                    "PropertyName": "HasValue",
-                    "Next": null
-                  }
-                }
+      "$type": "LinqlConstant",
+      "ConstantType": {
+        "TypeName": "LinqlSearch",
+        "GenericParameters": [
+          {
+            "TypeName": "DataModel",
+            "GenericParameters": null
+          }
+        ]
+      },
+      "Value": null,
+      "Next": {
+        "$type": "LinqlFunction",
+        "FunctionName": "Where",
+        "Arguments": [
+          {
+            "$type": "LinqlLambda",
+            "Parameters": [
+              {
+                "$type": "LinqlParameter",
+                "ParameterName": "r",
+                "Next": null
               }
-            },
-            "Right": {
+            ],
+            "Body": {
               "$type": "LinqlBinary",
-              "BinaryName": "Equal",
+              "BinaryName": "AndAlso",
               "Left": {
                 "$type": "LinqlParameter",
                 "ParameterName": "r",
@@ -51,30 +43,51 @@
                     "PropertyName": "Integer",
                     "Next": {
                       "$type": "LinqlProperty",
-                      "PropertyName": "Value",
+                      "PropertyName": "HasValue",
                       "Next": null
                     }
                   }
                 }
               },
               "Right": {
-                "$type": "LinqlConstant",
-                "ConstantType": {
-                  "TypeName": "Int32",
-                  "GenericParameters": null
+                "$type": "LinqlBinary",
+                "BinaryName": "Equal",
+                "Left": {
+                  "$type": "LinqlParameter",
+                  "ParameterName": "r",
+                  "Next": {
+                    "$type": "LinqlProperty",
+                    "PropertyName": "OneToOneNullable",
+                    "Next": {
+                      "$type": "LinqlProperty",
+                      "PropertyName": "Integer",
+                      "Next": {
+                        "$type": "LinqlProperty",
+                        "PropertyName": "Value",
+                        "Next": null
+                      }
+                    }
+                  }
                 },
-                "Value": 1,
+                "Right": {
+                  "$type": "LinqlConstant",
+                  "ConstantType": {
+                    "TypeName": "Int32",
+                    "GenericParameters": null
+                  },
+                  "Value": 1,
+                  "Next": null
+                },
                 "Next": null
               },
               "Next": null
             },
             "Next": null
-          },
-          "Next": null
-        }
-      ],
-      "Object": null,
-      "Next": null
+          }
+        ],
+        "Object": null,
+        "Next": null
+      }
     }
   ]
 }
