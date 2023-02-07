@@ -62,17 +62,15 @@ namespace Linql.Client
 
             LinqlExpression root = parser.Root;
 
-            if (!(root is LinqlConstant constant && constant.ConstantType.TypeName == nameof(LinqlSearch)))
+            if (root != null)
             {
-                if (root != null)
+                if (search.Expressions == null)
                 {
-                    if (search.Expressions == null)
-                    {   
-                        search.Expressions = new List<LinqlExpression>();
-                    }
-                    search.Expressions.Add(root);
+                    search.Expressions = new List<LinqlExpression>();
                 }
+                search.Expressions.Add(root);
             }
+
             return search;
         }
 

@@ -70,6 +70,11 @@ namespace Linql.Client
             LinqlType Type = new LinqlType(c.Type);
 
             LinqlConstant constant = new LinqlConstant(Type, value);
+            if(value is LinqlSearch)
+            {
+                constant.Value = null;
+            }
+
             AttachToExpression(constant);
             PushToStack(constant, c);
 
@@ -107,21 +112,25 @@ namespace Linql.Client
             AttachToExpression(function);
             PushToStack(function, m);
 
-            if (Root == function)
+            if (m.Method.IsStatic)
             {
                 LinqlExpression firstArg = function.Arguments.FirstOrDefault();
+                function.Arguments = function.Arguments.Skip(1).ToList();
+                firstArg.Next = function;
+                Root = firstArg;
+                //if (firstArg is LinqlConstant linqlConstant && linqlConstant.ConstantType.TypeName == nameof(LinqlSearch))
+                //{
+                //    function.Arguments = function.Arguments.Skip(1).ToList();
+                //    firstArg.Next = function;
+                //    Root =
+                //}
+                //else if (firstArg is LinqlFunction fun && m.Method.IsStatic == true)
+                //{
+                //    firstArg.Next = function;
+                //    function.Arguments = function.Arguments.Skip(1).ToList();
 
-                if (firstArg is LinqlConstant linqlConstant && linqlConstant.ConstantType.TypeName == nameof(LinqlSearch))
-                {
-                    function.Arguments = function.Arguments.Skip(1).ToList();
-                }
-                else if (firstArg is LinqlFunction fun && m.Method.IsStatic == true)
-                {
-                    firstArg.Next = function;
-                    function.Arguments = function.Arguments.Skip(1).ToList();
-
-                    Root = firstArg;
-                }
+                //    Root = firstArg;
+                //}
             }
 
             return m;

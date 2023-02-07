@@ -2,11 +2,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 
 namespace Linql.Client
 {
+    [DebuggerDisplay("LinqlSearch {ElementType.Name}")]
     public class LinqlSearch<T> : LinqlSearch, IQueryable<T>
     {
         public LinqlSearch() : base(typeof(T))
