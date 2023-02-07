@@ -115,10 +115,6 @@ namespace Linql.Client
                 function.Arguments = function.Arguments.Skip(1).ToList();
             }
            
-
-            //AttachToExpression(function);
-            //PushToStack(function, m);
-
             LinqlExpression attachTo = functionCallee.GetLastExpressionInNextChain();
             attachTo.Next = function;
             Root = functionCallee;
