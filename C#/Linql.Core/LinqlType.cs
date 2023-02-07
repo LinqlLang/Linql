@@ -42,5 +42,17 @@ namespace Linql.Core
         {
             return this.TypeName == LinqlType.ListType;
         }
+
+        public override string ToString()
+        {
+            IEnumerable<string> genericTypes = this.GenericParameters?.Select(r => r.ToString());
+            if (genericTypes != null && genericTypes.Any())
+            {
+                string genericTypesJoin = String.Join(",", genericTypes);
+                return $"{this.TypeName}<{genericTypesJoin}>";
+            }
+
+            return this.TypeName;
+        }
     }
 }

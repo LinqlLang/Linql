@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Xml.Linq;
 
 namespace Linql.Core
 {
+
     public class LinqlSearch
     {
         public LinqlType Type { get; set; }
@@ -20,6 +21,11 @@ namespace Linql.Core
         public LinqlSearch()
         {
 
+        }
+
+        public override string ToString()
+        {
+            return $"LinqlSearch<{this.Type.ToString()}>";
         }
     }
 }

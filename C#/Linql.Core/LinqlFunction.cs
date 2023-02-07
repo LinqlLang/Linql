@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Linql.Core
@@ -18,6 +19,11 @@ namespace Linql.Core
         {
             this.FunctionName = FunctionName;
             this.Arguments = Arguments;
+        }
+
+        public override string ToString()
+        {
+            return $"{FunctionName}({this.Arguments?.Count})";
         }
     }
 }

@@ -20,5 +20,11 @@ namespace Linql.Core
             this.Left = Left;
             this.Right = Right;
         }
+
+        public override string ToString()
+        {
+            return $"{this.BinaryName}";
+        }
+
     }
 }

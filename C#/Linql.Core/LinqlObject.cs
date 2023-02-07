@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Linql.Core
@@ -21,6 +22,11 @@ namespace Linql.Core
         public LinqlObject(Type Type, object Value) : this(new LinqlType(Type), Value)
         {
 
+        }
+
+        public override string ToString()
+        {
+            return $"LinqlObject {this.Type.ToString()}";
         }
     }
 
