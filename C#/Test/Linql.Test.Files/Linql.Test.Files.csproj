@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="TestFiles\DataTypes\DateTime_Equals.json" />
     <None Remove="TestFiles\SimpleExpressions\ToList.json" />
     <None Remove="TestFiles\Smoke\FirstOrDefault.json" />
     <None Remove="TestFiles\Smoke\FirstOrDefaultWithPredicate.json" />
