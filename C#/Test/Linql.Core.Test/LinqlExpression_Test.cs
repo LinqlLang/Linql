@@ -48,11 +48,11 @@ namespace Linql.Core.Test
         {
             LinqlConstant constant = new LinqlConstant(typeof(bool).ToLinqlType(), false);
             LinqlFunction fun = new LinqlFunction("Test", new List<LinqlExpression> { constant });
-            fun.Object = constant;
+            //fun.Object = constant;
 
             Assert.That(fun.FunctionName, Is.EqualTo("Test"));
             Assert.That(fun.Arguments.Count, Is.EqualTo(1));
-            Assert.That(fun.Object, Is.EqualTo(constant));
+            //Assert.That(fun.Object, Is.EqualTo(constant));
             Assert.True(fun.Arguments.Contains(constant));
 
         }
@@ -65,7 +65,7 @@ namespace Linql.Core.Test
           
             Assert.That(fun.FunctionName, Is.EqualTo(null));
             Assert.That(fun.Arguments, Is.EqualTo(null));
-            Assert.That(fun.Object, Is.EqualTo(null));
+            //Assert.That(fun.Object, Is.EqualTo(null));
             Assert.That(fun.Arguments, Is.EqualTo(null));
 
         }

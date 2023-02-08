@@ -45,7 +45,7 @@ namespace Linql.Server
             }
             else if (Expression is LinqlFunction function)
             {
-                return this.VisitFunction(function, InputType);
+                return this.VisitFunction(function, InputType, Previous);
             }
             else if (Expression is LinqlLambda lam)
             {
@@ -104,7 +104,7 @@ namespace Linql.Server
             return expression;
         }
 
-        protected Expression VisitFunction(LinqlFunction Function, Type InputType)
+        protected Expression VisitFunction(LinqlFunction Function, Type InputType, Expression Previous)
         {
             List<Expression> argExpressions = new List<Expression>();
 
@@ -119,7 +119,7 @@ namespace Linql.Server
                     {
                         inputType = argExpressions.FirstOrDefault().Type;
                     }
-                    argExpression  = this.VisitLambda(r as LinqlLambda, inputType.GetEnumerableType());
+                    argExpression  = this.VisitLambda(r as LinqlLambda, Previous.Type.GetEnumerableType());
                 }
                 else
                 {
@@ -129,17 +129,17 @@ namespace Linql.Server
                 argExpressions.Add(argExpression);
             });
 
-            Expression objectExpression = null;
+            Expression objectExpression = Previous;
 
-            if (Function.Object != null)
-            {
-                LinqlCompiler objectCompiler = new LinqlCompiler(this, new Dictionary<string, ParameterExpression>(this.Parameters));
-                objectExpression = objectCompiler.Visit(Function.Object, InputType);
-            }
-            else
-            {
-                objectExpression = argExpressions.FirstOrDefault();
-            }
+            //if (Function.Object != null)
+            //{
+            //    LinqlCompiler objectCompiler = new LinqlCompiler(this, new Dictionary<string, ParameterExpression>(this.Parameters));
+            //    objectExpression = objectCompiler.Visit(Function.Object, InputType);
+            //}
+            //else
+            //{
+            //    objectExpression = argExpressions.FirstOrDefault();
+            //}
 
             MethodInfo foundMethod = this.FindMethod(objectExpression.Type, Function, argExpressions);
             Type genericMethodType = objectExpression.Type;
@@ -147,6 +147,7 @@ namespace Linql.Server
 
             if (foundMethod.IsStatic)
             {
+                argExpressions.Insert(0, objectExpression);
                 objectExpression = null;
             }
 
@@ -156,6 +157,11 @@ namespace Linql.Server
             }
 
             Expression functionExp = Expression.Call(objectExpression, foundMethod, argExpressions);
+
+            if(Function.Next != null)
+            {
+                this.Visit(Function.Next, functionExp.Type, functionExp);
+            }
 
             return functionExp;
         }

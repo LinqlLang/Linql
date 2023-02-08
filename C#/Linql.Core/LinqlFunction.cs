@@ -11,8 +11,6 @@ namespace Linql.Core
 
         public List<LinqlExpression> Arguments { get; set; }
 
-        public LinqlExpression Object { get; set; }
-
         public LinqlFunction() { }
 
         public LinqlFunction(string FunctionName, List<LinqlExpression> Arguments = null) 

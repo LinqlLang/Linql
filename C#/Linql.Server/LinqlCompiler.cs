@@ -49,14 +49,17 @@ namespace Linql.Server
 
             Search.Expressions?.ForEach(exp =>
             {
-
-                if (exp is LinqlFunction function)
+                if(exp is LinqlConstant constant && constant.ConstantType.TypeName == nameof(LinqlSearch))
+                {
+                    result = this.TopLevelFunction(constant.Next as LinqlFunction, Queryable);
+                }
+                else if (exp is LinqlFunction function)
                 {
                     result = this.TopLevelFunction(function, Queryable);
                 }
                 else
                 {
-                    throw new Exception($"Linql Search did not start with a function, but started with {exp.GetType().Name}");
+                    throw new Exception($"Linql Search did not start with a function, or a LinqlSearch, but started with {exp.GetType().Name}");
                 }
             });
             return result;
@@ -75,6 +78,11 @@ namespace Linql.Server
         protected object TopLevelFunction(LinqlFunction Function, IEnumerable Queryable)
         {
             this.Parameters.Clear();
+
+            if(Function == null)
+            {
+                return Queryable;
+            }
 
             Type queryableType = Queryable.GetType();
             Type genericType = Queryable.GetType().GetEnumerableType();
@@ -165,6 +173,7 @@ namespace Linql.Server
         {
             MethodInfo madeMethod = GenericMethod;
             IEnumerable<Type> funGenericArgs = GenericMethod.GetGenericArguments();
+            int genericArgCount = funGenericArgs.Count();
             IEnumerable<ParameterInfo> funParameters = GenericMethod.GetParameters().Skip(1);
             IEnumerable<Type> methodArgTypes = MethodArgs.Select(r => typeof(Expression<>).MakeGenericType(r.Type));
 
@@ -177,7 +186,7 @@ namespace Linql.Server
 
             List<Type> genericArgs = genericArgMapping.Select(r => r.Value).ToList();
 
-            madeMethod = madeMethod.MakeGenericMethod(genericArgs.ToArray());
+            madeMethod = madeMethod.MakeGenericMethod(genericArgs.Take(genericArgCount).ToArray());
             return madeMethod;
         }
 
@@ -291,17 +300,36 @@ namespace Linql.Server
                 trimmedMethods = candidates.Where(r => r.Name.Contains(function.FunctionName.Replace("Async", "")));
             }
 
+            bool argTypesSeemsStatic = false;
+
+            Type firstArgType = ArgTypes.FirstOrDefault();
+            
+            if(firstArgType != null)
+            {
+                argTypesSeemsStatic = FunctionObjectType.IsAssignableFromOrImplements(firstArgType) 
+                    || firstArgType.IsAssignableFromOrImplements(FunctionObjectType);
+            }
+
             IEnumerable<MethodInfo> argMatchFunctions = trimmedMethods.Where(r =>
             {
                 IEnumerable<Type> parameterTypes = r.GetParameters().Select(s => s.ParameterType);
 
-                if (parameterTypes.Count() != ArgTypes.Count())
+                List<Type> argTypes = new List<Type>();
+
+                if (r.IsStatic && !argTypesSeemsStatic)
+                {
+                    argTypes.Add(FunctionObjectType);
+                }
+
+                argTypes.AddRange(ArgTypes);
+
+                if (parameterTypes.Count() != argTypes.Count())
                 {
                     return false;
                 }
 
                 return parameterTypes
-                .Zip(ArgTypes, (left, right) => new { left = left, right = right })
+                .Zip(argTypes, (left, right) => new { left = left, right = right })
                 .All(s =>
                 {
                     bool implements = s.left.IsAssignableFromOrImplements(s.right.GetGenericTypeDefinitionSafe());
