@@ -3,7 +3,7 @@ using Linql.Test.Files;
 
 namespace Linql.Client.Test.Expressions
 {
-    public class DataTypesTest : TestFileTests
+    public partial class DataTypesTest : TestFileTests
     {
         protected LinqlContext Context { get; set; } = new LinqlContext();
 
@@ -24,18 +24,21 @@ namespace Linql.Client.Test.Expressions
             LinqlSearch compiledSearch = search.FirstOrDefaultAsyncSearch(r => r.DateTime == now);
             string value = JsonSerializer.Serialize(compiledSearch, JsonSerializerOptions);
 
+            compiledSearch = search.FirstOrDefaultAsyncSearch(r => r.DateTime == DateTime.Now);
+            string value2 = JsonSerializer.Serialize(compiledSearch, JsonSerializerOptions);
+
             //TestLoader.Compare(nameof(DateTime_Equals), value);
         }
 
         [Test]
         public void Guid()
         {
-            Guid guid = System.Guid.NewGuid();
+            Guid guid = DataModel.GuidAnchor;
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             LinqlSearch compiledSearch = search.FirstOrDefaultAsyncSearch(r => r.Guid == guid);
             string value = JsonSerializer.Serialize(compiledSearch, JsonSerializerOptions);
 
-            //TestLoader.Compare(nameof(DateTime_Equals), value);
+            TestLoader.Compare(nameof(Guid), value);
         }
 
     }

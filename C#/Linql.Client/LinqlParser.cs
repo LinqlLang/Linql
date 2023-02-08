@@ -46,7 +46,10 @@ namespace Linql.Client
 
         protected void RemoveFromPrevious(LinqlExpression ExpressionToRemove)
         {
-            PopStack();
+            if (ExpressionToRemove != null)
+            {
+                PopStack();
+            }
 
             LinqlExpression previousExpression = LinqlStack.FirstOrDefault();
         }
@@ -209,7 +212,12 @@ namespace Linql.Client
             //LinqlParser parser = new LinqlParser(m.Expression);
             //LinqlExpression root = parser.Root;
             base.VisitMember(m);
-            LinqlExpression previous = LinqlStack.First();
+            LinqlExpression previous = LinqlStack.FirstOrDefault();
+
+            if (previous == null)
+            {
+                previous = new LinqlConstant(new LinqlType(m.Type), m.Type);
+            }
 
             if (previous is LinqlConstant constant && constant.Value != null && !constant.ConstantType.IsList())
             {

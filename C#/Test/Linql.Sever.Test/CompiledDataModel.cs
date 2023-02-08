@@ -25,6 +25,11 @@ namespace Linql.Server.Test
             this.Long = (long)this.Decimal;
             this.OneToOneNullable = new NullableModel();
 
+            if(Index == 1)
+            {
+                this.Guid = DataModel.GuidAnchor;
+            }
+
             if (this.Boolean == true)
             {
                 this.OneToOneNullable.Integer = 1;

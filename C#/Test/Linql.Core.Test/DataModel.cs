@@ -8,6 +8,7 @@ namespace Linql.Core.Test
 {
     public class DataModel
     {
+        public static Guid GuidAnchor = Guid.Parse("40869a51-67d7-4c25-ba01-9cb62464c26a");
         public int Integer { get; set; }
 
         public string String { get; set; } = "";
