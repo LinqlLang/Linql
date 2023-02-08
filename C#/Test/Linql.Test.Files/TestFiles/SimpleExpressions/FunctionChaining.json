@@ -41,7 +41,6 @@
             "Next": null
           }
         ],
-        "Object": null,
         "Next": {
           "$type": "LinqlFunction",
           "FunctionName": "Where",
@@ -67,7 +66,6 @@
               "Next": null
             }
           ],
-          "Object": null,
           "Next": null
         }
       }

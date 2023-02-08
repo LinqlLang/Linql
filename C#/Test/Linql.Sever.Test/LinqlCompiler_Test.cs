@@ -33,7 +33,7 @@ namespace Linql.Server.Test
         {
             string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
-            LinqlFunction function = search.Expressions.FirstOrDefault() as LinqlFunction;
+            LinqlFunction function = search.Expressions.FirstOrDefault().Next as LinqlFunction;
 
             MethodInfo methodToComapre = typeof(Queryable).GetMethods().First(r => r.Name == "Where");
 
@@ -49,7 +49,7 @@ namespace Linql.Server.Test
         {
             string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
-            LinqlFunction function = search.Expressions.FirstOrDefault() as LinqlFunction;
+            LinqlFunction function = search.Expressions.FirstOrDefault().Next as LinqlFunction;
 
             MethodInfo methodToComapre = typeof(Queryable).GetMethods().First(r => r.Name == "Where");
             Type[] functionArgs = new Type[] { typeof(EnumerableQuery<DataModel>), typeof(Func<DataModel, bool>) };
@@ -65,7 +65,7 @@ namespace Linql.Server.Test
         {
             string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
-            LinqlFunction function = search.Expressions.FirstOrDefault() as LinqlFunction;
+            LinqlFunction function = search.Expressions.FirstOrDefault().Next as LinqlFunction;
 
             MethodInfo methodToComapre = typeof(Enumerable).GetMethods().First(r => r.Name == "Where");
             Type[] functionArgs = new Type[] { typeof(List<DataModel>), typeof(Func<DataModel, bool>) };
@@ -80,7 +80,7 @@ namespace Linql.Server.Test
         {
             string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
-            LinqlFunction function = search.Expressions.FirstOrDefault() as LinqlFunction;
+            LinqlFunction function = search.Expressions.FirstOrDefault().Next as LinqlFunction;
 
             MethodInfo methodToComapre = typeof(Enumerable).GetMethods().First(r => r.Name == "Where");
 
@@ -111,7 +111,7 @@ namespace Linql.Server.Test
 
 
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
-            LinqlFunction function = search.Expressions.FirstOrDefault() as LinqlFunction;
+            LinqlFunction function = search.Expressions.FirstOrDefault().Next as LinqlFunction;
             Type[] functionArgs = new Type[] { typeof(IEnumerable<DataModel>), typeof(Func<DataModel, bool>) };
 
 
@@ -145,7 +145,7 @@ namespace Linql.Server.Test
         {
             string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
-            LinqlFunction function = search.Expressions.FirstOrDefault() as LinqlFunction;
+            LinqlFunction function = search.Expressions.FirstOrDefault().Next as LinqlFunction;
 
             function.FunctionName = "Select";
 
@@ -163,7 +163,7 @@ namespace Linql.Server.Test
         {
             string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
-            LinqlFunction function = search.Expressions.FirstOrDefault() as LinqlFunction;
+            LinqlFunction function = search.Expressions.FirstOrDefault().Next as LinqlFunction;
 
             function.FunctionName = "Select";
 
@@ -191,7 +191,7 @@ namespace Linql.Server.Test
         {
             string json = this.TestLoader.TestFiles["SimpleBooleanFalse"];
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
-            LinqlFunction function = search.Expressions.FirstOrDefault() as LinqlFunction;
+            LinqlFunction function = search.Expressions.FirstOrDefault().Next as LinqlFunction;
             function.FunctionName = "DummyMethod";
 
             Type[] functionArgs = new Type[] { };

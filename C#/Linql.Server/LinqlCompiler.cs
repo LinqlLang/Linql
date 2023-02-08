@@ -12,7 +12,6 @@ namespace Linql.Server
 {
     public partial class LinqlCompiler
     {
-
         public HashSet<Assembly> ValidAssemblies { get; set; } = new HashSet<Assembly>();
 
         private readonly LinqlLambda StaticLambdaInstance = new LinqlLambda();

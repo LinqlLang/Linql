@@ -131,16 +131,6 @@ namespace Linql.Server
 
             Expression objectExpression = Previous;
 
-            //if (Function.Object != null)
-            //{
-            //    LinqlCompiler objectCompiler = new LinqlCompiler(this, new Dictionary<string, ParameterExpression>(this.Parameters));
-            //    objectExpression = objectCompiler.Visit(Function.Object, InputType);
-            //}
-            //else
-            //{
-            //    objectExpression = argExpressions.FirstOrDefault();
-            //}
-
             MethodInfo foundMethod = this.FindMethod(objectExpression.Type, Function, argExpressions);
             Type genericMethodType = objectExpression.Type;
 
@@ -160,7 +150,8 @@ namespace Linql.Server
 
             if(Function.Next != null)
             {
-                this.Visit(Function.Next, functionExp.Type, functionExp);
+                functionExp = this.Visit(Function.Next, functionExp.Type, functionExp);
+             
             }
 
             return functionExp;
