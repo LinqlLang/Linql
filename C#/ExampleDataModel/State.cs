@@ -18,4 +18,18 @@ public class State
     [JsonIgnore]
     public Geometry Geometry { get; set; }
 
+    public List<StateData> Data { get; set; } = new List<StateData>();
+
+}
+
+public class StateData
+{
+    public int Year { get; set; }
+
+    public decimal Value { get; set; }
+
+    public string Variable { get; set; }
+
+    public DateTime DateOfRecording { get; set; }
+
 }

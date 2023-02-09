@@ -24,6 +24,7 @@ namespace Linql.Server.Test.Expressions
                 typeof(Queryable).Assembly,
                 typeof(DataModel).Assembly
             },
+            null,
             true
             );
 

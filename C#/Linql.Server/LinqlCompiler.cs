@@ -322,7 +322,7 @@ namespace Linql.Server
 
             Type firstArgType = ArgTypes.FirstOrDefault();
             
-            if(firstArgType != null)
+            if(firstArgType != null && firstArgType != typeof(string))
             {
                 argTypesSeemsStatic = FunctionObjectType.IsAssignableFromOrImplements(firstArgType) 
                     || firstArgType.IsAssignableFromOrImplements(FunctionObjectType);
@@ -354,8 +354,9 @@ namespace Linql.Server
                     bool reverseImplements = s.right.IsAssignableFromOrImplements(s.left.GetGenericTypeDefinitionSafe());
                     bool genericsMatch = s.left.GetGenericTypeDefinitionSafe() == s.right.GetGenericTypeDefinitionSafe();
                     bool isExpressionType = s.left.IsExpression() && s.right.IsFunc();
+                    bool generic = s.left.IsGenericParameter;
 
-                    return implements || reverseImplements || genericsMatch || isExpressionType;
+                    return implements || reverseImplements || genericsMatch || isExpressionType || generic;
                 });
 
             });
@@ -369,7 +370,7 @@ namespace Linql.Server
             }
             else
             {
-                found = argMatchFunctions.FirstOrDefault();
+                found = argMatchFunctions.OrderBy(r => r.GetParameters().Any(s => s.ParameterType == typeof(object))).FirstOrDefault();
             }
 
             if (found == null)

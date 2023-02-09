@@ -167,5 +167,17 @@ namespace Linql.Server.Test
 
         }
 
+
+        [Test]
+        public void UserSuppliedListContains()
+        {
+            List<string> names = new List<string>() { "test" };
+            LinqlSearch<DataModel> search = new LinqlSearch<DataModel>();
+            LinqlSearch compiledSearch = search.Where(r => names.Select(s => s.ToUpper()).Contains(r.String)).ToLinqlSearch();
+            Assert.DoesNotThrow(() => this.Compiler.Execute<IEnumerable<DataModel>>(compiledSearch, this.Data.AsQueryable()));
+
+
+        }
+
     }
 }

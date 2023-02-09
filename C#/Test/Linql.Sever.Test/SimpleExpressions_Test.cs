@@ -19,6 +19,7 @@ namespace Linql.Server.Test
                 typeof(Enumerable).Assembly,
                 typeof(Queryable).Assembly
             },
+            null,
             true
             );
 

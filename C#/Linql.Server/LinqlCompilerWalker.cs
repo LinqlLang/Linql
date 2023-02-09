@@ -92,7 +92,7 @@ namespace Linql.Server
 
             if (value is JsonElement json)
             {
-                value = json.Deserialize(foundType);
+                value = json.Deserialize(foundType, this.JsonOptions);
             }
 
             Expression expression = Expression.Constant(value, foundType);
