@@ -99,7 +99,7 @@ namespace Linql.Client
         {
             if (source.Provider is ALinqlContext linqlProvider)
             {
-                LinqlSearch search = source.CustomLinqlFunction(FunctionName);
+                LinqlSearch search = source.CustomLinqlFunction(FunctionName, Predicate);
 
                 return await linqlProvider.SendRequestAsync<TResult>(typeof(TSource), search);
             }

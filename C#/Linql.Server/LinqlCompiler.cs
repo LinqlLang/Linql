@@ -7,6 +7,8 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Linql.Server
 {
@@ -22,7 +24,9 @@ namespace Linql.Server
 
         protected Dictionary<string, ParameterExpression> Parameters { get; set; } = new Dictionary<string, ParameterExpression>();
 
-        public LinqlCompiler(HashSet<Assembly> extensionAssemblies = null, bool UseCache = true, Dictionary<Type, List<MethodInfo>> MethodCache = null)
+        protected JsonSerializerOptions JsonOptions { get; set; }
+
+        public LinqlCompiler(HashSet<Assembly> extensionAssemblies = null, JsonSerializerOptions JsonOptions = null, bool UseCache = true, Dictionary<Type, List<MethodInfo>> MethodCache = null)
         {
             if (extensionAssemblies != null)
             {
@@ -34,10 +38,23 @@ namespace Linql.Server
             {
                 this.MethodCache = MethodCache;
             }
+
+            if(JsonOptions == null)
+            {
+                this.JsonOptions = new JsonSerializerOptions
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+                    PropertyNameCaseInsensitive = true
+                };
+            }
+            else
+            {
+                this.JsonOptions = JsonOptions;
+            }
         }
 
         //Used for recursive lambda generation
-        protected LinqlCompiler(LinqlCompiler Parent, Dictionary<string, ParameterExpression> ParameterExpressions) : this(Parent.ValidAssemblies, Parent.UseCache, Parent.MethodCache)
+        protected LinqlCompiler(LinqlCompiler Parent, Dictionary<string, ParameterExpression> ParameterExpressions) : this(Parent.ValidAssemblies, Parent.JsonOptions, Parent.UseCache, Parent.MethodCache)
         {
             this.Parameters = ParameterExpressions;
         }
@@ -139,7 +156,9 @@ namespace Linql.Server
 
                         if (r.parameter.ParameterType.IsFunc())
                         {
-                            methodArgs.Add(convertedLambda.Compile());
+                            Delegate compiledDeligate = convertedLambda.Compile();
+                            
+                            methodArgs.Add(compiledDeligate);
                         }
                         else
                         {

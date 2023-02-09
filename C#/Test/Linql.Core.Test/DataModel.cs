@@ -8,17 +8,48 @@ namespace Linql.Core.Test
 {
     public class DataModel
     {
+        #region static Anchors
+        
         public static Guid GuidAnchor = Guid.Parse("40869a51-67d7-4c25-ba01-9cb62464c26a");
-        public int Integer { get; set; }
 
-        public string String { get; set; } = "";
+        #endregion
+
+        #region Built-In Types
 
         public bool Boolean { get; set; } = false;
 
+        public byte Byte { get; set; }
+
+        public sbyte SByte { get; set; }
+
+        public char Char { get; set; }
+
         public decimal Decimal { get; set; }
+
+        public double Double { get; set; }
+
+        public float Float { get; set; }
+
+        public int Integer { get; set; }
+
+        public uint UInt { get; set; }
 
         public long Long { get; set; }
 
+        public ulong ULong { get; set; }
+
+        public short Short { get; set; }
+
+        public ushort UShort { get; set; }
+
+        #endregion
+
+        #region Reference Types
+        public string String { get; set; } = "";
+
+        #endregion
+
+        #region CommonClasses
         public DateTime DateTime { get; set; }
 
         public DateTimeOffset DateTimeOffset { get; set;}
@@ -36,6 +67,8 @@ namespace Linql.Core.Test
         public DataModel OneToOne { get; set; }
 
         public NullableModel OneToOneNullable { get; set; }
+
+        #endregion
     }
 
     public class NullableModel

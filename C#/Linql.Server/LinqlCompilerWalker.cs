@@ -163,7 +163,7 @@ namespace Linql.Server
 
 
             JsonElement jsonElement = (JsonElement)Obj.Value;
-            object value = jsonElement.Deserialize(foundType);
+            object value = jsonElement.Deserialize(foundType, this.JsonOptions);
             Expression expression = Expression.Constant(value, foundType);
 
             if (Obj.Next != null)

@@ -51,6 +51,7 @@ namespace Linql.Client
                 this.JsonOptions = new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+                    PropertyNameCaseInsensitive = true
                 };
             }
             else
@@ -74,7 +75,7 @@ namespace Linql.Client
 
         protected virtual async Task<TResult> SendHttpRequest<TResult>(string Endpoint, LinqlSearch Search)
         {
-            string search = JsonSerializer.Serialize(Search);
+            string search = JsonSerializer.Serialize(Search, this.JsonOptions);
             StringContent requestContent = new StringContent(search, Encoding.UTF8, "application/json");
             HttpResponseMessage response = await this.HttpClient.PostAsync(Endpoint, requestContent);
             var contentStream = await response.Content.ReadAsStreamAsync();

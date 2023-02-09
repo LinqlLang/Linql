@@ -1,0 +1,48 @@
+using Linql.Server;
+using Microsoft.AspNetCore.Http.Json;
+using NetTopologySuite;
+using NetTopologySuite.IO.Converters;
+using System.Text.Json;
+using WebApiExample;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        
+        // this constructor is overloaded.  see other overloads for options.
+        var geoJsonConverterFactory = new GeoJsonConverterFactory();
+        options.JsonSerializerOptions.Converters.Add(geoJsonConverterFactory);
+        
+    });
+
+builder.Services.AddSingleton(NtsGeometryServices.Instance);
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<DataService, DataService>();
+
+builder.Services.AddSingleton<LinqlCompiler, CustomLinqlCompiler>();
+
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();

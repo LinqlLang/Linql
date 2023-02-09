@@ -24,24 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="TestFiles\DataTypes\DateTime_Equals.json" />
-    <None Remove="TestFiles\DataTypes\Guid.json" />
-    <None Remove="TestFiles\SimpleExpressions\ToList.json" />
-    <None Remove="TestFiles\Smoke\FirstOrDefault.json" />
-    <None Remove="TestFiles\Smoke\FirstOrDefaultWithPredicate.json" />
-    <None Remove="TestFiles\Smoke\Inner_Lambda.json" />
-    <None Remove="TestFiles\Smoke\LinqlObject_NonZero.json" />
-    <None Remove="TestFiles\Smoke\List_Int_Contains.json" />
-    <None Remove="TestFiles\Smoke\List_Int_Count.json" />
-    <None Remove="TestFiles\Smoke\SelectMany.json" />
-    <None Remove="TestFiles\Smoke\SelectManyDouble.json" />
-    <None Remove="TestFiles\Smoke\Select_Test.json" />
-    <None Remove="TestFiles\Smoke\String_Contains.json" />
-    <None Remove="TestFiles\Smoke\ToListAsync.json" />
-  </ItemGroup>
-
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Linql.Client\Linql.Client.csproj" />
   </ItemGroup>
 
