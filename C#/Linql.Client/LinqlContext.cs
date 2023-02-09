@@ -68,7 +68,7 @@ namespace Linql.Client
                 throw new System.Exception("No HttpClient was configured in this LinqlContext.  Please pass a BaseUrl string into the constructor or derive and override the HttpClient property.");
             }
 
-            string url = this.GetEndpoint(Type);
+            string url = this.GetEndpoint(Type, Search);
             return await this.SendHttpRequest< TResult>(url, Search);
             
         }

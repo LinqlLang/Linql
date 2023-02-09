@@ -179,5 +179,16 @@ namespace Linql.Server.Test
 
         }
 
+
+        [Test]
+        public void DateTimeProperties()
+        {
+            LinqlSearch<DataModel> search = new LinqlSearch<DataModel>();
+            LinqlSearch compiledSearch = search.Where(r => r.DateTime.Year == DateTime.Now.Year).ToLinqlSearch();
+            Assert.DoesNotThrow(() => this.Compiler.Execute<IEnumerable<DataModel>>(compiledSearch, this.Data.AsQueryable()));
+
+
+        }
+
     }
 }

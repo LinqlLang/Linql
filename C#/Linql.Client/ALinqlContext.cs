@@ -36,9 +36,10 @@ namespace Linql.Client
 
         //#region Context
 
-        protected virtual string GetEndpoint(Type QueryableType)
+        protected virtual string GetEndpoint(Type QueryableType, LinqlSearch Search)
         {
-            return $"linql/{QueryableType.Name}";
+
+            return $"linql/{Search.Type.TypeName}";
         }
 
         public virtual LinqlSearch<T> Set<T>()

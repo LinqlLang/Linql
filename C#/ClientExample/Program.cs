@@ -40,9 +40,17 @@ stateWithIdsBetween.ForEach(r =>
     Console.WriteLine($"{r.State_Code}");
 });
 
-List<State> statePopulationQuery = await states.Where(r => r.Data.Any(s => s.Variable == "Population" && s.Value < 3234812 && s.Year == 2022)).ToListAsync();
+List<State> statePopulationQuery = await states.Where(r => r.Data.Any(s => s.Variable == "Population" && s.Value < 3234812 && s.DateOfRecording.Year == 2022)).ToListAsync();
+
+List<StateData> stateData = await states.SelectMany(r => r.Data).Where(s => s.Variable == "Population" && s.Value < 3234812 && s.DateOfRecording.Year == 2022).ToListAsync();
+
 
 statePopulationQuery.ForEach(r =>
 {
     Console.WriteLine($"{r.State_Code}");
+});
+
+stateData.ForEach(r =>
+{
+    Console.WriteLine($"{r.Value}");
 });

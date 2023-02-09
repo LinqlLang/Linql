@@ -37,6 +37,7 @@ namespace WebApiExample
                     StateData data = new StateData();
                     data.Year = r;
                     DateTime observation = DateTime.Parse($"1/{random.Next(1, 12)}/{r}");
+                    data.DateOfRecording = observation;
                     data.Variable = "Population";
                     data.Value = random.Next(500000, 1000000) * random.Next(1, 12);
                     state.Data.Add(data);

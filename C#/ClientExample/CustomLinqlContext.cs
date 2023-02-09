@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Linql.Client;
+using Linql.Core;
 using NetTopologySuite.IO.Converters;
 
 public class CustomLinqlContext : LinqlContext
@@ -12,8 +13,8 @@ public class CustomLinqlContext : LinqlContext
 
     }
 
-    protected override string GetEndpoint(Type QueryableType)
+    protected override string GetEndpoint(Type QueryableType, LinqlSearch Search)
     {
-        return $"{QueryableType.Name}";
+        return $"{Search.Type.TypeName}";
     }
 }
