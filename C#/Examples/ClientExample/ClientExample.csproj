@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ExampleDataModel\ExampleDataModel.csproj" />
-    <ProjectReference Include="..\Linql.Client\Linql.Client.csproj" />
+    <ProjectReference Include="..\..\Linql.Client\Linql.Client.csproj" />
   </ItemGroup>
 
 </Project>

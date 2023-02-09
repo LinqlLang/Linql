@@ -21,11 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Linql.Core.Test", "Test\Lin
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{AB8700C7-0C9F-4AE4-9B84-4F0AE55151C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiExample", "WebApiExample\WebApiExample.csproj", "{DEC2F9EB-EDE6-4D9D-8998-29005B2E8F1E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiExample", "Examples\WebApiExample\WebApiExample.csproj", "{DEC2F9EB-EDE6-4D9D-8998-29005B2E8F1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientExample", "ClientExample\ClientExample.csproj", "{724D24D0-42AC-4875-A735-96629AB45479}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientExample", "Examples\ClientExample\ClientExample.csproj", "{724D24D0-42AC-4875-A735-96629AB45479}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleDataModel", "ExampleDataModel\ExampleDataModel.csproj", "{DE5FDCD0-FC32-4A4A-AB8E-D2D851F83064}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleDataModel", "Examples\ExampleDataModel\ExampleDataModel.csproj", "{DE5FDCD0-FC32-4A4A-AB8E-D2D851F83064}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
