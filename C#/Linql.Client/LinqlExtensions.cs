@@ -101,7 +101,7 @@ namespace Linql.Client
             {
                 LinqlSearch search = source.CustomLinqlFunction(FunctionName, Predicate);
 
-                return await linqlProvider.SendRequestAsync<TResult>(typeof(TSource), search);
+                return await linqlProvider.SendRequestAsync<TResult>(search);
             }
             else
             {

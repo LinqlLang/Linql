@@ -42,6 +42,7 @@ namespace Linql.Server.Test
             MethodInfo foundMethod = this.FindMethod(typeof(IQueryable<DataModel>), function, functionArgs);
 
             Assert.That(foundMethod, Is.EqualTo(methodToComapre));
+
         }
 
         [Test]

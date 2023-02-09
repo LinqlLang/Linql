@@ -124,40 +124,50 @@ namespace Linql.Client.Test
         }
 
 
-        //[Test]
-        //public async Task ToListAsync_IQueryable()
-        //{
+        [Test]
+        public async Task ToListAsync_IQueryable()
+        {
 
-        //    Assert.DoesNotThrowAsync(async () =>
-        //    {
-        //        LinqlContext context = new MockLinqlContext("http://localhost");
+            Assert.DoesNotThrowAsync(async () =>
+            {
+                LinqlContext context = new MockLinqlContext("http://localhost");
 
-        //        bool test = false;
-        //        LinqlSearch<DataModel> search = context.Set<DataModel>();
-        //        List<DataModel> output = await search.Where(r => r.OneToOneNullable.Integer.HasValue && r.OneToOneNullable.Integer.Value == 1).ToListAsync();
+                bool test = false;
+                LinqlSearch<DataModel> search = context.Set<DataModel>();
+                List<DataModel> output = await search.Where(r => r.OneToOneNullable.Integer.HasValue && r.OneToOneNullable.Integer.Value == 1).ToListAsync();
 
-        //        Assert.That(output.Count(), Is.EqualTo(0));
-        //    });
+                Assert.That(output.Count(), Is.EqualTo(0));
+            });
 
-        //}
+        }
+
+        [Test]
+        public void Search_Type_Based_On_First_Expression()
+        {
+
+            Assert.DoesNotThrow(() =>
+            {
+                MockLinqlContext context = new MockLinqlContext();
+
+                LinqlSearch<DataModel> search = context.Set<DataModel>();
+                LinqlSearch searchOne = search.ToListAsyncSearch();
+                LinqlSearch searchTwo = search.SelectMany(r => r.ListNullableModel).ToListAsyncSearch();
+                LinqlSearch searchThree = search.Select(r => r.OneToOneNullable).ToListAsyncSearch();
+
+                string urlOne = context.GetRoute(searchOne);
+                string urlTwo = context.GetRoute(searchTwo);
+                string urlThree = context.GetRoute(searchThree);
 
 
-        //[Test]
-        //public async Task ToList_Should_Throw_When_BaseUrl_Set()
-        //{
+                Assert.That(searchOne.Type, Is.EqualTo(searchTwo.Type));
+                Assert.That(searchOne.Type, Is.EqualTo(searchThree.Type));
+                Assert.That(urlOne, Is.EqualTo(urlTwo));
+                Assert.That(urlOne, Is.EqualTo(urlThree));
 
-        //    Assert.Catch(() =>
-        //    {
-        //        LinqlContext context = new MockLinqlContext();
+            });
 
-        //        bool test = false;
-        //        LinqlSearch<DataModel> search = context.Set<DataModel>();
-        //        List<DataModel> output = search.Where(r => r.OneToOneNullable.Integer.HasValue && r.OneToOneNullable.Integer.Value == 1).ToList();
+        }
 
-        //        Assert.That(output.Count(), Is.EqualTo(0));
-        //    });
-
-        //}
     }
 
 
@@ -165,6 +175,11 @@ namespace Linql.Client.Test
     {
 
         public MockLinqlContext(string BaseUrl = null) : base(BaseUrl) { }
+
+        public string GetRoute(LinqlSearch Search)
+        {
+            return this.GetEndpoint(Search);
+        }
 
         public override string BaseUrl
         {

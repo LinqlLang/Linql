@@ -36,7 +36,7 @@ namespace Linql.Client
 
         //#region Context
 
-        protected virtual string GetEndpoint(Type QueryableType, LinqlSearch Search)
+        protected virtual string GetEndpoint(LinqlSearch Search)
         {
 
             return $"linql/{Search.Type.TypeName}";
@@ -77,7 +77,7 @@ namespace Linql.Client
 
         public abstract TResult SendRequest<TResult>(IQueryable LinqlSearch);
 
-        public abstract Task<TResult> SendRequestAsync<TResult>(Type Type, LinqlSearch LinqlSearch);
+        public abstract Task<TResult> SendRequestAsync<TResult>(LinqlSearch LinqlSearch);
 
         public abstract string ToJson(LinqlSearch Search);
 

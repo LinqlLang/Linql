@@ -13,7 +13,7 @@ public class CustomLinqlContext : LinqlContext
 
     }
 
-    protected override string GetEndpoint(Type QueryableType, LinqlSearch Search)
+    protected override string GetEndpoint(LinqlSearch Search)
     {
         return $"{Search.Type.TypeName}";
     }

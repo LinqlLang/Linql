@@ -54,5 +54,14 @@ namespace Linql.Core
 
             return this.TypeName;
         }
+
+        public override bool Equals(object obj)
+        {
+            if(obj is LinqlType other)
+            {
+                return other.ToString() == this.ToString();
+            }
+            return false;
+        }
     }
 }
