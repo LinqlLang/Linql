@@ -31,6 +31,11 @@ namespace Linql.Core
             return typeof(IEnumerable).IsAssignableFrom(Type);
         }
 
+        public static bool IsDictionary(this Type Type)
+        {
+            return typeof(IDictionary).IsAssignableFrom(Type);
+        }
+
         public static Type GetEnumerableType(this Type Type)
         {
             if (Type.IsEnumerable())

@@ -21,7 +21,14 @@ namespace Linql.Core
 
         public override string ToString()
         {
-            return $"{FunctionName}({this.Arguments?.Count})";
+            int argumentCount = 0;
+
+            if(this.Arguments != null)
+            {
+                argumentCount = this.Arguments.Count;
+            }
+
+            return $"{FunctionName}({argumentCount})";
         }
     }
 }

@@ -25,6 +25,10 @@ namespace Linql.Core
 
         public override string ToString()
         {
+            if(this.Type == null)
+            {
+                return "LinqlSearch";
+            }
             return $"LinqlSearch<{this.Type.ToString()}>";
         }
     }

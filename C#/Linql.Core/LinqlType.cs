@@ -28,6 +28,10 @@ namespace Linql.Core
             {
                 this.TypeName = Type.Name;
             }
+            else if (Type.IsDictionary())
+            {
+                this.TypeName = "Dictionary";
+            }
             else if (typeof(IEnumerable).IsAssignableFrom(Type))
             {
                 this.TypeName = LinqlType.ListType;
@@ -48,7 +52,7 @@ namespace Linql.Core
             IEnumerable<string> genericTypes = this.GenericParameters?.Select(r => r.ToString());
             if (genericTypes != null && genericTypes.Any())
             {
-                string genericTypesJoin = String.Join(",", genericTypes);
+                string genericTypesJoin = String.Join(", ", genericTypes);
                 return $"{this.TypeName}<{genericTypesJoin}>";
             }
 

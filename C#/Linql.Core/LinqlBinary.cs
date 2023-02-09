@@ -23,7 +23,7 @@ namespace Linql.Core
 
         public override string ToString()
         {
-            return $"{this.BinaryName}";
+            return this.BinaryName;
         }
 
     }

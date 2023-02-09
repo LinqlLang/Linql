@@ -64,7 +64,13 @@ namespace Linql.Client
             {
                 search = linqlProvider.BuildLinqlRequest(source.Expression, source.GetType().GetEnumerableType());
 
-                LinqlExpression expression = search.Expressions?.FirstOrDefault();
+                LinqlExpression expression = null;
+
+                if (search.Expressions != null)
+                {
+                    expression = search.Expressions.FirstOrDefault();
+                }
+
                 LinqlFunction customFunction = new LinqlFunction(FunctionName);
 
                 if (expression != null)
@@ -72,11 +78,7 @@ namespace Linql.Client
                     LinqlExpression lastExpression = expression.GetLastExpressionInNextChain();
                     lastExpression.Next = customFunction;
                 }
-                else
-                {
-                    search.Expressions = new List<LinqlExpression>();
-                    search.Expressions.Add(customFunction);
-                }
+              
 
                 if (Predicate != null) 
                 {
@@ -129,6 +131,15 @@ namespace Linql.Client
             return await source.ExecuteCustomLinqlFunction<T, T>("FirstOrDefaultAsync", Predicate);
         }
 
+        public static LinqlSearch LastOrDefaultAsyncSearch<T>(this IQueryable<T> source, Expression<Func<T, bool>> Predicate = null)
+        {
+            return source.CustomLinqlFunction("LastOrDefaultAsync", Predicate);
+        }
+
+        public static async Task<T> LastOrDefaultAsync<T>(this IQueryable<T> source, Expression<Func<T, bool>> Predicate = null)
+        {
+            return await source.ExecuteCustomLinqlFunction<T, T>("LastOrDefaultAsync", Predicate);
+        }
 
     }
 }

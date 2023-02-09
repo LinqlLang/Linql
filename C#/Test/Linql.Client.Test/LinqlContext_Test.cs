@@ -59,7 +59,7 @@ namespace Linql.Client.Test
 
             Assert.DoesNotThrow(() =>
             {
-                LinqlContext context = new MockLinqlContext("http://localhost");
+                LinqlContext context = new ListMockLinqlContext("http://localhost");
 
                 bool test = false;
                 LinqlSearch<DataModel> search = context.Set<DataModel>();
@@ -74,7 +74,7 @@ namespace Linql.Client.Test
 
             Assert.Catch(() =>
             {
-                LinqlContext context = new MockLinqlContext();
+                LinqlContext context = new ListMockLinqlContext();
 
                 bool test = false;
                 LinqlSearch<DataModel> search = context.Set<DataModel>();
@@ -92,7 +92,7 @@ namespace Linql.Client.Test
             Assert.Catch(() =>
             {
 
-                LinqlContext context = new MockLinqlContext();
+                LinqlContext context = new ListMockLinqlContext();
 
                 //bool test = false;
                 LinqlSearch<DataModel> search = context.Set<DataModel>();
@@ -112,7 +112,7 @@ namespace Linql.Client.Test
 
             Assert.DoesNotThrowAsync(async () =>
             {
-                LinqlContext context = new MockLinqlContext("http://localhost");
+                LinqlContext context = new ListMockLinqlContext("http://localhost");
 
                 bool test = false;
                 LinqlSearch<DataModel> search = context.Set<DataModel>();
@@ -130,7 +130,7 @@ namespace Linql.Client.Test
 
             Assert.DoesNotThrowAsync(async () =>
             {
-                LinqlContext context = new MockLinqlContext("http://localhost");
+                LinqlContext context = new ListMockLinqlContext("http://localhost");
 
                 bool test = false;
                 LinqlSearch<DataModel> search = context.Set<DataModel>();
@@ -142,12 +142,47 @@ namespace Linql.Client.Test
         }
 
         [Test]
+        public async Task FirstOrDefaultAsync_IQueryable()
+        {
+
+            Assert.DoesNotThrowAsync(async () =>
+            {
+                LinqlContext context = new SingleMockLinqlContext("http://localhost");
+
+                bool test = false;
+                LinqlSearch<DataModel> search = context.Set<DataModel>();
+                DataModel output = await search.Where(r => r.OneToOneNullable.Integer.HasValue && r.OneToOneNullable.Integer.Value == 1).FirstOrDefaultAsync();
+
+                Assert.That(output, Is.Not.EqualTo(null));
+            });
+
+        }
+
+
+        [Test]
+        public async Task LastOrDefaultAsync_IQueryable()
+        {
+
+            Assert.DoesNotThrowAsync(async () =>
+            {
+                LinqlContext context = new SingleMockLinqlContext("http://localhost");
+
+                bool test = false;
+                LinqlSearch<DataModel> search = context.Set<DataModel>();
+                DataModel output = await search.Where(r => r.OneToOneNullable.Integer.HasValue && r.OneToOneNullable.Integer.Value == 1).LastOrDefaultAsync();
+
+                Assert.That(output, Is.Not.EqualTo(null));
+            });
+
+        }
+
+        [Test]
         public void Search_Type_Based_On_First_Expression()
         {
 
             Assert.DoesNotThrow(() =>
             {
-                MockLinqlContext context = new MockLinqlContext();
+                ListMockLinqlContext context = new ListMockLinqlContext();
 
                 LinqlSearch<DataModel> search = context.Set<DataModel>();
                 LinqlSearch searchOne = search.ToListAsyncSearch();
@@ -168,17 +203,60 @@ namespace Linql.Client.Test
 
         }
 
+        [Test]
+        public void Custom_Function()
+        {
+
+            Assert.DoesNotThrow(() =>
+            {
+                ListMockLinqlContext context = new ListMockLinqlContext();
+
+                LinqlSearch<DataModel> search = context.Set<DataModel>();
+                LinqlSearch result = search.CustomLinqlFunction("Test");
+                
+                Assert.That(result.Expressions.Count, Is.EqualTo(1));
+
+            });
+
+        }
+
+        [Test]
+        public void CustomLinqlFunction_Wrong_Provider()
+        {
+
+            Assert.Catch(() =>
+            {
+                List<DataModel> test = new List<DataModel>();
+                LinqlSearch result = test.AsQueryable().CustomLinqlFunction("Test");
+
+                
+
+            });
+
+        }
+
     }
 
 
-    class MockLinqlContext : LinqlContext
+    class ListMockLinqlContext : LinqlContext
     {
+        public ListMockLinqlContext() : base(null) { }
+        public ListMockLinqlContext(string BaseUrl = null) : base(BaseUrl) { }
 
-        public MockLinqlContext(string BaseUrl = null) : base(BaseUrl) { }
 
         public string GetRoute(LinqlSearch Search)
         {
             return this.GetEndpoint(Search);
+        }
+
+        protected virtual MockHttpMessageHandler BuildHandler()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            // Setup a respond for the user api (including a wildcard in the URL)
+            mockHttp.When("http://localhost/linql/*")
+                    .Respond("application/json", "[]");
+            return mockHttp;
         }
 
         public override string BaseUrl
@@ -193,18 +271,29 @@ namespace Linql.Client.Test
                 {
                     if (this.HttpClient == null)
                     {
-                        var mockHttp = new MockHttpMessageHandler();
-
-                        // Setup a respond for the user api (including a wildcard in the URL)
-                        mockHttp.When("http://localhost/linql/*")
-                                .Respond("application/json", "[]");
-
-
-                        this.HttpClient = mockHttp.ToHttpClient();
+                       
+                        this.HttpClient = this.BuildHandler().ToHttpClient();
                     }
                     this.HttpClient.BaseAddress = new Uri(value);
                 }
             }
+        }
+    }
+
+    class SingleMockLinqlContext : ListMockLinqlContext
+    {
+        public SingleMockLinqlContext() : base(null) { }
+        public SingleMockLinqlContext(string BaseUrl = null) : base(BaseUrl) { }
+
+
+        protected override MockHttpMessageHandler BuildHandler()
+        {
+            var mockHttp = new MockHttpMessageHandler();
+
+            // Setup a respond for the user api (including a wildcard in the URL)
+            mockHttp.When("http://localhost/linql/*")
+                    .Respond("application/json", "{}");
+            return mockHttp;
         }
     }
 }

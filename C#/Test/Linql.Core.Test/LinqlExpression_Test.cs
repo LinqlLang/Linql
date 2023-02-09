@@ -3,6 +3,7 @@ using NUnit.Framework.Internal;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection.Metadata;
 
 namespace Linql.Core.Test
 {
@@ -20,6 +21,10 @@ namespace Linql.Core.Test
             Assert.That(binary.Left, Is.EqualTo(left));
             Assert.That(binary.Right, Is.EqualTo(right));
 
+            string toString = binary.ToString();
+            Assert.That(toString, Is.EqualTo("test"));
+
+
         }
 
         [Test]
@@ -29,7 +34,8 @@ namespace Linql.Core.Test
             Assert.That(left.Next, Is.EqualTo(null));
             Assert.That(left.Value, Is.EqualTo(false));
             Assert.That(left.ConstantType.TypeName, Is.EqualTo(typeof(bool).ToLinqlType().TypeName));
-         
+            string toString = left.ToString();
+            Assert.That(toString, Is.EqualTo("LinqlConstant Boolean"));
         }
 
         [Test]
@@ -54,6 +60,9 @@ namespace Linql.Core.Test
             Assert.That(fun.Arguments.Count, Is.EqualTo(1));
             //Assert.That(fun.Object, Is.EqualTo(constant));
             Assert.True(fun.Arguments.Contains(constant));
+            string toString = fun.ToString();
+            Assert.That(toString, Is.EqualTo("Test(1)"));
+
 
         }
 
@@ -85,6 +94,10 @@ namespace Linql.Core.Test
             Assert.That(lam.Next, Is.EqualTo(constant));
             Assert.True(lam.Parameters.Contains(constant));
 
+            string toString = lam.ToString();
+            Assert.That(toString, Is.EqualTo("LinqlConstant Boolean"));
+
+
         }
 
         [Test]
@@ -93,6 +106,9 @@ namespace Linql.Core.Test
             LinqlObject obj = new LinqlObject(typeof(bool).ToLinqlType(), false);
             Assert.That(obj.Value, Is.EqualTo(false));
             Assert.That(obj.Type.TypeName, Is.EqualTo(typeof(bool).ToLinqlType().TypeName));
+            string toString = obj.ToString();
+            Assert.That(toString, Is.EqualTo("LinqlObject Boolean"));
+
 
         }
 
@@ -119,7 +135,7 @@ namespace Linql.Core.Test
         {
             LinqlParameter parameter = new LinqlParameter("test");
             Assert.That(parameter.ParameterName, Is.EqualTo("test"));
-
+            Assert.That(parameter.ToString(), Is.EqualTo("test"));
         }
 
         [Test]
@@ -136,6 +152,7 @@ namespace Linql.Core.Test
             LinqlProperty prop = new LinqlProperty("test");
             Assert.That(prop.PropertyName, Is.EqualTo("test"));
             Assert.That(prop.Next, Is.EqualTo(null));
+            Assert.That(prop.ToString(), Is.EqualTo("test"));
 
         }
 
@@ -146,6 +163,19 @@ namespace Linql.Core.Test
             Assert.That(type.TypeName, Is.EqualTo("List"));
             Assert.That(type.GenericParameters.Count, Is.EqualTo(1));
             Assert.That(type.GenericParameters.First().TypeName, Is.EqualTo("DataModel"));
+            string typeName = type.ToString();
+            Assert.That(typeName, Is.EqualTo("List<DataModel>"));
+
+            LinqlType dictionaryType = typeof(Dictionary<string, DataModel>).ToLinqlType();
+            string dictionaryTypeName = dictionaryType.ToString();
+            Assert.That(dictionaryTypeName, Is.EqualTo("Dictionary<String, DataModel>"));
+
+            Assert.False(dictionaryTypeName.Equals(null));
+
+            LinqlType type2 = typeof(List<DataModel>).ToLinqlType();
+
+            Assert.False(type.Equals(null));
+
 
         }
 
@@ -182,7 +212,6 @@ namespace Linql.Core.Test
             Assert.That(unary.UnaryName, Is.EqualTo("test"));
             Assert.That(unary.Arguments.Count, Is.EqualTo(1));
             Assert.That(unary.Arguments.First(), Is.EqualTo(constant));
-
         }
 
         [Test]
@@ -209,6 +238,9 @@ namespace Linql.Core.Test
 
             Assert.That(search.Type, Is.EqualTo(null));
             Assert.That(search.Expressions, Is.EqualTo(null));
+            Assert.That(search.ToString(), Is.EqualTo("LinqlSearch"));
+
+
         }
 
         [Test]
@@ -218,6 +250,9 @@ namespace Linql.Core.Test
 
             Assert.That(search.Type.TypeName, Is.EqualTo(typeof(DataModel).ToLinqlType().TypeName));
             Assert.That(search.Expressions, Is.EqualTo(null));
+
+            Assert.That(search.ToString(), Is.EqualTo("LinqlSearch<DataModel>"));
+
         }
 
         [Test]
