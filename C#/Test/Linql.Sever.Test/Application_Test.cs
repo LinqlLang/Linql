@@ -122,6 +122,18 @@ namespace Linql.Server.Test
 
         }
 
+        [Test]
+        public async Task SkipTake()
+        {
+            string json = this.TestLoader.TestFiles["SkipTake"];
+            LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+
+            IQueryable<DataModel> data = this.Data;
+
+            List<DataModel> result = this.Compiler.Execute<List<DataModel>>(search, data);
+            List<DataModel> compiledResult = result.ToList();
+        }
+
 
         [Test]
         public void LinqlObjectNotLoaded()

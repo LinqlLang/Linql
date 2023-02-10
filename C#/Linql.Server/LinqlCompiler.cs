@@ -165,9 +165,14 @@ namespace Linql.Server
                             methodArgs.Add(convertedLambda);
                         }
                     }
+                    else if(r.arg is ConstantExpression exp)
+                    {
+                        methodArgs.Add(exp.Value);
+                    }
                     else
                     {
                         methodArgs.Add(r.arg);
+
                     }
 
                 });

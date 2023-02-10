@@ -349,6 +349,16 @@ namespace Linql.Client.Test.Expressions
             string value = JsonSerializer.Serialize(jsonSearch, new JsonSerializerOptions() { WriteIndented = false, DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault });
             TestLoader.Compare(nameof(Smoke_Test.LastOrDefaultWithPredicate), value);
         }
+
+        [Test]
+        public async Task SkipTake()
+        {
+
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            LinqlSearch jsonSearch = search.Skip(1).Take(2).ToListAsyncSearch();
+            string value = JsonSerializer.Serialize(jsonSearch, new JsonSerializerOptions() { WriteIndented = false, DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault });
+            TestLoader.Compare(nameof(Smoke_Test.SkipTake), value);
+        }
     }
 
 }

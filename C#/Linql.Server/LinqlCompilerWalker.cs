@@ -115,10 +115,6 @@ namespace Linql.Server
                 {
                     Type inputType = InputType;
 
-                    if (argExpressions.Count > 0)
-                    {
-                        inputType = argExpressions.FirstOrDefault().Type;
-                    }
                     argExpression  = this.VisitLambda(r as LinqlLambda, Previous.Type.GetEnumerableType());
                 }
                 else
