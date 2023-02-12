@@ -13,6 +13,9 @@ namespace Linql.Server.Test
 
         public LinqlCompiler Compiler { get; set; }
 
+        public LinqlCompiler ExtensionCompiler { get; set; }
+
+
         protected override string TestFolder { get; set; } = "Smoke";
 
         [OneTimeSetUp]
@@ -35,7 +38,12 @@ namespace Linql.Server.Test
                 typeof(Enumerable).Assembly,
                 typeof(Queryable).Assembly
             };
+
+            HashSet<Assembly> extensionCompiler = new HashSet<Assembly>(assemblies);
+            extensionCompiler.Add(typeof(Application_Test).Assembly);
+
             this.Compiler = new LinqlCompiler(assemblies);
+            this.ExtensionCompiler = new LinqlCompiler(extensionCompiler);
 
 
         }
@@ -143,10 +151,10 @@ namespace Linql.Server.Test
             string json = this.TestLoader.TestFiles["LinqlObject"];
             IQueryable<DataModel> data = this.Data;
             LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
-            
+
             Assert.Catch(() => this.Compiler.Execute<IQueryable<DataModel>>(search, data));
 
-          
+
         }
 
 
@@ -202,5 +210,95 @@ namespace Linql.Server.Test
 
         }
 
+        [Test]
+        public void TestExtensionMethodShouldFail()
+        {
+            LinqlSearch<DataModel> search = new LinqlSearch<DataModel>();
+            LinqlSearch compiledSearch = search.Where(r => r.TestQueryableExtensionMethod()).ToLinqlSearch();
+            Assert.Catch(() => this.Compiler.Execute<IEnumerable<DataModel>>(compiledSearch, this.Data.AsQueryable()));
+
+        }
+
+        [Test]
+        public void TestExtensionMethod()
+        {
+            LinqlSearch<DataModel> search = new LinqlSearch<DataModel>();
+            LinqlSearch compiledSearch = search.Where(r => r.TestQueryableExtensionMethod()).ToLinqlSearch();
+            Assert.DoesNotThrow(() =>
+            {
+                IEnumerable<DataModel> data = this.ExtensionCompiler.Execute<IEnumerable<DataModel>>(compiledSearch, this.Data.AsQueryable());
+                Assert.That(data.Count(), Is.EqualTo(this.Data.Count()));
+
+            });
+
+        }
+
+        [Test]
+        public void TestExtensionMethodGeneric()
+        {
+            LinqlSearch<DataModel> search = new LinqlSearch<DataModel>();
+            LinqlSearch compiledSearch = search.Where(r => r.TestQueryableExtensionMethod()).ToLinqlSearch();
+            Assert.DoesNotThrow(() =>
+            {
+                IEnumerable<DataModel> data = this.ExtensionCompiler.Execute<IEnumerable<DataModel>>(compiledSearch, this.Data.AsQueryable());
+                Assert.That(data.Count(), Is.EqualTo(this.Data.Count()));
+
+            });
+
+        }
+
+        [Test]
+        public void TestExtensionMethodGenericInterface()
+        {
+            LinqlSearch<DataModel> search = new LinqlSearch<DataModel>();
+            LinqlSearch compiledSearch = search.Where(r => r.TestQueryableGenericExtensionMethodInterface()).ToLinqlSearch();
+            Assert.DoesNotThrow(() =>
+            {
+                IEnumerable<DataModel> data = this.ExtensionCompiler.Execute<IEnumerable<DataModel>>(compiledSearch, this.Data.AsQueryable());
+                Assert.That(data.Count(), Is.EqualTo(this.Data.Count()));
+
+            });
+
+        }
+
+        [Test]
+        public void TestExtensionMethodGenericAbstract()
+        {
+            LinqlSearch<DataModel> search = new LinqlSearch<DataModel>();
+            LinqlSearch compiledSearch = search.Where(r => r.TestQueryableGenericExtensionMethodAbstractClass()).ToLinqlSearch();
+            Assert.DoesNotThrow(() =>
+            {
+                IEnumerable<DataModel> data = this.ExtensionCompiler.Execute<IEnumerable<DataModel>>(compiledSearch, this.Data.AsQueryable());
+                Assert.That(data.Count(), Is.EqualTo(this.Data.Count()));
+
+            });
+
+        }
+
     }
+
+    public static class ExtensionMethodTest
+    {
+        public static bool TestQueryableExtensionMethod(this DataModel source)
+        {
+            return true;
+        }
+
+        public static bool TestQueryableGenericExtensionMethod<T>(this T source) where T: DataModel
+        {
+            return true;
+        }
+
+        public static bool TestQueryableGenericExtensionMethodInterface<T>(this T source) where T : IDataModel
+        {
+            return true;
+        }
+
+        public static bool TestQueryableGenericExtensionMethodAbstractClass<T>(this T source) where T : ADataModel
+        {
+            return true;
+        }
+    }
+
+
 }

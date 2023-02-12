@@ -6,17 +6,30 @@ using System.Threading.Tasks;
 
 namespace Linql.Core.Test
 {
-    public class DataModel
+
+    public interface IDataModel
+    {
+        public bool Boolean { get; set; }
+
+    }
+
+    public abstract class ADataModel : IDataModel
+    {
+        public virtual bool Boolean { get; set; } = false;
+
+    }
+
+    public class DataModel : ADataModel
     {
         #region static Anchors
-        
+
         public static Guid GuidAnchor = Guid.Parse("40869a51-67d7-4c25-ba01-9cb62464c26a");
 
         #endregion
 
         #region Built-In Types
 
-        public bool Boolean { get; set; } = false;
+        public override bool Boolean { get; set; } = false;
 
         public byte Byte { get; set; }
 
@@ -52,7 +65,7 @@ namespace Linql.Core.Test
         #region CommonClasses
         public DateTime DateTime { get; set; }
 
-        public DateTimeOffset DateTimeOffset { get; set;}
+        public DateTimeOffset DateTimeOffset { get; set; }
 
         public Guid Guid { get; set; }
 
