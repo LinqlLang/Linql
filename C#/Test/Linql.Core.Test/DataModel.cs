@@ -13,13 +13,12 @@ namespace Linql.Core.Test
 
     }
 
-    public abstract class ADataModel : IDataModel
+    public abstract class ADataModel
     {
-        public virtual bool Boolean { get; set; } = false;
 
     }
 
-    public class DataModel : ADataModel
+    public class DataModel : ADataModel, IDataModel
     {
         #region static Anchors
 
@@ -29,7 +28,7 @@ namespace Linql.Core.Test
 
         #region Built-In Types
 
-        public override bool Boolean { get; set; } = false;
+        public bool Boolean { get; set; } = false;
 
         public byte Byte { get; set; }
 

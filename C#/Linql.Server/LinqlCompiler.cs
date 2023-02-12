@@ -292,23 +292,19 @@ namespace Linql.Server
             IEnumerable<Type> types = this.ValidAssemblies.SelectMany(r => r.GetTypes()).Where(r => r.IsSealed && !r.IsGenericType && !r.IsNested);
             Type extendTypeDef = extendedType.GetGenericTypeDefinitionSafe();
 
-
-            //List<MethodInfo> methods2 = types.SelectMany(r => r.GetMethods()).ToList();
-
-            //MethodInfo myMethod = methods2.FirstOrDefault(r => r.Name.Contains("TestQueryableGenericExtensionMethodInterface"));
-            //ParameterInfo parameter = myMethod.GetParameters().FirstOrDefault();
-
             IEnumerable<MethodInfo> allMethods = types.SelectMany(r => r.GetMethods()).Where(s => s.GetParameters().Count() > 0);
 
             IEnumerable<MethodInfo> assignableMethods = allMethods.Where(r =>
             {
+                string methodName = r.Name;
                 IEnumerable<ParameterInfo> parameters = r.GetParameters();
                 ParameterInfo parameter = parameters.FirstOrDefault();
                 Type genericParameterType = parameter.ParameterType.GetGenericTypeDefinitionSafe();
 
                 if (genericParameterType.IsGenericParameter)
                 {
-                    return genericParameterType.GetInterfaces().Any(s => s.IsAssignableFrom(extendTypeDef));
+                    return genericParameterType.GetInterfaces().Any(s => s.IsAssignableFrom(extendTypeDef)) 
+                    || genericParameterType.BaseType.GetGenericTypeDefinitionSafe().IsAssignableFrom(extendedType);
                 }
                 else
                 {
@@ -318,19 +314,6 @@ namespace Linql.Server
                 }
             });
 
-      
-
-            //List<MethodInfo> methods = types
-            //    .SelectMany(r => r.GetMethods())
-            //    .Where(s =>
-            //    s.GetParameters().Count() > 0
-            //    &&
-            //    (s.GetParameters().FirstOrDefault().ParameterType.GetGenericTypeDefinitionSafe().IsAssignableFrom(extendedType.GetGenericTypeDefinitionSafe())
-            //    ||
-            //    extendedType.GetInterface(s.GetParameters().FirstOrDefault().ParameterType.GetGenericTypeDefinitionSafe().Name) != null
-            //    )
-            //    )
-            //    .ToList();
             return assignableMethods.ToList();
         }
 

@@ -275,6 +275,36 @@ namespace Linql.Server.Test
 
         }
 
+
+        [Test]
+        public void TestInterfaceExtensionMethod()
+        {
+            LinqlSearch<DataModel> search = new LinqlSearch<DataModel>();
+            LinqlSearch compiledSearch = search.Where(r => r.TestInterfaceExtensionMethod()).ToLinqlSearch();
+            Assert.DoesNotThrow(() =>
+            {
+                IEnumerable<DataModel> data = this.ExtensionCompiler.Execute<IEnumerable<DataModel>>(compiledSearch, this.Data.AsQueryable());
+                Assert.That(data.Count(), Is.EqualTo(this.Data.Count()));
+
+            });
+
+        }
+
+        [Test]
+        public void TestAbstractExtensionMethod()
+        {
+            LinqlSearch<DataModel> search = new LinqlSearch<DataModel>();
+            LinqlSearch compiledSearch = search.Where(r => r.TestAbstractExtensionMethod()).ToLinqlSearch();
+            Assert.DoesNotThrow(() =>
+            {
+                IEnumerable<DataModel> data = this.ExtensionCompiler.Execute<IEnumerable<DataModel>>(compiledSearch, this.Data.AsQueryable());
+                Assert.That(data.Count(), Is.EqualTo(this.Data.Count()));
+
+            });
+
+        }
+
+
     }
 
     public static class ExtensionMethodTest
@@ -295,6 +325,16 @@ namespace Linql.Server.Test
         }
 
         public static bool TestQueryableGenericExtensionMethodAbstractClass<T>(this T source) where T : ADataModel
+        {
+            return true;
+        }
+
+        public static bool TestInterfaceExtensionMethod(this IDataModel source)
+        {
+            return true;
+        }
+
+        public static bool TestAbstractExtensionMethod(this ADataModel source)
         {
             return true;
         }
