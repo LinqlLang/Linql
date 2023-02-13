@@ -1,7 +1,10 @@
+import { LinqlExpression } from "linql.core";
+
 export abstract class ALinqlSearch<T>
 {
+    public Expressions: Array<LinqlExpression> | undefined;
 
-    constructor(public Type: (string | (new () => T)), public ArgumentContext: {} | undefined = {}, Context: ALinqlContext)
+    constructor(public Type: (string | (new () => T)), public ArgumentContext: {} | undefined = {}, public Context: ALinqlContext)
     {
 
     }
