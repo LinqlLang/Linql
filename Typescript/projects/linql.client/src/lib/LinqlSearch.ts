@@ -14,7 +14,7 @@ export class LinqlSearch<T> extends ALinqlSearch<T>
         super(Type, ArgumentContext, Context);
     }
 
-    protected Copy(): LinqlSearch<T>
+    public Copy(): LinqlSearch<T>
     {
         const search = new LinqlSearch<T>(this.Type, this.ArgumentContext, this.Context);
 
@@ -28,7 +28,7 @@ export class LinqlSearch<T> extends ALinqlSearch<T>
 
     private Parse(Expression: AnyExpression<T> | string | undefined): LinqlExpression
     {
-        return {} as LinqlExpression;
+        return this.Context.Parse(Expression);
     }
 
     //#region Functions
@@ -44,7 +44,18 @@ export class LinqlSearch<T> extends ALinqlSearch<T>
 
         const newExpression = this.Parse(Expression);
         const newSearch = this.Copy();
-        newSearch.Expressions?.push(newExpression);
+
+        const firstExpression = this.Expressions?.find(r => true);
+
+        if (firstExpression)
+        {
+            const lastExpression = firstExpression.GetLastExpressionInNextChain();
+            lastExpression.Next = newExpression;
+        }
+        else
+        {
+            newSearch.Expressions?.push(newExpression);
+        }
         return newSearch as any as LinqlSearch<S>;
     }
 
@@ -96,7 +107,7 @@ export class LinqlSearch<T> extends ALinqlSearch<T>
     public skip(Skip: number): LinqlSearch<T>
     {
         const type = new LinqlType();
-        type.TypeName = "int32";
+        type.TypeName = "Int32";
         const constant = new LinqlConstant(type, Skip);
         const fun = new LinqlFunction("Skip", [constant]);
         const newExpression = this.Copy();
@@ -107,7 +118,7 @@ export class LinqlSearch<T> extends ALinqlSearch<T>
     public take(Take: number): LinqlSearch<T>
     {
         const type = new LinqlType();
-        type.TypeName = "int32";
+        type.TypeName = "Int32";
         const constant = new LinqlConstant(type, Take);
         const fun = new LinqlFunction("Take", [constant]);
         const newExpression = this.Copy();
@@ -115,7 +126,26 @@ export class LinqlSearch<T> extends ALinqlSearch<T>
         return newExpression;
     }
 
+    toJson()
+    {
+        return this.Context.ToJson(this);
+    }
 
+
+    //#endregion
+
+    //#region ExecuteFunctions
+
+    async executeCustomLinqlFunction<TResult>(FunctionName: string, Predicate: AnyExpression<any> | string | undefined)
+    {
+        const search = this.CustomLinqlFunction(FunctionName, Predicate);
+        return await this.Context.GetResult<TResult>(search);
+    }
+
+    async toListAsync()
+    {
+        return null;
+    }
     //#endregion
 
 }

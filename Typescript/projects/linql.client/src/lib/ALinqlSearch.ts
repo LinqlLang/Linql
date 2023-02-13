@@ -17,6 +17,17 @@ export abstract class ALinqlContext
 
     }
 
+    public abstract GetResult<TResult>(Search: ALinqlSearch<any>): Promise<TResult>;
+
+    protected abstract SendHttpRequest<TResult>(Endpoint: string, Search: ALinqlSearch<any>): Promise<TResult>;
+
+    protected abstract SendRequest<TResult>(Search: ALinqlSearch<any>): Promise<TResult>;
+
+    ToJson(Search: ALinqlSearch<any>)
+    {
+        return JSON.stringify(Search);
+    }
+
     protected GetEndpoint(Search: ALinqlSearch<any>)
     {
         let endPoint: string;
@@ -30,6 +41,8 @@ export abstract class ALinqlContext
         }
         return `linql/${ endPoint }`
     }
+
+    public abstract Parse(Expression: any): LinqlExpression;
 
     public Set<T>(Type: new () => T, ArgumentContext: {} | undefined): ALinqlSearch<T>
     {
