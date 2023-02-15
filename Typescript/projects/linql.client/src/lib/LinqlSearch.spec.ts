@@ -7,55 +7,83 @@ class DataModel
 {
     Number: number = 1;
     Boolean: boolean = true;
+    OneToOne!: DataModel;
+}
+
+class TestClass
+{
+    test: boolean = false;
+    context: ALinqlContext = new LinqlContext(LinqlSearch as any as LinqlSearchConstructor<any>, { this: this });
+    testFiles = new TestFileLoader("Smoke");
+
+    async EmptySearch()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search;
+        await this._ExecuteTest("EmptySearch", newSearch);
+    }
+
+    async SimpleConstant()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.filter(r => true);
+        await this._ExecuteTest("SimpleConstant", newSearch);
+    }
+    async SimpleBooleanProperty()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.filter(r => r.Boolean);
+        await this._ExecuteTest("SimpleBooleanProperty", newSearch);
+    }
+
+    async BooleanNegate()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.filter(r => !r.Boolean);
+        await this._ExecuteTest("BooleanNegate", newSearch);
+    }
+
+    async SimpleBooleanPropertyChaining()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.filter(r => r.OneToOne.Boolean);
+        await this._ExecuteTest("SimpleBooleanPropertyChaining", newSearch);
+    }
+
+    async SimpleBooleanPropertyEqualsSwap()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.filter(r => false === r.Boolean);
+        await this._ExecuteTest("SimpleBooleanPropertyEqualsSwap", newSearch);
+    }
+
+    private async _ExecuteTest(TestName: string, newSearch: LinqlSearch<any>)
+    {
+        const json = newSearch.toJson();
+        const compare = await this.testFiles.GetFile(TestName);
+        expect(json).toEqual(compare);
+    }
+
 }
 
 
 describe('LinqlSearch', () =>
 {
-    const testFiles = new TestFileLoader("Smoke");
     const contextArgs: any = {} as any;
     const test = { this: contextArgs };
     let context: ALinqlContext = new LinqlContext(LinqlSearch as any as LinqlSearchConstructor<any>, { this: contextArgs });
+    const testClass = new TestClass();
 
-    const emptySearch = 'EmptySearch';
-    it(emptySearch, async () =>
+    for (let key of Object.getOwnPropertyNames(testClass.constructor.prototype))
     {
-        const search = context.Set<DataModel>(DataModel);
-        const newSearch = search;
-        const json = newSearch.toJson();
-        const compare = await testFiles.GetFile(emptySearch);
-        expect(json).toEqual(compare);
-    });
-
-    const simpleConstant = 'SimpleConstant';
-    it(simpleConstant, async () =>
-    {
-        const search = context.Set<DataModel>(DataModel);
-        const newSearch = search.filter(r => true);
-        const json = newSearch.toJson();
-        const compare = await testFiles.GetFile(simpleConstant);
-        expect(json).toEqual(compare);
-    });
-
-    const simpleBooleanProperty = 'SimpleBooleanProperty';
-    it(simpleBooleanProperty, async () =>
-    {
-        const search = context.Set<DataModel>(DataModel);
-        const newSearch = search.filter(r => r.Boolean);
-        const json = newSearch.toJson();
-        const compare = await testFiles.GetFile(simpleBooleanProperty);
-        expect(json).toEqual(compare);
-    });
-
-    const booleanNegate = 'BooleanNegate';
-    it(booleanNegate, async () =>
-    {
-        const search = context.Set<DataModel>(DataModel);
-        const newSearch = search.filter(r => !r.Boolean);
-        const json = newSearch.toJson();
-        const compare = await testFiles.GetFile(booleanNegate);
-        console.log(json);
-        console.log(compare);
-        expect(json).toEqual(compare);
-    });
+        const any = testClass as any;
+        const value = any[key];
+        if (key !== "constructor" && key.indexOf("_") == -1 && typeof value === "function")
+        {
+            it(key, async () =>
+            {
+                await any[key]();
+            });
+        }
+    }
 });

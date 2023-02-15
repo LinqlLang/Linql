@@ -1,4 +1,4 @@
-import { LinqlConstant, LinqlExpression, LinqlLambda, LinqlObject, LinqlParameter, LinqlProperty, LinqlType, LinqlUnary } from "linql.core";
+import { LinqlBinary, LinqlConstant, LinqlExpression, LinqlLambda, LinqlObject, LinqlParameter, LinqlProperty, LinqlType, LinqlUnary } from "linql.core";
 import { AnyExpression } from "./Types";
 import * as Acorn from 'acorn';
 import * as AcornWalk from 'acorn-walk';
@@ -14,7 +14,7 @@ export class LinqlParser
 
     Root: LinqlExpression | undefined;
 
-    constructor(protected RootExpression: AnyExpression<any> | string | undefined | Acorn.Node)
+    constructor(protected RootExpression: AnyExpression<any> | string | undefined | Acorn.Node, protected ArgumentContext: {})
     {
         this.Visit();
     }
@@ -92,7 +92,7 @@ export class LinqlParser
             },
             BinaryExpression(Node: Acorn.Node, State: LinqlParser, Callback: AcornWalk.WalkerCallback<LinqlParser>)
             {
-                debugger;
+                State.VisitBinary(Node, Callback);
             },
             UnaryExpression(Node: Acorn.Node, State: LinqlParser, Callback: AcornWalk.WalkerCallback<LinqlParser>)
             {
@@ -130,7 +130,7 @@ export class LinqlParser
             linqlLambda.Parameters.push(param);
         });
 
-        const bodyParser = new LinqlParser(lambda.body as Acorn.Node);
+        const bodyParser = new LinqlParser(lambda.body as Acorn.Node, this.ArgumentContext);
         linqlLambda.Body = bodyParser.Root;
     }
 
@@ -219,6 +219,41 @@ export class LinqlParser
         else
         {
             throw `Unable interpret unary operator ${ Node }`;
+        }
+    }
+
+    VisitBinary(Node: Acorn.Node, Callback: AcornWalk.WalkerCallback<LinqlParser>)
+    {
+        const node = Node as any as ESTree.BinaryExpression;
+        let binary: LinqlBinary | undefined;
+        switch (node.operator)
+        {
+            case "==":
+            case "===":
+                binary = new LinqlBinary("Equal");
+                break;
+            default:
+                break;
+
+        }
+
+        if (binary)
+        {
+            this.AttachToExpression(binary);
+            this.PushToStack(binary, Node);
+
+            const left = node.left;
+            const right = node.right;
+
+            const leftParser = new LinqlParser(left as Acorn.Node, this.ArgumentContext);
+            const rightParser = new LinqlParser(right as Acorn.Node, this.ArgumentContext);
+
+            binary.Left = leftParser.Root;
+            binary.Right = rightParser.Root;
+        }
+        else
+        {
+            throw `Unable to find binary expression ${ node }`;
         }
     }
 

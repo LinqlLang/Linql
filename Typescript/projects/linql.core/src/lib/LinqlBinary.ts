@@ -3,10 +3,16 @@ import { LinqlExpression } from "./LinqlExpression";
 export class LinqlBinary extends LinqlExpression
 {
     "$type": string = "LinqlBinary";
+    BinaryName: string;
+    Left: LinqlExpression | undefined;
+    Right: LinqlExpression | undefined;
 
-    constructor(public BinaryName: string, public Left: LinqlExpression | undefined = undefined, public Right: LinqlExpression | undefined = undefined)
+    constructor(BinaryName: string, Left: LinqlExpression | undefined = undefined, Right: LinqlExpression | undefined = undefined)
     {
         super();
+        this.BinaryName = BinaryName;
+        this.Left = Left;
+        this.Right = Right;
 
     }
 }

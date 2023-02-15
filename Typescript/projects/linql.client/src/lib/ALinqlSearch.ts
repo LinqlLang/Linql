@@ -171,7 +171,7 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
 
 export abstract class ALinqlContext
 {
-    constructor(public LinqlSearchType: LinqlSearchConstructor<any>, public ArgumentContext: {} | undefined)
+    constructor(public LinqlSearchType: LinqlSearchConstructor<any>, public ArgumentContext: {} = {})
     {
 
     }
@@ -184,7 +184,7 @@ export abstract class ALinqlContext
 
     Parse(Expression: string | AnyExpression<any> | undefined): LinqlExpression | undefined
     {
-        const parser = new LinqlParser(Expression);
+        const parser = new LinqlParser(Expression, this.ArgumentContext);
         return parser.Root;
     }
 
