@@ -293,7 +293,7 @@ export class LinqlParser
     {
         const node = Node as any as ESTree.BinaryExpression;
         let binary: LinqlBinary | undefined;
-        const operator: ESTree.BinaryOperator | "&&" = node.operator as ESTree.BinaryOperator | "&&";
+        const operator: ESTree.BinaryOperator | "&&" | "||" = node.operator as ESTree.BinaryOperator | "&&" | "||";
 
         switch (operator)
         {
@@ -302,8 +302,16 @@ export class LinqlParser
                 binary = new LinqlBinary("Equal");
                 break;
             case "&":
+                binary = new LinqlBinary("And");
+                break;
             case "&&":
                 binary = new LinqlBinary("AndAlso");
+                break;
+            case "|":
+                binary = new LinqlBinary("Or");
+                break;
+            case "||":
+                binary = new LinqlBinary("OrElse");
                 break;
             case "!=":
             case "!==":

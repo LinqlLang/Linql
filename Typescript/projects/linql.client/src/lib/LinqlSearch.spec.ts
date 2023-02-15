@@ -9,6 +9,7 @@ class DataModel
     Integer: number = 1;
     Boolean: boolean = false;
     OneToOne!: DataModel;
+    ListInteger!: Array<number>;
 }
 
 class TestClass
@@ -93,6 +94,19 @@ class TestClass
         await this._ExecuteTest("ListInt", newSearch);
     }
 
+    async ListIntFromProperty()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.filter(r => r.ListInteger.Contains(1));
+        await this._ExecuteTest("ListIntFromProperty", newSearch);
+    }
+
+    async InnerLambda()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.filter(r => r.ListInteger.Any(s => s === 1));
+        await this._ExecuteTest("InnerLambda", newSearch);
+    }
 
     private async _ExecuteTest(TestName: string, newSearch: LinqlSearch<any>)
     {
