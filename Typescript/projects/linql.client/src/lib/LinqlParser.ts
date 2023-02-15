@@ -1,4 +1,4 @@
-import { LinqlBinary, LinqlConstant, LinqlExpression, LinqlLambda, LinqlObject, LinqlParameter, LinqlProperty, LinqlType, LinqlUnary } from "linql.core";
+import { LinqlBinary, LinqlConstant, LinqlExpression, LinqlFunction, LinqlLambda, LinqlObject, LinqlParameter, LinqlProperty, LinqlType, LinqlUnary } from "linql.core";
 import { AnyExpression } from "./Types";
 import * as Acorn from 'acorn';
 import * as AcornWalk from 'acorn-walk';
@@ -88,7 +88,7 @@ export class LinqlParser
             },
             CallExpression(Node: Acorn.Node, State: LinqlParser, Callback: AcornWalk.WalkerCallback<LinqlParser>)
             {
-                debugger;
+                State.VisitMethodCall(Node, Callback);
             },
             MemberExpression(Node: Acorn.Node, State: LinqlParser, Callback: AcornWalk.WalkerCallback<LinqlParser>)
             {
@@ -96,7 +96,7 @@ export class LinqlParser
             },
             LogicalExpression(Node: Acorn.Node, State: LinqlParser, Callback: AcornWalk.WalkerCallback<LinqlParser>)
             {
-                debugger;
+                State.VisitBinary(Node, Callback);
             },
             BinaryExpression(Node: Acorn.Node, State: LinqlParser, Callback: AcornWalk.WalkerCallback<LinqlParser>)
             {
@@ -293,11 +293,17 @@ export class LinqlParser
     {
         const node = Node as any as ESTree.BinaryExpression;
         let binary: LinqlBinary | undefined;
-        switch (node.operator)
+        const operator: ESTree.BinaryOperator | "&&" = node.operator as ESTree.BinaryOperator | "&&";
+
+        switch (operator)
         {
             case "==":
             case "===":
                 binary = new LinqlBinary("Equal");
+                break;
+            case "&":
+            case "&&":
+                binary = new LinqlBinary("AndAlso");
                 break;
             default:
                 break;
@@ -320,8 +326,37 @@ export class LinqlParser
         }
         else
         {
-            throw `Unable to find binary expression ${ node }`;
+            throw `Unable to find binary expression ${ node.operator }`;
         }
     }
+
+    VisitMethodCall(Node: Acorn.Node, Callback: AcornWalk.WalkerCallback<LinqlParser>)
+    {
+        const node = Node as any as ESTree.CallExpression;
+        const callee = node.callee as ESTree.MemberExpression;
+        const functionName = callee.property as ESTree.Identifier;
+        const linqlFunction = new LinqlFunction(functionName.name);
+        let functionCallee: LinqlExpression | undefined;
+
+        linqlFunction.Arguments = node.arguments.map(s =>
+        {
+            const parser = new LinqlParser(s as Acorn.Node, this.ArgumentContext);
+            return parser.Root;
+        }) as Array<LinqlExpression>;
+
+        if (callee.object)
+        {
+            const parser = new LinqlParser(callee.object as Acorn.Node, this.ArgumentContext);
+            functionCallee = parser.Root;
+        }
+
+        if (functionCallee)
+        {
+            const attachTo = functionCallee.GetLastExpressionInNextChain();
+            attachTo.Next = linqlFunction;
+            this.Root = functionCallee;
+        }
+    }
+
 
 }

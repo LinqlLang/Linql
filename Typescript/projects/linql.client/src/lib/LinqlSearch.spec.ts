@@ -2,19 +2,26 @@ import { LinqlSearch } from "./LinqlSearch";
 import { ALinqlContext, LinqlSearchConstructor } from "./ALinqlSearch";
 import { LinqlContext } from "./LinqlContext";
 import { TestFileLoader } from "./test/TestfileLoader";
+import "./Extensions/Array";
 
 class DataModel
 {
-    Number: number = 1;
-    Boolean: boolean = true;
+    Integer: number = 1;
+    Boolean: boolean = false;
     OneToOne!: DataModel;
 }
 
 class TestClass
 {
-    test: boolean = false;
+    debugMode = false;
     context: ALinqlContext = new LinqlContext(LinqlSearch as any as LinqlSearchConstructor<any>, { this: this });
     testFiles = new TestFileLoader("Smoke");
+
+    //#region TestVariables
+    test: boolean = false;
+    complex: DataModel = new DataModel();
+    integers = [1, 2, 3];
+    //#endregion
 
     async EmptySearch()
     {
@@ -65,10 +72,39 @@ class TestClass
         await this._ExecuteTest("BooleanVar", newSearch);
     }
 
+    async ComplexBoolean()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.filter(r => this.complex.Boolean);
+        await this._ExecuteTest("ComplexBoolean", newSearch);
+    }
+
+    async ThreeBooleans()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.filter(r => r.Boolean && r.Boolean && r.Boolean);
+        await this._ExecuteTest("ThreeBooleans", newSearch);
+    }
+
+    async ListInt()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.filter(r => this.integers.Contains(r.Integer));
+        await this._ExecuteTest("ListInt", newSearch);
+    }
+
+
     private async _ExecuteTest(TestName: string, newSearch: LinqlSearch<any>)
     {
         const json = newSearch.toJson();
         const compare = await this.testFiles.GetFile(TestName);
+
+        if (this.debugMode)
+        {
+            console.log(json);
+            console.log(compare);
+            debugger;
+        }
         expect(json).toEqual(compare);
     }
 
@@ -84,7 +120,13 @@ describe('LinqlSearch', () =>
     let functions = Object.getOwnPropertyNames(testClass.constructor.prototype)
         .filter(r => r !== "constructor" && r.indexOf("_") == -1);
 
-    //functions = functions.filter(r => r === "BooleanVar");
+    const functionFilter: string = "";
+
+    if (functionFilter !== "")
+    {
+        functions = functions.filter(r => r === functionFilter);
+        testClass.debugMode = true;
+    }
 
     for (let key of functions)
     {

@@ -50,8 +50,6 @@ namespace Linql.Client
             {
                 PopStack();
             }
-
-            LinqlExpression previousExpression = LinqlStack.FirstOrDefault();
         }
 
         public LinqlParser(Expression LinqlExpression) : base()

@@ -30,6 +30,19 @@ export class LinqlType
                 type.TypeName = "Int32";
                 break;
             case "object":
+
+                if (Array.isArray(Value))
+                {
+                    type.TypeName = "List";
+                    const firstValue = Value.length > 0 ? Value[0] : null;
+
+                    if (firstValue)
+                    {
+                        type.GenericParameters = new Array<LinqlType>();
+                        type.GenericParameters.push(LinqlType.GetLinqlType(firstValue));
+                    }
+                }
+                break;
             case "function":
             case "symbol":
             case "undefined":
