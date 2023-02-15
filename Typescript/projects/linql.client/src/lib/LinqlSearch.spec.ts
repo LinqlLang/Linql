@@ -57,6 +57,14 @@ class TestClass
         await this._ExecuteTest("SimpleBooleanPropertyEqualsSwap", newSearch);
     }
 
+    async BooleanVar()
+    {
+        this.test = false;
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.filter(r => false === this.test);
+        await this._ExecuteTest("BooleanVar", newSearch);
+    }
+
     private async _ExecuteTest(TestName: string, newSearch: LinqlSearch<any>)
     {
         const json = newSearch.toJson();
@@ -73,12 +81,16 @@ describe('LinqlSearch', () =>
     const test = { this: contextArgs };
     let context: ALinqlContext = new LinqlContext(LinqlSearch as any as LinqlSearchConstructor<any>, { this: contextArgs });
     const testClass = new TestClass();
+    let functions = Object.getOwnPropertyNames(testClass.constructor.prototype)
+        .filter(r => r !== "constructor" && r.indexOf("_") == -1);
 
-    for (let key of Object.getOwnPropertyNames(testClass.constructor.prototype))
+    //functions = functions.filter(r => r === "BooleanVar");
+
+    for (let key of functions)
     {
         const any = testClass as any;
         const value = any[key];
-        if (key !== "constructor" && key.indexOf("_") == -1 && typeof value === "function")
+        if (typeof value === "function")
         {
             it(key, async () =>
             {

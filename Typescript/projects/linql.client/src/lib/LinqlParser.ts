@@ -44,6 +44,14 @@ export class LinqlParser
         }
     }
 
+    RemoveFromPrevious(Expression: LinqlExpression | undefined)
+    {
+        if (Expression)
+        {
+            this.PopStack();
+        }
+    }
+
 
     protected Visit()
     {
@@ -147,9 +155,34 @@ export class LinqlParser
     VisitParameter(Node: Acorn.Node, Callback: AcornWalk.WalkerCallback<LinqlParser>)
     {
         const node = Node as any as ESTree.Identifier;
-        const param = new LinqlParameter(node.name);
-        this.AttachToExpression(param);
-        this.PushToStack(param, Node);
+        const anyArg = this.ArgumentContext as any;
+        let expression: LinqlExpression;
+
+        if (node.name.startsWith("this") || node.name.startsWith("_this"))
+        {
+            let value = anyArg[node.name];
+
+            if (!value)
+            {
+                value = anyArg["this"];
+            }
+
+            if (!value)
+            {
+                throw `Unable to extract argument ${ Node }`;
+            }
+            else
+            {
+                expression = new LinqlConstant(LinqlType.GetLinqlType(value), value);
+            }
+        }
+        else
+        {
+            expression = new LinqlParameter(node.name);
+        }
+        this.AttachToExpression(expression);
+        this.PushToStack(expression, Node);
+
 
     }
 
@@ -173,10 +206,44 @@ export class LinqlParser
         if (memberName)
         {
             const property = new LinqlProperty(memberName);
-
+            let expression: LinqlExpression | undefined;
             if (previous instanceof LinqlConstant && previous.Value && !previous.ConstantType?.IsList())
             {
+                let value = previous.Value;
 
+                if (value != null)
+                {
+                    value = value[memberName];
+                }
+
+                if (value != null)
+                {
+                    const type = LinqlType.GetLinqlType(value);
+
+                    if (value instanceof LinqlObject)
+                    {
+
+                    }
+                    else
+                    {
+                        expression = new LinqlConstant(type, value);
+                    }
+                }
+                else
+                {
+                    expression = new LinqlConstant(LinqlType.GetLinqlType(null), null);
+                }
+
+                if (expression)
+                {
+                    this.RemoveFromPrevious(previous);
+                    this.AttachToExpression(expression);
+                    this.PushToStack(expression, Node);
+                }
+                else
+                {
+                    throw `Unalbe to parse member from constant ${ previous } ${ node }`;
+                }
             }
             else if (previous instanceof LinqlObject)
             {
