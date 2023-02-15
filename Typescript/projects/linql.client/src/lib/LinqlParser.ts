@@ -305,6 +305,22 @@ export class LinqlParser
             case "&&":
                 binary = new LinqlBinary("AndAlso");
                 break;
+            case "!=":
+            case "!==":
+                binary = new LinqlBinary("NotEqual");
+                break;
+            case "<":
+                binary = new LinqlBinary("LessThan");
+                break;
+            case "<=":
+                binary = new LinqlBinary("LessThanOrEqual");
+                break;
+            case ">":
+                binary = new LinqlBinary("GreaterThan");
+                break;
+            case ">=":
+                binary = new LinqlBinary("GreaterThanOrEqual");
+                break;
             default:
                 break;
 
