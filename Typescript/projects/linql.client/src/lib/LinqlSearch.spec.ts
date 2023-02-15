@@ -6,6 +6,7 @@ import { TestFileLoader } from "./test/TestfileLoader";
 class DataModel
 {
     Number: number = 1;
+    Boolean: boolean = true;
 }
 
 
@@ -16,13 +17,23 @@ describe('LinqlSearch', () =>
     const test = { this: contextArgs };
     let context: ALinqlContext = new LinqlContext(LinqlSearch as any as LinqlSearchConstructor<any>, { this: contextArgs });
 
-    const simpleBoolean = 'SimpleBooleanFalse';
-    it(simpleBoolean, async () =>
+    const simpleConstant = 'SimpleConstant';
+    it(simpleConstant, async () =>
     {
         const search = context.Set<DataModel>(DataModel);
-        const newSearch = search.filter(r => false);
+        const newSearch = search.filter(r => true);
         const json = newSearch.toJson();
-        const compare = await testFiles.GetFile(simpleBoolean);
+        const compare = await testFiles.GetFile(simpleConstant);
+        expect(json).toEqual(compare);
+    });
+
+    const simpleBooleanProperty = 'SimpleBooleanProperty';
+    it(simpleBooleanProperty, async () =>
+    {
+        const search = context.Set<DataModel>(DataModel);
+        const newSearch = search.filter(r => r.Boolean);
+        const json = newSearch.toJson();
+        const compare = await testFiles.GetFile(simpleBooleanProperty);
         debugger;
         expect(json).toEqual(compare);
     });

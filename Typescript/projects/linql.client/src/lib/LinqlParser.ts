@@ -1,4 +1,4 @@
-import { LinqlConstant, LinqlExpression, LinqlLambda, LinqlParameter, LinqlType } from "linql.core";
+import { LinqlConstant, LinqlExpression, LinqlLambda, LinqlObject, LinqlParameter, LinqlProperty, LinqlType } from "linql.core";
 import { AnyExpression } from "./Types";
 import * as Acorn from 'acorn';
 import * as AcornWalk from 'acorn-walk';
@@ -84,7 +84,7 @@ export class LinqlParser
             },
             MemberExpression(Node: Acorn.Node, State: LinqlParser, Callback: AcornWalk.WalkerCallback<LinqlParser>)
             {
-                debugger;
+                State.VisitMember(Node, Callback);
             },
             LogicalExpression(Node: Acorn.Node, State: LinqlParser, Callback: AcornWalk.WalkerCallback<LinqlParser>)
             {
@@ -100,7 +100,7 @@ export class LinqlParser
             },
             Identifier(Node: Acorn.Node, State: LinqlParser, Callback: AcornWalk.WalkerCallback<LinqlParser>)
             {
-                debugger;
+                State.VisitParameter(Node, Callback);
             },
             Literal(Node: Acorn.Node, State: LinqlParser, Callback: AcornWalk.WalkerCallback<LinqlParser>)
             {
@@ -142,6 +142,60 @@ export class LinqlParser
         const constant = new LinqlConstant(type, value);
         this.AttachToExpression(constant);
         this.PushToStack(constant, Node);
+    }
+
+    VisitParameter(Node: Acorn.Node, Callback: AcornWalk.WalkerCallback<LinqlParser>)
+    {
+        const node = Node as any as ESTree.Identifier;
+        const param = new LinqlParameter(node.name);
+        this.AttachToExpression(param);
+        this.PushToStack(param, Node);
+
+    }
+
+    VisitMember(Node: Acorn.Node, Callback: AcornWalk.WalkerCallback<LinqlParser>)
+    {
+        debugger;
+        const node = Node as any as ESTree.MemberExpression;
+
+        let memberName: string | undefined;
+
+        switch (node.property.type)
+        {
+            case "Identifier":
+            default:
+                memberName = (node.property as ESTree.Identifier).name;
+                break;
+        }
+
+        Callback(node.object as Acorn.Node, this);
+        const previous = this.LinqlStack.at(-1);
+
+        if (memberName)
+        {
+            const property = new LinqlProperty(memberName);
+
+            if (previous instanceof LinqlConstant && previous.Value && !previous.ConstantType?.IsList())
+            {
+
+            }
+            else if (previous instanceof LinqlObject)
+            {
+
+            }
+            else
+            {
+                this.AttachToExpression(property);
+                this.PushToStack(property, Node);
+            }
+
+        }
+        else
+        {
+            throw `Was unable to find Member for ${ node }`;
+        }
+
+
     }
 
 }
