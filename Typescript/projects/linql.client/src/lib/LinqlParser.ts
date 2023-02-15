@@ -1,4 +1,4 @@
-import { LinqlConstant, LinqlExpression, LinqlLambda, LinqlObject, LinqlParameter, LinqlProperty, LinqlType } from "linql.core";
+import { LinqlConstant, LinqlExpression, LinqlLambda, LinqlObject, LinqlParameter, LinqlProperty, LinqlType, LinqlUnary } from "linql.core";
 import { AnyExpression } from "./Types";
 import * as Acorn from 'acorn';
 import * as AcornWalk from 'acorn-walk';
@@ -33,7 +33,7 @@ export class LinqlParser
 
     AttachToExpression(ExpressionToAttach: LinqlExpression)
     {
-        const previousExpression = this.LinqlStack.find(r => true);
+        const previousExpression = this.LinqlStack.at(-1);
         if (previousExpression)
         {
             previousExpression.Next = ExpressionToAttach;
@@ -96,7 +96,7 @@ export class LinqlParser
             },
             UnaryExpression(Node: Acorn.Node, State: LinqlParser, Callback: AcornWalk.WalkerCallback<LinqlParser>)
             {
-                debugger;
+                State.VisitUnary(Node, Callback);
             },
             Identifier(Node: Acorn.Node, State: LinqlParser, Callback: AcornWalk.WalkerCallback<LinqlParser>)
             {
@@ -155,7 +155,6 @@ export class LinqlParser
 
     VisitMember(Node: Acorn.Node, Callback: AcornWalk.WalkerCallback<LinqlParser>)
     {
-        debugger;
         const node = Node as any as ESTree.MemberExpression;
 
         let memberName: string | undefined;
@@ -196,6 +195,31 @@ export class LinqlParser
         }
 
 
+    }
+
+    VisitUnary(Node: Acorn.Node, Callback: AcornWalk.WalkerCallback<LinqlParser>)
+    {
+        const node = Node as any as ESTree.UnaryExpression;
+        let unary: LinqlUnary | undefined;
+        switch (node.operator)
+        {
+            case "!":
+                unary = new LinqlUnary("Not");
+                break;
+            default:
+                break;
+        }
+
+        if (unary)
+        {
+            this.AttachToExpression(unary);
+            this.PushToStack(unary, Node);
+            Callback(node.argument as Acorn.Node, this);
+        }
+        else
+        {
+            throw `Unable interpret unary operator ${ Node }`;
+        }
     }
 
 }
