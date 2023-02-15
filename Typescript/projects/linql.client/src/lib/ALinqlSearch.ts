@@ -1,6 +1,7 @@
 import { LinqlConstant, LinqlExpression, LinqlFunction, LinqlSearch, LinqlType } from "linql.core";
 import { AOrderedLinqlSearch } from "./AOrderedLinqlSearch";
 import { IGrouping } from "./IGrouping";
+import { LinqlParser } from "./LinqlParser";
 import { AnyExpression, BooleanExpression, GenericConstructor, TransformExpression } from "./Types";
 
 
@@ -19,6 +20,22 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
     constructor(public ModelType: string | GenericConstructor<T>, public ArgumentContext: {} | undefined = {}, public Context: ALinqlContext)
     {
         super(new LinqlType());
+        this.Type.TypeName = this.Context.GetTypeName(ModelType);
+        this.Expressions = new Array<LinqlExpression>();
+        const searchExpression = this.BuildLinqlSearchExpression();
+        this.Expressions.push(searchExpression);
+    }
+
+
+    private BuildLinqlSearchExpression()
+    {
+        const searchType = new LinqlType();
+        searchType.TypeName = "LinqlSearch";
+        searchType.GenericParameters = new Array<LinqlType>();
+        searchType.GenericParameters.push(this.Type);
+        const searchExpression = new LinqlConstant(searchType, undefined);
+        return searchExpression;
+
     }
 
     abstract Copy(): this;
@@ -32,21 +49,29 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
             expressions = Array.from(this.Expressions);
         }
 
-        const newExpression = this.Context.Parse(Expression);
-        const newSearch = this.Copy();
+        const customFunction = new LinqlFunction(FunctionName);
 
+        const functionArguments = this.Context.Parse(Expression);
+
+        if (functionArguments)
+        {
+            customFunction.Arguments = new Array<LinqlExpression>();
+            customFunction.Arguments.push(functionArguments);
+        }
+
+        const newSearch = this.Copy();
         const firstExpression = this.Expressions?.find(r => true);
 
         if (firstExpression)
         {
             const lastExpression = firstExpression.GetLastExpressionInNextChain();
-            lastExpression.Next = newExpression;
+            lastExpression.Next = customFunction;
         }
-        else
+        else if (customFunction)
         {
-            expressions.push(newExpression);
+            expressions.push(customFunction);
+            newSearch.Expressions = expressions;
         }
-        newSearch.Expressions = expressions;
         return newSearch as any as ALinqlSearch<S>;
     }
 
@@ -157,9 +182,31 @@ export abstract class ALinqlContext
 
     protected abstract SendRequest<TResult>(Search: ALinqlSearch<any>): Promise<TResult>;
 
+    Parse(Expression: string | AnyExpression<any> | undefined): LinqlExpression | undefined
+    {
+        const parser = new LinqlParser(Expression);
+        return parser.Root;
+    }
+
     ToJson(Search: ALinqlSearch<any>)
     {
-        return JSON.stringify(Search);
+        const copy: any = Search.Copy();
+        copy.Context = undefined;
+        copy.ArgumentContext = undefined;
+        copy.ModelType = undefined;
+        return JSON.stringify(copy);
+    }
+
+    GetTypeName(Type: string | GenericConstructor<any>)
+    {
+        if (typeof Type === "string")
+        {
+            return Type;
+        }
+        else
+        {
+            return Type.name;
+        }
     }
 
     protected GetEndpoint(Search: ALinqlSearch<any>)
@@ -175,8 +222,6 @@ export abstract class ALinqlContext
         }
         return `linql/${ endPoint }`
     }
-
-    public abstract Parse(Expression: any): LinqlExpression;
 
     public Set<T>(Type: string | GenericConstructor<T>, ArgumentContext: {} | undefined = this.ArgumentContext): ALinqlSearch<T>
     {

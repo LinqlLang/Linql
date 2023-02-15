@@ -4,12 +4,6 @@ import { ALinqlContext, ALinqlSearch } from "./ALinqlSearch";
 export class LinqlContext extends ALinqlContext
 {
 
-
-    public Parse(Expression: any): LinqlExpression
-    {
-        return {} as LinqlExpression;
-    }
-
     public GetResult<TResult>(Search: ALinqlSearch<any>): Promise<TResult>
     {
 

@@ -3,10 +3,11 @@ import { LinqlExpression } from "./LinqlExpression";
 export class LinqlParameter extends LinqlExpression
 {
     "$type": string = "LinqlParameter";
-
-    constructor(public ParameterName: string)
+    ParameterName: string;
+    constructor(ParameterName: string)
     {
         super();
+        this.ParameterName = ParameterName;
     }
 
 }
