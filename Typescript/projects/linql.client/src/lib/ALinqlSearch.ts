@@ -1,8 +1,6 @@
-import { LinqlConstant, LinqlExpression, LinqlFunction, LinqlSearch, LinqlType } from "linql.core";
+import { AnyExpression, BooleanExpression, GenericConstructor, IGrouping, LinqlConstant, LinqlExpression, LinqlFunction, LinqlSearch, LinqlType, TransformExpression } from "linql.core";
 import { AOrderedLinqlSearch } from "./AOrderedLinqlSearch";
-import { IGrouping } from "./IGrouping";
 import { LinqlParser } from "./LinqlParser";
-import { AnyExpression, BooleanExpression, GenericConstructor, TransformExpression } from "./Types";
 
 
 export declare type LinqlSearchConstructor<T> =
@@ -42,13 +40,6 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
 
     public CustomLinqlFunction<S>(FunctionName: string, Expression: AnyExpression<T> | string | undefined): ALinqlSearch<S>
     {
-
-        let expressions = new Array<LinqlExpression>();
-        if (this.Expressions)
-        {
-            expressions = Array.from(this.Expressions);
-        }
-
         const customFunction = new LinqlFunction(FunctionName);
 
         const functionArguments = this.Context.Parse(Expression);
@@ -60,7 +51,13 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
         }
 
         const newSearch = this.Copy();
-        const firstExpression = this.Expressions?.find(r => true);
+        this.AttachTopLevelFunction(customFunction, newSearch);
+        return newSearch as any as ALinqlSearch<S>;
+    }
+
+    public AttachTopLevelFunction(customFunction: LinqlFunction, search: LinqlSearch)
+    {
+        const firstExpression = search.Expressions?.find(r => true);
 
         if (firstExpression)
         {
@@ -69,79 +66,77 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
         }
         else if (customFunction)
         {
-            expressions.push(customFunction);
-            newSearch.Expressions = expressions;
+            search.Expressions?.push(customFunction);
         }
-        return newSearch as any as ALinqlSearch<S>;
     }
 
     //#region Functions
 
-    public filter(Expression: BooleanExpression<T> | string)
+    public Where(Expression: BooleanExpression<T> | string)
     {
         return this.CustomLinqlFunction<T>("Where", Expression);
     }
 
-    public any(Expression: BooleanExpression<T> | string)
+    public Any(Expression: BooleanExpression<T> | string)
     {
         return this.CustomLinqlFunction<T>("Any", Expression);
     }
 
-    public all(Expression: BooleanExpression<T> | string)
+    public All(Expression: BooleanExpression<T> | string)
     {
         return this.CustomLinqlFunction<T>("All", Expression);
     }
 
-    public distinct()
+    public Distinct()
     {
         return this.CustomLinqlFunction<T>("Distinct", undefined);
     }
 
-    public select<S>(Expression: TransformExpression<T, S>)
+    public Select<S>(Expression: TransformExpression<T, S>)
     {
         return this.CustomLinqlFunction<S>("Select", Expression);
     }
 
-    public selectMany<S>(Expression: TransformExpression<T, S>)
+    public SelectMany<S>(Expression: TransformExpression<T, S>)
     {
         return this.CustomLinqlFunction<S>("SelectMany", Expression);
     }
 
-    public groupBy<S>(Expression: TransformExpression<T, S>)
+    public GroupBy<S>(Expression: TransformExpression<T, S>)
     {
         return this.CustomLinqlFunction<IGrouping<S, T>>("GroupBy", Expression);
     }
 
-    public orderBy<S>(Expression: TransformExpression<T, S>): AOrderedLinqlSearch<T>
+    public OrderBy<S>(Expression: TransformExpression<T, S>): AOrderedLinqlSearch<T>
     {
         return this.CustomLinqlFunction<T>("OrderBy", Expression) as AOrderedLinqlSearch<T>;
     }
 
-    public orderByDescending<S>(Expression: TransformExpression<T, S>): AOrderedLinqlSearch<T>
+    public OrderByDescending<S>(Expression: TransformExpression<T, S>): AOrderedLinqlSearch<T>
     {
         return this.CustomLinqlFunction<T>("OrderByDescending", Expression) as AOrderedLinqlSearch<T>;
     }
 
-    public skip(Skip: number)
+    public Skip(Skip: number)
     {
         const type = new LinqlType();
         type.TypeName = "Int32";
         const constant = new LinqlConstant(type, Skip);
         const fun = new LinqlFunction("Skip", [constant]);
-        const newExpression = this.Copy();
-        newExpression.Expressions?.push(fun);
-        return newExpression;
+        const newSearch = this.Copy();
+        this.AttachTopLevelFunction(fun, newSearch);
+        return newSearch;
     }
 
-    public take(Take: number)
+    public Take(Take: number)
     {
         const type = new LinqlType();
         type.TypeName = "Int32";
         const constant = new LinqlConstant(type, Take);
         const fun = new LinqlFunction("Take", [constant]);
-        const newExpression = this.Copy();
-        newExpression.Expressions?.push(fun);
-        return newExpression;
+        const newSearch = this.Copy();
+        this.AttachTopLevelFunction(fun, newSearch);
+        return newSearch;
     }
 
     toJson(): string
@@ -159,9 +154,12 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
         return await this.Context.GetResult<TResult>(search);
     }
 
-    async toListAsync()
+    toListAsyncJson()
     {
-        return null;
+        const fun = new LinqlFunction("ToListAsync");
+        const newSearch = this.Copy();
+        this.AttachTopLevelFunction(fun, newSearch);
+        return newSearch;
     }
     //#endregion
 

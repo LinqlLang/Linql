@@ -1,32 +1,33 @@
-import { IGrouping } from "../IGrouping";
-import { BooleanExpression, AnyExpression, OneToManyExpression } from "../Types";
+import { IGrouping } from "./IGrouping";
+import { BooleanExpression, AnyExpression, OneToManyExpression } from "./Types";
 
 declare global
 {
     export interface Array<T>
     {
-        Contains<T>(ItemToCompare: T): boolean;
-        Any<T>(Expression: BooleanExpression<T> | undefined): boolean;
-        All<T>(Expression: BooleanExpression<T> | undefined): boolean;
-        Average<T, S extends number>(Expression: AnyExpression<S> | undefined): number;
+        Contains(ItemToCompare: T): boolean;
+        Any(Expression: BooleanExpression<T> | undefined): boolean;
+        All(Expression: BooleanExpression<T> | undefined): boolean;
+        Average<S extends number>(Expression: AnyExpression<S> | undefined): number;
         Distinct(): Array<T>;
-        GroupBy<T, S>(Expression: AnyExpression<S>): Array<IGrouping<S, T>>;
-        FirstOrDefault<T>(Expression: BooleanExpression<T> | undefined): boolean;
-        LastOrDefault<T>(Expression: BooleanExpression<T> | undefined): boolean;
-        Min<T, S extends number>(Expression: AnyExpression<S> | undefined): number;
-        Max<T, S extends number>(Expression: AnyExpression<S> | undefined): number;
-        MinBy<T, S extends number>(Expression: AnyExpression<S> | undefined): T;
-        MaxBy<T, S extends number>(Expression: AnyExpression<S> | undefined): T;
-        Select<T, S>(Expression: AnyExpression<S>): Array<S>;
-        SelectMany<T, S>(Expression: OneToManyExpression<T, S>): Array<S>;
-        Skip<T>(Count: number): Array<T>;
-        Sum<T, S extends number>(Expression: AnyExpression<S> | undefined): number;
-        Take<T>(Count: number): Array<T>;
-        Where<T>(Expression: BooleanExpression<T>): Array<T>;
-
+        GroupBy<S>(Expression: AnyExpression<S>): Array<IGrouping<S, T>>;
+        FirstOrDefault(Expression: BooleanExpression<T> | undefined): boolean;
+        LastOrDefault(Expression: BooleanExpression<T> | undefined): boolean;
+        Min<S extends number>(Expression: AnyExpression<S> | undefined): number;
+        Max<S extends number>(Expression: AnyExpression<S> | undefined): number;
+        MinBy<S extends number>(Expression: AnyExpression<S> | undefined): T;
+        MaxBy<S extends number>(Expression: AnyExpression<S> | undefined): T;
+        Select<S>(Expression: AnyExpression<S>): Array<S>;
+        SelectMany<S>(Expression: OneToManyExpression<T, S>): Array<S>;
+        Skip(Count: number): Array<T>;
+        Sum<S extends number>(Expression: AnyExpression<S> | undefined): number;
+        Take(Count: number): Array<T>;
+        Where(Expression: BooleanExpression<T>): Array<T>;
+        Count: number;
 
     }
 }
+
 Array.prototype.Contains = function <T>(ItemToCompare: T | undefined)
 {
     if (!ItemToCompare)

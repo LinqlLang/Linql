@@ -9,4 +9,9 @@ export * from "./LinqlProperty";
 export * from "./LinqlSearch";
 export * from "./LinqlType";
 export * from "./LinqlUnary";
+export * from "./Extensions/Array";
+export * from "./Extensions/IGrouping";
+export * from "./Extensions/Types";
+export * from "./Extensions/INullable";
+export * from "./Extensions/String";
 

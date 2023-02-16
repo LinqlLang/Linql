@@ -1,8 +1,7 @@
-import { LinqlBinary, LinqlConstant, LinqlExpression, LinqlFunction, LinqlLambda, LinqlObject, LinqlParameter, LinqlProperty, LinqlType, LinqlUnary } from "linql.core";
-import { AnyExpression } from "./Types";
 import * as Acorn from 'acorn';
 import * as AcornWalk from 'acorn-walk';
 import * as ESTree from 'estree';
+import { AnyExpression, LinqlBinary, LinqlConstant, LinqlExpression, LinqlFunction, LinqlLambda, LinqlObject, LinqlParameter, LinqlProperty, LinqlType, LinqlUnary } from "linql.core";
 
 
 

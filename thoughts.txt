@@ -1,0 +1,21 @@
+Reading about core-js and the horrors right before trying to open source something.  Feelings about that. 
+
+Not having the time to actually engage in things like this blog.  Too focused on engineering.  Not necessarily good for the career/exposure 
+
+Struggles of Job search, inadequacies. 
+
+Naming conventions, and how the fragmentation/arguments make no sense.  It is impracticle.  
+having arguments with junior engineers.  Who is right? Who is wrong?
+The interesting problem: having to wrap internal methods in order to create a standard.  
+Is a dialect a better approach?  Why/Why not? 
+
+Issue with LinqlObjects not being copied.  Not idempotent
+
+Tests can just be drop in somehow.  The way it works in linql.client is pretty slick.  Could have some structure around it. 
+
+Need to test all the data types
+
+Is it worht it?  Is this just a curiosity?  Will people actually use it?  Does it matter?
+The typescript generator?  having already done it.
+
+May not actually be idempotent

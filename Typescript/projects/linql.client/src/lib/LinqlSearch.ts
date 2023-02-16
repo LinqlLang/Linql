@@ -1,8 +1,6 @@
-import { LinqlConstant, LinqlExpression, LinqlFunction, LinqlType } from "linql.core";
+import { GenericConstructor } from "linql.core";
 import { ALinqlContext, ALinqlSearch, LinqlSearchConstructor } from "./ALinqlSearch";
-import { IGrouping } from "./IGrouping";
-import { LinqlContext } from "./LinqlContext"
-import { AnyExpression, BooleanExpression, GenericConstructor, TransformExpression } from "./Types";
+import { LinqlContext } from "./LinqlContext";
 
 export class LinqlSearch<T> extends ALinqlSearch<T>
 {

@@ -1,5 +1,5 @@
+import { TransformExpression } from "linql.core";
 import { ALinqlSearch } from "./ALinqlSearch";
-import { TransformExpression } from "./Types";
 
 export abstract class AOrderedLinqlSearch<T> extends ALinqlSearch<T>
 {

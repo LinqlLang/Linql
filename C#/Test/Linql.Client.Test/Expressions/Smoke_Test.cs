@@ -251,6 +251,7 @@ namespace Linql.Client.Test.Expressions
             
             LinqlSearch<DataModel> search = Context.Set<DataModel>();
             string contains = await search.Where(r => "3".ToLowerInvariant().Contains(r.String)).ToJsonAsync();
+            contains.ToLower();
             TestLoader.Compare(nameof(Smoke_Test.String_Contains), contains);
         }
 
