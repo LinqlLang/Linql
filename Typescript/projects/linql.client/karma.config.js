@@ -19,10 +19,16 @@ module.exports = function (config)
         client: {
             clearContext: false // leave Jasmine Spec Runner output visible in browser
         },
+        coverageReporter: {
+            dir: require('path').join(__dirname, '../../../Typescript/coverage/linql.client'),
+        },
         coverageIstanbulReporter: {
-            dir: require('path').join(__dirname, '../../../coverage/linql.client'),
+            dir: require('path').join(__dirname, '../../../Typescript/coverage/linql.client/instanbul'),
             reports: ['html', 'lcovonly', 'text-summary'],
             fixWebpackSourcePaths: true
+        },
+        jasmineHtmlReporter: {
+            dir: require('path').join(__dirname, '../../../Typescript/coverage/linql.client/html'),
         },
         reporters: ['progress', 'kjhtml'],
         port: 9876,
