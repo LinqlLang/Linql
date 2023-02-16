@@ -38,7 +38,7 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
 
     abstract Copy(): this;
 
-    public CustomLinqlFunction<S>(FunctionName: string, Expression: AnyExpression<T> | string | undefined): ALinqlSearch<S>
+    public CustomLinqlFunction<S>(FunctionName: string, Expression: AnyExpression<T> | string | undefined = undefined): ALinqlSearch<S>
     {
         const customFunction = new LinqlFunction(FunctionName);
 
@@ -144,23 +144,47 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
         return this.Context.ToJson(this);
     }
 
+    ToListAsyncSearch()
+    {
+        const newSearch = this.CustomLinqlFunction("ToListAsync");
+        return newSearch;
+    }
+
+    FirstOrDefaultSearch(Predicate: BooleanExpression<T> | string | undefined = undefined)
+    {
+        return this.CustomLinqlFunction("FirstOrDefaultAsync", Predicate);
+    }
+
+    LastOrDefaultSearch(Predicate: BooleanExpression<T> | string | undefined = undefined)
+    {
+        return this.CustomLinqlFunction("LastOrDefaultAsync", Predicate);
+    }
+
     //#endregion
 
     //#region ExecuteFunctions
 
-    async executeCustomLinqlFunction<TResult>(FunctionName: string, Predicate: AnyExpression<any> | string | undefined): Promise<TResult>
+    async executeCustomLinqlFunction<TResult>(FunctionName: string, Predicate: AnyExpression<any> | string | undefined = undefined): Promise<TResult>
     {
         const search = this.CustomLinqlFunction(FunctionName, Predicate);
         return await this.Context.GetResult<TResult>(search);
     }
 
-    toListAsyncJson()
+    async ToListAsync(): Promise<Array<T>>
     {
-        const fun = new LinqlFunction("ToListAsync");
-        const newSearch = this.Copy();
-        this.AttachTopLevelFunction(fun, newSearch);
-        return newSearch;
+        return this.executeCustomLinqlFunction("ToListAsync");
     }
+
+    async FirstOrDefaultAsync(Predicate: BooleanExpression<T> | string | undefined = undefined)
+    {
+        return this.executeCustomLinqlFunction("FirstOrDefaultAsync", Predicate);
+    }
+
+    async LastOrDefaultAsync(Predicate: BooleanExpression<T> | string | undefined = undefined)
+    {
+        return this.executeCustomLinqlFunction("FirstOrDefaultAsync", Predicate);
+    }
+
     //#endregion
 
 

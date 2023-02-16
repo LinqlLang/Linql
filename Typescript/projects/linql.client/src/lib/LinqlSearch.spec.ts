@@ -251,9 +251,46 @@ class TestClass
     async SkipTake()
     {
         const search = this.context.Set<DataModel>(DataModel);
-        const newSearch = search.Skip(1).Take(2).toListAsyncJson();
+        const newSearch = search.Skip(1).Take(2).ToListAsyncSearch();
         await this._ExecuteTest("SkipTake", newSearch);
     }
+
+    async ToListAsync()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.SelectMany(r => r.ListRecusrive.SelectMany(s => s.ListInteger)).ToListAsyncSearch();
+        await this._ExecuteTest("ToListAsync", newSearch);
+    }
+
+    async FirstOrDefault()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.FirstOrDefaultSearch();
+        await this._ExecuteTest("FirstOrDefault", newSearch);
+    }
+
+    async FirstOrDefaultWithPredicate()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.FirstOrDefaultSearch(r => r.Integer === 1);
+        await this._ExecuteTest("FirstOrDefaultWithPredicate", newSearch);
+    }
+
+    async LastOrDefault()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.LastOrDefaultSearch();
+        await this._ExecuteTest("LastOrDefault", newSearch);
+    }
+
+
+    async LastOrDefaultWithPredicate()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.LastOrDefaultSearch(r => r.Integer === 1);
+        await this._ExecuteTest("LastOrDefaultWithPredicate", newSearch);
+    }
+
 
     private async _ExecuteTest(TestName: string, newSearch: LinqlSearch<any>)
     {
