@@ -42,10 +42,17 @@ export class LinqlType
                         type.GenericParameters.push(LinqlType.GetLinqlType(firstValue));
                     }
                 }
+                else
+                {
+                    type.TypeName = Value.constructor.name;
+                }
+                break;
+            case "undefined":
+                type.TypeName = "undefined";
                 break;
             case "function":
             case "symbol":
-            case "undefined":
+
                 console.error("Unsupported type passed to VisitContant.");
                 break;
         }

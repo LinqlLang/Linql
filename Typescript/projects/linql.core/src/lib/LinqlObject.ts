@@ -1,13 +1,17 @@
 import { LinqlExpression } from "./LinqlExpression";
 import { LinqlType } from "./LinqlType";
 
-export class LinqlObject extends LinqlExpression
+export class LinqlObject<T> extends LinqlExpression
 {
     "$type": string = "LinqlObject";
+    Type: LinqlType;
+    Value: T;
 
-    constructor(public Type: LinqlType, public Value: any)
+    constructor(Value: T)
     {
         super();
+        this.Type = LinqlType.GetLinqlType(Value);
+        this.Value = Value;
     }
 
 }

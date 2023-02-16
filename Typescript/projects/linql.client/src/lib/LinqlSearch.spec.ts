@@ -3,13 +3,39 @@ import { ALinqlContext, LinqlSearchConstructor } from "./ALinqlSearch";
 import { LinqlContext } from "./LinqlContext";
 import { TestFileLoader } from "./test/TestfileLoader";
 import "./Extensions/Array";
+import { INullable } from "./INullable";
+import { LinqlObject, LinqlType } from "linql.core";
 
 class DataModel
 {
-    Integer: number = 1;
+    Integer!: number;
     Boolean: boolean = false;
-    OneToOne!: DataModel;
+    String!: string;
+    Decimal!: number;
+    Long!: bigint;
+    DateTime!: Date;
+    Guid!: string;
     ListInteger!: Array<number>;
+    ListString!: Array<string>;
+    ListRecursive!: Array<DataModel>;
+    OneToOne!: DataModel;
+    OneToOneNullable!: NullableModel;
+    ListNullableModel!: Array<NullableModel>;
+}
+
+class NullableModel
+{
+    Integer?: number;
+    Boolean?: boolean;
+    String?: string;
+    Decimal?: number;
+    Long?: bigint;
+    DateTime?: Date;
+    Guid?: string;
+    ListInteger?: Array<number>;
+    ListString?: Array<string>;
+    ListRecursive?: Array<DataModel>;
+    OneToOne?: DataModel;
 }
 
 class TestClass
@@ -22,7 +48,22 @@ class TestClass
     test: boolean = false;
     complex: DataModel = new DataModel();
     integers = [1, 2, 3];
+    objectTest: LinqlObject<DataModel>;
     //#endregion
+
+    constructor()
+    {
+        const testData = new DataModel();
+        const anyCast = testData as any;
+        anyCast.Boolean = undefined;
+        anyCast.String = "";
+        anyCast.ListInteger = new Array<any>();
+        anyCast.ListString = new Array<any>();
+        anyCast.ListRecusrive = new Array<any>();
+        anyCast.ListNullableModel = new Array<any>();
+
+        this.objectTest = new LinqlObject<DataModel>(testData);
+    }
 
     async EmptySearch()
     {
@@ -106,6 +147,34 @@ class TestClass
         const search = this.context.Set<DataModel>(DataModel);
         const newSearch = search.filter(r => r.ListInteger.Any(s => s === 1));
         await this._ExecuteTest("InnerLambda", newSearch);
+    }
+
+    async NullableHasValue()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.filter(r => r.OneToOneNullable.Integer !== undefined);
+        await this._ExecuteTest("NullableHasValue", newSearch);
+    }
+
+    async NullableHasValueReversed()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.filter(r => undefined !== r.OneToOneNullable.Integer);
+        await this._ExecuteTest("NullableHasValue", newSearch);
+    }
+
+    async NullableValue()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.filter(r => r.OneToOneNullable.Integer !== undefined && (r.OneToOneNullable.Integer as any as INullable<number>).Value === 1);
+        await this._ExecuteTest("NullableValue", newSearch);
+    }
+
+    async LinqlObject()
+    {
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.filter(r => this.objectTest.Value.Integer == r.Integer);
+        await this._ExecuteTest("LinqlObject", newSearch);
     }
 
     private async _ExecuteTest(TestName: string, newSearch: LinqlSearch<any>)

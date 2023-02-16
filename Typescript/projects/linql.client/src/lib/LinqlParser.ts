@@ -176,6 +176,10 @@ export class LinqlParser
                 expression = new LinqlConstant(LinqlType.GetLinqlType(value), value);
             }
         }
+        else if (node.name === "undefined")
+        {
+            expression = new LinqlConstant(LinqlType.GetLinqlType(undefined), undefined);
+        }
         else
         {
             expression = new LinqlParameter(node.name);
@@ -218,14 +222,13 @@ export class LinqlParser
 
                 if (value != null)
                 {
-                    const type = LinqlType.GetLinqlType(value);
-
                     if (value instanceof LinqlObject)
                     {
-
+                        expression = value;
                     }
                     else
                     {
+                        const type = LinqlType.GetLinqlType(value);
                         expression = new LinqlConstant(type, value);
                     }
                 }
@@ -245,7 +248,7 @@ export class LinqlParser
                     throw `Unalbe to parse member from constant ${ previous } ${ node }`;
                 }
             }
-            else if (previous instanceof LinqlObject)
+            else if (previous instanceof LinqlObject && memberName === "Value")
             {
 
             }
@@ -336,9 +339,6 @@ export class LinqlParser
 
         if (binary)
         {
-            this.AttachToExpression(binary);
-            this.PushToStack(binary, Node);
-
             const left = node.left;
             const right = node.right;
 
@@ -347,11 +347,47 @@ export class LinqlParser
 
             binary.Left = leftParser.Root;
             binary.Right = rightParser.Root;
+
+            let attachExpression: LinqlExpression = binary;
+
+            const nullableCheck = this.NullableCheck(binary.Left, binary.Right);
+
+            if (nullableCheck)
+            {
+                attachExpression = nullableCheck;
+            }
+
+            this.AttachToExpression(attachExpression);
+            this.PushToStack(attachExpression, Node);
         }
         else
         {
             throw `Unable to find binary expression ${ node.operator }`;
         }
+    }
+
+    private NullableCheck(left: LinqlExpression | undefined, right: LinqlExpression | undefined)
+    {
+        let nullableCheck: LinqlExpression | undefined;
+
+        if (left instanceof LinqlConstant && !(right instanceof LinqlConstant) && left.Value === undefined)
+        {
+            nullableCheck = right;
+        }
+        else if (right instanceof LinqlConstant && !(left instanceof LinqlConstant) && right.Value === undefined)
+        {
+            nullableCheck = left;
+        }
+
+        if (nullableCheck)
+        {
+            const lastExpression = nullableCheck.GetLastExpressionInNextChain();
+            const property = new LinqlProperty("HasValue");
+            lastExpression.Next = property;
+            return nullableCheck;
+        }
+        return undefined;
+
     }
 
     VisitMethodCall(Node: Acorn.Node, Callback: AcornWalk.WalkerCallback<LinqlParser>)
