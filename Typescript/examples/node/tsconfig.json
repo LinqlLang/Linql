@@ -2,7 +2,7 @@
    "compilerOptions": {
       "target": "es6",
       "moduleResolution": "node",
-      "module": "commonjs",
+      "module": "es6",
       "declaration": false,
       "noLib": false,
       "emitDecoratorMetadata": true,
@@ -28,7 +28,7 @@
       ],
       "paths": {
          "linql.core": [
-            "node_modules/linql.core"
+            "./node_modules/linql.core"
          ]
       }
    },

@@ -1,4 +1,4 @@
-import { Main } from './app';
+import { Main } from './app.mjs';
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
 (async () =>
