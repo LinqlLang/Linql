@@ -231,4 +231,4 @@ Array.prototype.Where = function <T>(Expression: BooleanExpression<T>)
 }
 
 
-export { };
+export default {};

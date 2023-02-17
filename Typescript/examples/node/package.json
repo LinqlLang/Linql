@@ -1,0 +1,20 @@
+{
+  "name": "linql-node-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.13.0",
+    "linql.client": "file:../../dist/linql.client",
+    "linql.core": "file:../../dist/linql.core",
+    "node-fetch": "^3.3.0",
+    "tslib": "^2.5.0",
+    "typescript": "^4.9.5"
+  }
+}

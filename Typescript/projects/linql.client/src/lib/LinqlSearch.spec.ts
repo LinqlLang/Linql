@@ -41,7 +41,7 @@ class NullableModel
 class TestClass
 {
     debugMode = false;
-    context: ALinqlContext = new LinqlContext(LinqlSearch as any as LinqlSearchConstructor<any>, { this: this });
+    context: ALinqlContext = new LinqlContext(LinqlSearch as any as LinqlSearchConstructor<any>, "", { this: this });
     testFiles = new TestFileLoader("Smoke");
 
     //#region TestVariables
@@ -313,7 +313,7 @@ describe('LinqlSearch', () =>
 {
     const contextArgs: any = {} as any;
     const test = { this: contextArgs };
-    let context: ALinqlContext = new LinqlContext(LinqlSearch as any as LinqlSearchConstructor<any>, { this: contextArgs });
+    let context: ALinqlContext = new LinqlContext(LinqlSearch as any as LinqlSearchConstructor<any>, "", { this: contextArgs });
     const testClass = new TestClass();
     let functions = Object.getOwnPropertyNames(testClass.constructor.prototype)
         .filter(r => r !== "constructor" && !r.startsWith("_"));

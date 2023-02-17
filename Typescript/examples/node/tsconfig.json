@@ -1,0 +1,42 @@
+{
+   "compilerOptions": {
+      "target": "es6",
+      "moduleResolution": "node",
+      "module": "commonjs",
+      "declaration": false,
+      "noLib": false,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "sourceMap": true,
+      "pretty": true,
+      "allowUnreachableCode": true,
+      "allowUnusedLabels": true,
+      "noImplicitAny": false,
+      "noImplicitReturns": false,
+      "noImplicitUseStrict": false,
+      "outDir": "dist/",
+      "baseUrl": "./",
+      "listFiles": false,
+      "noEmitHelpers": false,
+      "lib": [
+         "dom",
+         "es5",
+         "es6"
+      ],
+      "typeRoots": [
+         "node_modules/@types"
+      ],
+      "paths": {
+         "linql.core": [
+            "node_modules/linql.core"
+         ]
+      }
+   },
+   "include": [
+      "**/*"
+   ],
+   "exclude": [
+      "node_modules"
+   ],
+   "compileOnSave": false
+}

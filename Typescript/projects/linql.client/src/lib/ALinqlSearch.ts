@@ -166,8 +166,8 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
 
     async executeCustomLinqlFunction<TResult>(FunctionName: string, Predicate: AnyExpression<any> | string | undefined = undefined): Promise<TResult>
     {
-        const search = this.CustomLinqlFunction(FunctionName, Predicate);
-        return await this.Context.GetResult<TResult>(search);
+        const search: ALinqlSearch<T> = this.CustomLinqlFunction(FunctionName, Predicate);
+        return await this.Context.GetResult<T, TResult>(search);
     }
 
     async ToListAsync(): Promise<Array<T>>
@@ -175,12 +175,12 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
         return this.executeCustomLinqlFunction("ToListAsync");
     }
 
-    async FirstOrDefaultAsync(Predicate: BooleanExpression<T> | string | undefined = undefined)
+    async FirstOrDefaultAsync(Predicate: BooleanExpression<T> | string | undefined = undefined): Promise<T | undefined>
     {
         return this.executeCustomLinqlFunction("FirstOrDefaultAsync", Predicate);
     }
 
-    async LastOrDefaultAsync(Predicate: BooleanExpression<T> | string | undefined = undefined)
+    async LastOrDefaultAsync(Predicate: BooleanExpression<T> | string | undefined = undefined): Promise<T | undefined>
     {
         return this.executeCustomLinqlFunction("FirstOrDefaultAsync", Predicate);
     }
@@ -193,16 +193,14 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
 
 export abstract class ALinqlContext
 {
-    constructor(public LinqlSearchType: LinqlSearchConstructor<any>, public ArgumentContext: {} = {})
+    constructor(public LinqlSearchType: LinqlSearchConstructor<any>, public BaseUrl: string, public ArgumentContext: {} = {})
     {
 
     }
 
-    public abstract GetResult<TResult>(Search: ALinqlSearch<any>): Promise<TResult>;
+    public abstract GetResult<T, TResult>(Search: ALinqlSearch<T>): Promise<TResult>;
 
     protected abstract SendHttpRequest<TResult>(Endpoint: string, Search: ALinqlSearch<any>): Promise<TResult>;
-
-    protected abstract SendRequest<TResult>(Search: ALinqlSearch<any>): Promise<TResult>;
 
     Parse(Expression: string | AnyExpression<any> | undefined): LinqlExpression | undefined
     {
@@ -231,7 +229,7 @@ export abstract class ALinqlContext
         }
     }
 
-    protected GetEndpoint(Search: ALinqlSearch<any>)
+    protected GetEndpoint<T>(Search: ALinqlSearch<T>)
     {
         let endPoint: string;
         if (typeof Search.ModelType === "string")

@@ -15,6 +15,15 @@
       "request": "launch",
       "preLaunchTask": "npm: test",
       "url": "http://localhost:9876/debug.html"
+    },
+    {
+      "name": "nodeExample",
+      "type": "node",
+      "request": "launch",
+      "program": "./examples/node/main.ts",
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ],
     }
   ]
 }

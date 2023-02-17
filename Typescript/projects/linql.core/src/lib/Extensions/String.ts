@@ -123,4 +123,4 @@ String.prototype.TrimEnd = function ()
     return this.trimEnd();
 };
 
-export { };
+export default {};
