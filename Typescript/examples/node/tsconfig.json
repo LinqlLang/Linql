@@ -8,6 +8,7 @@
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
       "sourceMap": true,
+      "preserveSymlinks": true,
       "pretty": true,
       "allowUnreachableCode": true,
       "allowUnusedLabels": true,
@@ -27,9 +28,7 @@
          "node_modules/@types"
       ],
       "paths": {
-         "linql.core": [
-            "./node_modules/linql.core"
-         ]
+       
       }
    },
    "include": [
