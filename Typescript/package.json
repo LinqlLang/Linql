@@ -7,7 +7,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "build": "node scripts/build.js",
-    "setup": "node scripts/install.js"
+    "setup": "node scripts/install.js",
+    "updateVersion": "node scripts/updateVersion.js"
   },
   "private": true,
   "dependencies": {
@@ -19,6 +20,7 @@
     "@angular/compiler-cli": "^15.0.0",
     "@angular/platform-browser-dynamic": "^15.1.4",
     "@types/jasmine": "~4.3.0",
+    "glob": "^9.2.1",
     "jasmine-core": "~4.5.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.1.0",
