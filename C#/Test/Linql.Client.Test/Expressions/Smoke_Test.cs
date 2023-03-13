@@ -360,6 +360,17 @@ namespace Linql.Client.Test.Expressions
             string value = JsonSerializer.Serialize(jsonSearch, new JsonSerializerOptions() { WriteIndented = false, DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault });
             TestLoader.Compare(nameof(Smoke_Test.SkipTake), value);
         }
+
+        [Test]
+        public async Task EmptyList()
+        {
+
+            List<int> intList = new List<int>() {  };
+            LinqlSearch<DataModel> search = Context.Set<DataModel>();
+            string contains = await search.Where(r => intList.Contains(r.Integer)).ToJsonAsync();
+            TestLoader.Compare(nameof(Smoke_Test.EmptyList), contains);
+
+        }
     }
 
 }

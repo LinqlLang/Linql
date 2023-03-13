@@ -24,7 +24,7 @@ namespace WebApiExample.Controllers
 
         }
 
-        [HttpPost("linql")]
+        [HttpPost]
         public object Linql(LinqlSearch Search)
         {
             object result = this.Compiler.Execute(Search, this.DataService.StateData.AsQueryable());

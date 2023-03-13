@@ -24,12 +24,24 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="TestFiles\Smoke\EmptyList.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Linql.Client\Linql.Client.csproj" />
   </ItemGroup>
 
 
   <ItemGroup>
     <Content Update="TestFiles\Smoke\LinqlObject_NonZero.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <PackageCopyToOutput>true</PackageCopyToOutput>
+    </Content>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Content Update="TestFiles\Smoke\EmptyList.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <PackageCopyToOutput>true</PackageCopyToOutput>
     </Content>
