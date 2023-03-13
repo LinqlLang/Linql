@@ -186,9 +186,6 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
     }
 
     //#endregion
-
-
-
 }
 
 export abstract class ALinqlContext
@@ -229,18 +226,38 @@ export abstract class ALinqlContext
         }
     }
 
-    protected GetEndpoint<T>(Search: ALinqlSearch<T>)
+    protected GetSearchTypeString<T>(Search: ALinqlSearch<T>)
     {
-        let endPoint: string;
+        let searchTypeString: string;
         if (typeof Search.ModelType === "string")
         {
-            endPoint = Search.ModelType;
+            searchTypeString = Search.ModelType;
         }
         else
         {
-            endPoint = Search.ModelType.name;
+            searchTypeString = Search.ModelType.name;
         }
-        return `linql/${ endPoint }`
+        return searchTypeString;
+    }
+
+    protected GetRoute<T>(Search: ALinqlSearch<T>)
+    {
+        const endpoint = this.GetSearchTypeString(Search);
+        return `linql/${ endpoint }`
+
+    }
+
+    protected GetEndpoint<T>(Search: ALinqlSearch<T>)
+    {
+        let basePath = this.BaseUrl;
+        const route = this.GetRoute(Search);
+
+        if (!basePath.endsWith("/"))
+        {
+            basePath += "/";
+        }
+
+        return `${ basePath }${ route }`;
     }
 
     public Set<T>(Type: string | GenericConstructor<T>, ArgumentContext: {} | undefined = this.ArgumentContext): ALinqlSearch<T>

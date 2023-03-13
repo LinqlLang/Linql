@@ -28,7 +28,9 @@
          "node_modules/@types"
       ],
       "paths": {
-       
+       "linql.client": [
+         "node_modules/linql.client"
+       ]
       }
    },
    "include": [
