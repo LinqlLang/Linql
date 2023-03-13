@@ -13,6 +13,15 @@
       "linql.client": [
         "dist/linql.client"
       ],
+      "linql.client-angular": [
+        "dist/linql.client-angular"
+      ],
+      "linql.client-fetch": [
+        "dist/linql.client-fetch"
+      ],
+      "linql.client-node-fetch": [
+        "dist/linql.client-node-fetch"
+      ],
       "linql.core": [
         "dist/linql.core"
       ],

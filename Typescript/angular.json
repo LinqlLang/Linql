@@ -103,6 +103,105 @@
           }
         }
       }
+    },
+    "linql.client-node-fetch": {
+      "projectType": "library",
+      "root": "projects/linql.client-node-fetch",
+      "sourceRoot": "projects/linql.client-node-fetch/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/linql.client-node-fetch/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/linql.client-node-fetch/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/linql.client-node-fetch/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/linql.client-node-fetch/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "linql.client-fetch": {
+      "projectType": "library",
+      "root": "projects/linql.client-fetch",
+      "sourceRoot": "projects/linql.client-fetch/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/linql.client-fetch/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/linql.client-fetch/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/linql.client-fetch/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/linql.client-fetch/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "linql.client-angular": {
+      "projectType": "library",
+      "root": "projects/linql.client-angular",
+      "sourceRoot": "projects/linql.client-angular/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/linql.client-angular/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/linql.client-angular/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/linql.client-angular/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/linql.client-angular/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
     }
   }
 }
