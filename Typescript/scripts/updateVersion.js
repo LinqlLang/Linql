@@ -11,6 +11,28 @@ const ignore = [
 
 const version = process.argv.pop();
 
+if (!version)
+{
+    console.error("Version format was null or undefined");
+    return;
+}
+if (version.length < 1)
+{
+    console.error('Version was empty');
+    return;
+}
+
+const versionCheck = version[0];
+
+
+const startsWithNumber = Number(versionCheck);
+
+if (!startsWithNumber)
+{
+    console.error("Version didn't start with a number");
+    return;
+}
+
 const packages = globSync('**/package.json', { ignore: ignore });
 
 console.log(packages);
