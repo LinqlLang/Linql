@@ -4,5 +4,4 @@
 
 export * from "./lib/ALinqlSearch";
 export * from "./lib/AOrderedLinqlSearch";
-export * from "./lib/LinqlContext";
 export * from "./lib/LinqlSearch";

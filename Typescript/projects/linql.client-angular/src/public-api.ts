@@ -3,5 +3,5 @@
  */
 
 export * from './lib/linql.client-angular.service';
-export * from './lib/linql.client-angular.component';
+export * from "./lib/Tokens";
 export * from './lib/linql.client-angular.module';

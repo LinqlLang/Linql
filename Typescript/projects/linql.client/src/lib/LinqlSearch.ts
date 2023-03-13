@@ -1,13 +1,12 @@
 import { GenericConstructor } from "linql.core";
 import { ALinqlContext, ALinqlSearch, LinqlSearchConstructor } from "./ALinqlSearch";
-import { LinqlContext } from "./LinqlContext";
 
 export class LinqlSearch<T> extends ALinqlSearch<T>
 {
     constructor(
         ModelType: string | GenericConstructor<T>,
         ArgumentContext: any = {},
-        Context: ALinqlContext = new LinqlContext(LinqlSearch as any as LinqlSearchConstructor<T>, ArgumentContext)
+        Context: ALinqlContext
     )
     {
         super(ModelType, ArgumentContext, Context);

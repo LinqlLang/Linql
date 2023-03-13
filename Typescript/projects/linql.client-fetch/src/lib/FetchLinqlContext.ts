@@ -1,6 +1,5 @@
-import { ALinqlContext, ALinqlSearch } from "./ALinqlSearch";
-import fetch, { RequestInit } from 'node-fetch';
-export class LinqlContext extends ALinqlContext
+import { ALinqlContext, ALinqlSearch } from "linql.client";
+export class FetchLinqlContext extends ALinqlContext
 {
 
     public async GetResult<T, TResult>(Search: ALinqlSearch<any>): Promise<TResult>
