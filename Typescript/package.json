@@ -9,6 +9,7 @@
     "build": "node scripts/build.js",
     "setup": "node scripts/install.js",
     "publishPrivate": "node scripts/publish.js http://localhost:4873/",
+    "installAll": "node scripts/installAll.js",
     "updateVersion": "node scripts/updateVersion.js"
   },
   "private": true,
