@@ -5,7 +5,7 @@ const {
 const fs = require('fs');
 
 const ignore = [
-    'node_modules/**',
+    '**/node_modules/**',
     "examples/**"
 ]
 
