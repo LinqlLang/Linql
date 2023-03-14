@@ -1,8 +1,8 @@
-import { HttpClientModule } from "@angular/common/http";
+import { HttpClient, HttpClientModule } from "@angular/common/http";
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { LinqlSearchConstructor } from "linql.client";
+import { LinqlSearch, LinqlSearchConstructor } from "linql.client";
 import { LinqlContext } from "./linql.client-angular.service";
-import { LinqlSearchType, BaseUrl } from "./Tokens";
+import { LinqlSearchType as LinqlTypeToken, BaseUrl as BaseUrlToken } from "./Tokens";
 
 
 @NgModule({
@@ -14,18 +14,19 @@ import { LinqlSearchType, BaseUrl } from "./Tokens";
   ],
   exports: [
 
+  ],
+  providers: [
+
   ]
 })
 export class LinqlClientAngularModule
 {
-  static forRoot(LinqlSearchType: LinqlSearchConstructor<any>, BaseUrl: string): ModuleWithProviders<LinqlClientAngularModule>
+  static forRoot(BaseUrl: string, LinqlSearchType: LinqlSearchConstructor<any> = LinqlSearch): ModuleWithProviders<LinqlClientAngularModule>
   {
     return {
       ngModule: LinqlClientAngularModule,
       providers: [
-        { provide: LinqlSearchType, useValue: LinqlSearchType },
-        { provide: BaseUrl, useValue: BaseUrl },
-        LinqlContext
+        { provide: LinqlContext, deps: [HttpClient], useFactory: (client: HttpClient) => new LinqlContext(BaseUrl, client, LinqlSearchType) },
       ]
     };
   }

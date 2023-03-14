@@ -42,7 +42,7 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
     {
         const customFunction = new LinqlFunction(FunctionName);
 
-        const functionArguments = this.Context.Parse(Expression);
+        const functionArguments = this.Context.Parse(Expression, this.ArgumentContext);
 
         if (functionArguments)
         {
@@ -199,9 +199,13 @@ export abstract class ALinqlContext
 
     protected abstract SendHttpRequest<TResult>(Endpoint: string, Search: ALinqlSearch<any>): Promise<TResult>;
 
-    Parse(Expression: string | AnyExpression<any> | undefined): LinqlExpression | undefined
+    Parse(Expression: string | AnyExpression<any> | undefined, ArgumentContext: {} = this.ArgumentContext): LinqlExpression | undefined
     {
-        const parser = new LinqlParser(Expression, this.ArgumentContext);
+        if (!ArgumentContext)
+        {
+            ArgumentContext = this.ArgumentContext;
+        }
+        const parser = new LinqlParser(Expression, ArgumentContext);
         return parser.Root;
     }
 

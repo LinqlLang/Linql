@@ -1,11 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, Optional } from '@angular/core';
 import { ALinqlContext, ALinqlSearch, LinqlSearch, LinqlSearchConstructor } from 'linql.client';
 import { LinqlSearchType, BaseUrl as BaseUrlToken } from './Tokens';
 import { lastValueFrom } from "rxjs";
-@Injectable({
-  providedIn: 'root'
-})
 export class LinqlContext extends ALinqlContext
 {
   async GetResult<T, TResult>(Search: ALinqlSearch<T>): Promise<TResult>
@@ -15,10 +12,15 @@ export class LinqlContext extends ALinqlContext
   }
   protected SendHttpRequest<TResult>(Endpoint: string, Search: ALinqlSearch<any>): Promise<TResult>
   {
-    return lastValueFrom(this.Client.post<TResult>(Endpoint, Search));
+    const optimizedSearch = Search.Copy();
+    const anycast = optimizedSearch as any;
+    optimizedSearch.ArgumentContext = undefined;
+    anycast.Context = undefined;
+    anycast.ModelType = undefined;
+    return lastValueFrom(this.Client.post<TResult>(Endpoint, optimizedSearch));
   }
 
-  constructor(@Inject(LinqlSearchType) LinqlSearchType: LinqlSearchConstructor<any> = LinqlSearch, @Inject(BaseUrlToken) BaseUrl: string, public Client: HttpClient)
+  constructor(BaseUrl: string, public Client: HttpClient, LinqlSearchType: LinqlSearchConstructor<any> = LinqlSearch)
   {
     super(LinqlSearchType, BaseUrl, {});
 
