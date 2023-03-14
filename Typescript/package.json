@@ -1,6 +1,6 @@
 {
   "name": "linql",
-  "version": "1.0.0-alpha1",
+  "version": "1.0.0-alpha3",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -8,6 +8,7 @@
     "test": "ng test",
     "build": "node scripts/build.js",
     "setup": "node scripts/install.js",
+    "publishPrivate": "node scripts/publish.js http://localhost:4873/",
     "updateVersion": "node scripts/updateVersion.js"
   },
   "private": true,
