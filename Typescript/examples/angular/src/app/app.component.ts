@@ -27,10 +27,10 @@ export class AppComponent implements OnInit
     const search = this.customContext.Set<State>(State, { this: this });
     const results = await search.ToListAsync();
     this.StateData = results;
-    const search2 = this.customContext.Set<State>(State, { this: this });
-    const search3 = search2.Where(r => r.State_Name!.ToLower().Contains(this.StateSearch));
+    const search3 = search.Where(r => r.State_Name!.ToLower().Contains(this.StateSearch));
     this.StateSearchData = await search3.ToListAsync();
 
+    this.StateData = await search.Where(r => r.State_Code!.Contains("A")).ToListAsync();
     this.CD.markForCheck();
   }
 }

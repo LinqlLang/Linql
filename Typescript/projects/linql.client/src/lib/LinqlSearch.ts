@@ -18,7 +18,7 @@ export class LinqlSearch<T> extends ALinqlSearch<T>
 
         if (this.Expressions)
         {
-            search.Expressions = Array.from(this.Expressions);
+            search.Expressions = this.Expressions.map(r => r.Clone());
         }
 
         return search as this;

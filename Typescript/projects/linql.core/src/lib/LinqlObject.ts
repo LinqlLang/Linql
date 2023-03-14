@@ -14,4 +14,11 @@ export class LinqlObject<T> extends LinqlExpression
         this.Value = Value;
     }
 
+    public Clone(): this
+    {
+        const obj = new LinqlObject(this.Value);
+        obj.Next = this.Next?.Clone();
+        return obj as this;
+    }
+
 }

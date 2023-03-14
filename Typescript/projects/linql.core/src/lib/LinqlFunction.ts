@@ -13,4 +13,11 @@ export class LinqlFunction extends LinqlExpression
         this.Arguments = Arguments;
     }
 
+    public Clone(): this
+    {
+        const linqlFunction = new LinqlFunction(this.FunctionName, this.Arguments?.map(r => r.Clone()));
+        linqlFunction.Next = this.Next?.Clone();
+        return linqlFunction as this;
+    }
+
 }

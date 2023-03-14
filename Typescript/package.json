@@ -1,6 +1,6 @@
 {
   "name": "linql",
-  "version": "1.0.0-alpha4",
+  "version": "1.0.0-alpha7",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

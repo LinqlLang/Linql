@@ -33,13 +33,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
-    "linql.client": "file:../Typescript/dist/linql.client",
-    "linql.client-angular": "file:../Typescript/dist/linql.client-angular",
-    "typescript": "~4.8.2",
-    "acorn-walk": "^8.2.0",
-    "acorn": "^8.8.2"
-  },
-  "peerDependencies": {
-    "linql.core": "^1.0.0-alpha3"
+    "linql.client-angular": "^1.0.0-alpha6",
+    "typescript": "~4.8.2"
   }
 }

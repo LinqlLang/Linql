@@ -15,4 +15,11 @@ export class LinqlBinary extends LinqlExpression
         this.Right = Right;
 
     }
+
+    public Clone(): this
+    {
+        const binary = new LinqlBinary(this.BinaryName, this.Left?.Clone(), this.Right?.Clone());
+        binary.Next = this.Next?.Clone();
+        return binary as this;
+    }
 }

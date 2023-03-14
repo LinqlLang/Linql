@@ -10,4 +10,11 @@ export class LinqlProperty extends LinqlExpression
         this.PropertyName = PropertyName;
     }
 
+    public Clone(): this
+    {
+        const clone = new LinqlProperty(this.PropertyName);
+        clone.Next = this.Next?.Clone();
+        return clone as this;
+    }
+
 }

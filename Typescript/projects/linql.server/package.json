@@ -1,6 +1,6 @@
 {
   "name": "linql.server",
-  "version": "1.0.0-alpha4",
+  "version": "1.0.0-alpha7",
   "peerDependencies": {},
   "dependencies": {
     "tslib": "^2.3.0"

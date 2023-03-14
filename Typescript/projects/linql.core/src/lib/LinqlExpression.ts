@@ -13,4 +13,5 @@ export abstract class LinqlExpression
         return this.Next.GetLastExpressionInNextChain();
     }
 
+    public abstract Clone(): this;
 }

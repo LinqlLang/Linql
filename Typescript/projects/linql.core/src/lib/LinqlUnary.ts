@@ -13,4 +13,11 @@ export class LinqlUnary extends LinqlExpression
         this.Arguments = Arguments;
     }
 
+    public Clone(): this
+    {
+        const unary = new LinqlUnary(this.UnaryName, this.Arguments?.map(r => r.Clone()));
+        unary.Next = this.Next?.Clone();
+        return unary as this;
+    }
+
 }

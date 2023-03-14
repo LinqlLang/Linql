@@ -3,10 +3,20 @@ import { LinqlType } from "./LinqlType";
 
 export class LinqlLambda extends LinqlExpression
 {
+
     "$type": string = "LinqlLambda";
 
     Body: LinqlExpression | undefined;
 
     Parameters: Array<LinqlExpression> | undefined;
+
+    public Clone(): this
+    {
+        const clone = new LinqlLambda();
+        clone.Body = this.Body?.Clone();
+        clone.Next = this.Next?.Clone();
+        clone.Parameters = this.Parameters?.map(r => r.Clone());
+        return clone as this;
+    }
 
 }

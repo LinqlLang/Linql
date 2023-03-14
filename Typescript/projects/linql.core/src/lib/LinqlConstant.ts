@@ -5,7 +5,7 @@ export class LinqlConstant extends LinqlExpression
 {
     "$type": string = "LinqlConstant";
 
-    ConstantType: LinqlType | undefined;
+    ConstantType: LinqlType;
 
     Value: any;
 
@@ -14,5 +14,12 @@ export class LinqlConstant extends LinqlExpression
         super();
         this.ConstantType = ConstantType;
         this.Value = Value;
+    }
+
+    public Clone(): this
+    {
+        const constant = new LinqlConstant(this.ConstantType, this.Value);
+        constant.Next = this.Next?.Clone();
+        return constant as this;
     }
 }

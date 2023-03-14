@@ -10,4 +10,11 @@ export class LinqlParameter extends LinqlExpression
         this.ParameterName = ParameterName;
     }
 
+    public Clone(): this
+    {
+        const param = new LinqlParameter(this.ParameterName);
+        param.Next = this.Next?.Clone();
+        return param as this;
+    }
+
 }
