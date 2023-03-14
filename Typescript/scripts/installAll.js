@@ -8,7 +8,9 @@ const fs = require('fs');
 
 const ignore = [
     '**/node_modules/**',
-    "examples/**"
+    "examples/**",
+    "dist/**",
+    "package.json"
 ]
 
 const packages = globSync('**/package.json', { ignore: ignore });
@@ -19,6 +21,6 @@ packages.forEach(r =>
 {
     const file = fs.readFileSync(r, 'utf-8');
     const parsed = JSON.parse(file);
-    execSync(`npm run install ${ parsed.name }`, { stdio: 'inherit' });
+    execSync(`npm run setup ${ parsed.name }`, { stdio: 'inherit' });
 });
 
