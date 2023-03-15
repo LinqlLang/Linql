@@ -38,7 +38,8 @@ namespace WebApiExample.Controllers
             ConcurrentDictionary<long, object> results = new ConcurrentDictionary<long, object>();
             Parallel.ForEach(Searches, (search, options, index) =>
             {
-                object result = this.Compiler.Execute(search, this.DataService.StateData.AsQueryable());
+                LinqlCompiler compiler = new CustomLinqlCompiler();
+                object result = compiler.Execute(search, this.DataService.StateData.AsQueryable());
                 results.GetOrAdd(index, (key) => result);
             });
            

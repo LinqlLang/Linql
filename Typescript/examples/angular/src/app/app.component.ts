@@ -17,6 +17,8 @@ export class AppComponent implements OnInit
 
   StateSearch: string = "en";
 
+  BatchData: Array<any> | undefined;
+
   constructor(public context: LinqlContext, public customContext: CustomLinqlContext, public CD: ChangeDetectorRef)
   {
 
@@ -29,8 +31,11 @@ export class AppComponent implements OnInit
     const searches = [
       search.ToListAsyncSearch(),
       search.Where(r => r.State_Code!.Contains("A")).ToListAsyncSearch(),
-      search.Where(r => r.State_Name!.ToLower().Contains(this.StateSearch))
+      search.Where(r => r.State_Name!.ToLower().Contains(this.StateSearch)),
+      search.FirstOrDefaultSearch()
     ];
+    const serialStart = performance.now()
+
 
     const results = await search.ToListAsync();
     this.StateData = results;
@@ -40,9 +45,19 @@ export class AppComponent implements OnInit
 
     this.StateData = await search.Where(r => r.State_Code!.Contains("A")).ToListAsync();
 
+    const serialEnd = performance.now()
 
-    const batch = await this.customContext.Batch(searches);
-    console.log(batch);
+    console.log(`Time it takes to run sequentially: ${ serialEnd - serialStart } ms`)
+
+
+    const batchStart = performance.now()
+
+    this.BatchData = await this.customContext.Batch(searches);
+
+    const batchEnd = performance.now()
+
+    console.log(`Time it takes to run in batch: ${ batchEnd - batchStart } ms`)
+
     this.CD.markForCheck();
   }
 }
