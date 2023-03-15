@@ -1,13 +1,16 @@
 {
   "name": "linql.client-angular",
-  "version": "1.0.0-alpha7",
+  "version": "1.0.0-alpha8",
   "peerDependencies": {
     "@angular/common": ">=14.0.0",
     "@angular/core": ">=14.0.0",
-    "linql.client": "^1.0.0-alpha1",
+    "linql.client": "^1.0.0-alpha8",
     "rxjs": "^7.8.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "linql.client": "file:../../dist/linql.client"
   }
 }

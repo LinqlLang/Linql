@@ -146,18 +146,18 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
 
     ToListAsyncSearch()
     {
-        const newSearch = this.CustomLinqlFunction("ToListAsync");
+        const newSearch = this.CustomLinqlFunction<Array<T>>("ToListAsync");
         return newSearch;
     }
 
     FirstOrDefaultSearch(Predicate: BooleanExpression<T> | string | undefined = undefined)
     {
-        return this.CustomLinqlFunction("FirstOrDefaultAsync", Predicate);
+        return this.CustomLinqlFunction<T | null>("FirstOrDefaultAsync", Predicate);
     }
 
     LastOrDefaultSearch(Predicate: BooleanExpression<T> | string | undefined = undefined)
     {
-        return this.CustomLinqlFunction("LastOrDefaultAsync", Predicate);
+        return this.CustomLinqlFunction<T | null>("LastOrDefaultAsync", Predicate);
     }
 
     //#endregion
@@ -211,10 +211,7 @@ export abstract class ALinqlContext
 
     ToJson(Search: ALinqlSearch<any>)
     {
-        const copy: any = Search.Copy();
-        copy.Context = undefined;
-        copy.ArgumentContext = undefined;
-        copy.ModelType = undefined;
+        const copy: any = this.GetOptimizedSearch(Search);
         return JSON.stringify(copy);
     }
 
@@ -267,5 +264,15 @@ export abstract class ALinqlContext
     public Set<T>(Type: string | GenericConstructor<T>, ArgumentContext: {} | undefined = this.ArgumentContext): ALinqlSearch<T>
     {
         return new this.LinqlSearchType(Type, ArgumentContext, this);
+    }
+
+    protected GetOptimizedSearch<T>(Search: ALinqlSearch<T>)
+    {
+        const optimizedSearch = Search.Copy();
+        const anycast = optimizedSearch as any;
+        optimizedSearch.ArgumentContext = undefined;
+        anycast.Context = undefined;
+        anycast.ModelType = undefined;
+        return optimizedSearch;
     }
 }

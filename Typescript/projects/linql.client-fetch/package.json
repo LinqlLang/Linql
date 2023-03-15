@@ -1,13 +1,13 @@
 {
   "name": "linql.client-fetch",
-  "version": "1.0.0-alpha7",
+  "version": "1.0.0-alpha8",
   "peerDependencies": {
-    "linql.client": "file../../../dist/linql.client"
+    "linql.client": "^1.0.0-alpha8"
   },
   "dependencies": {
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "linql.client": "file../../../dist/linql.client"
+    "linql.client": "file:../../dist/linql.client"
   }
 }

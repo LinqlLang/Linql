@@ -25,12 +25,24 @@ export class AppComponent implements OnInit
   async ngOnInit()
   {
     const search = this.customContext.Set<State>(State, { this: this });
+
+    const searches = [
+      search.ToListAsyncSearch(),
+      search.Where(r => r.State_Code!.Contains("A")).ToListAsyncSearch(),
+      search.Where(r => r.State_Name!.ToLower().Contains(this.StateSearch))
+    ];
+
     const results = await search.ToListAsync();
     this.StateData = results;
+
     const search3 = search.Where(r => r.State_Name!.ToLower().Contains(this.StateSearch));
     this.StateSearchData = await search3.ToListAsync();
 
     this.StateData = await search.Where(r => r.State_Code!.Contains("A")).ToListAsync();
+
+
+    const batch = await this.customContext.Batch(searches);
+    console.log(batch);
     this.CD.markForCheck();
   }
 }

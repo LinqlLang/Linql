@@ -3,6 +3,7 @@ using Linql.Core;
 using System.IO;
 using System.Text.Json;
 using Linql.Server;
+using System.Collections.Concurrent;
 
 namespace WebApiExample.Controllers
 {
@@ -29,6 +30,19 @@ namespace WebApiExample.Controllers
         {
             object result = this.Compiler.Execute(Search, this.DataService.StateData.AsQueryable());
             return result;
+        }
+
+        [HttpPost("/Batch")]
+        public List<object> Batch(List<LinqlSearch> Searches)
+        {
+            ConcurrentDictionary<long, object> results = new ConcurrentDictionary<long, object>();
+            Parallel.ForEach(Searches, (search, options, index) =>
+            {
+                object result = this.Compiler.Execute(search, this.DataService.StateData.AsQueryable());
+                results.GetOrAdd(index, (key) => result);
+            });
+           
+            return results.OrderBy(r => r.Key).Select(r => r.Value).ToList();
         }
     }
 }

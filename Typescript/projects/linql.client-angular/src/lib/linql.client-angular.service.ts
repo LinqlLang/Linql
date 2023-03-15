@@ -12,11 +12,7 @@ export class LinqlContext extends ALinqlContext
   }
   protected SendHttpRequest<TResult>(Endpoint: string, Search: ALinqlSearch<any>): Promise<TResult>
   {
-    const optimizedSearch = Search.Copy();
-    const anycast = optimizedSearch as any;
-    optimizedSearch.ArgumentContext = undefined;
-    anycast.Context = undefined;
-    anycast.ModelType = undefined;
+    const optimizedSearch = this.GetOptimizedSearch(Search);
     return lastValueFrom(this.Client.post<TResult>(Endpoint, optimizedSearch));
   }
 

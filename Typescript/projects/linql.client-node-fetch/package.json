@@ -1,15 +1,15 @@
 {
   "name": "linql.client-node-fetch",
-  "version": "1.0.0-alpha7",
+  "version": "1.0.0-alpha8",
   "peerDependencies": {
-    "linql.client": "file../../../dist/linql.client",
+    "linql.client": "^1.0.0-alpha8",
     "node-fetch": "^3.3.1"
   },
   "dependencies": {
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "linql.client": "file../../../dist/linql.client",
+    "linql.client": "file:../../dist/linql.client",
     "node-fetch": "^3.3.1"
   }
 }
