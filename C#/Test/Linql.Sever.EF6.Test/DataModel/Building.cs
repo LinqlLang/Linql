@@ -19,13 +19,15 @@ namespace Linql.Server.EF6.Test.DataModel
         [Required]
         public string BuildingName { get; set; } = "";
 
-        public decimal Latitude { get; set; }
+        public double Latitude { get; set; }
 
-        public decimal Longitude { get; set; }
+        public double Longitude { get; set; }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DbGeography Geography { get; set; }
 
-        public DbGeometry Geometry { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DbGeometry Geometry { get; set;  }
 
 
     }

@@ -4,15 +4,17 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.Entity;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Linql.Server.EF6.Test
 {
-    public class EF6TestContext<T> : DbContext where T: class, new()
+    public class EF6TestContext : DbContext
     {
-        public DbSet<T> ResultSet { get; set; }
+        public DbSet<Building> Buildings { get; set; }
 
         public EF6TestContext(string ConnectionString = DataModelConstants.ConnectionString) : base(ConnectionString)
         {
@@ -27,16 +29,46 @@ namespace Linql.Server.EF6.Test
         {
             if (Reset)
             {
-                string text = await File.ReadAllTextAsync("./Scripts/DbSetup.sql");
-                using (SqlConnection con = new SqlConnection(DataModelConstants.MasterConnectionString))
-                {
-                    con.Open();
-                    SqlCommand command = new SqlCommand(text, con);
-                    await command.ExecuteNonQueryAsync();
-                }
+                await this.RunScript("DbSetup.sql", true);
+                
             }
 
-            await this.ResultSet.ToListAsync();
+            await this.Buildings.ToListAsync();
+            await this.RunScript("TableSetup.sql");
+            await this.SeedData();
+        }
+
+        private async Task RunScript(string ScriptName, bool UseMaster = false)
+        {
+            string connection = UseMaster ? DataModelConstants.MasterConnectionString : DataModelConstants.ConnectionString;
+            string script = Path.Join("Scripts", ScriptName);
+
+            string text = await File.ReadAllTextAsync(script);
+            using (SqlConnection con = new SqlConnection(connection))
+            {
+                con.Open();
+                SqlCommand command = new SqlCommand(text, con);
+                await command.ExecuteNonQueryAsync();
+            }
+        }
+
+        private async Task SeedData()
+        {
+            string latLongFile = await File.ReadAllTextAsync("./TestData/LatLongs.json");
+
+            List<LatLong> latLongs = JsonSerializer.Deserialize<List<LatLong>>(latLongFile);
+
+            List<Building> buildings = latLongs.Select(r =>
+            {
+                Building building = new Building();
+                building.Latitude = r.Latitude;
+                building.Longitude = r.Longitude;
+                building.BuildingName = $"Test Building {latLongs.IndexOf(r) + 1}";
+                return building;
+            }).ToList();
+
+            this.Buildings.AddRange(buildings);
+            await this.SaveChangesAsync();
         }
     }
 }

@@ -11,12 +11,12 @@ namespace Linql.Server.EF6.Test
     public class BuildingTest : TestFileTests
     {
 
-        EF6TestContext<Building> Context { get; set; } 
+        EF6TestContext Context { get; set; } 
       
         [OneTimeSetUp]
         public override async Task Setup()
         {
-            this.Context = new EF6TestContext<Building>();
+            this.Context = new EF6TestContext();
             await this.Context.Init();
             //await base.Setup();
             //List<DataModel> dataList = new List<DataModel>();
