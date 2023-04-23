@@ -21,11 +21,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Linql.Core.Test", "Test\Lin
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{AB8700C7-0C9F-4AE4-9B84-4F0AE55151C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiExample", "Examples\WebApiExample\WebApiExample.csproj", "{DEC2F9EB-EDE6-4D9D-8998-29005B2E8F1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiExample", "Examples\WebApiExample\WebApiExample.csproj", "{DEC2F9EB-EDE6-4D9D-8998-29005B2E8F1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientExample", "Examples\ClientExample\ClientExample.csproj", "{724D24D0-42AC-4875-A735-96629AB45479}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientExample", "Examples\ClientExample\ClientExample.csproj", "{724D24D0-42AC-4875-A735-96629AB45479}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleDataModel", "Examples\ExampleDataModel\ExampleDataModel.csproj", "{DE5FDCD0-FC32-4A4A-AB8E-D2D851F83064}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleDataModel", "Examples\ExampleDataModel\ExampleDataModel.csproj", "{DE5FDCD0-FC32-4A4A-AB8E-D2D851F83064}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Linql.Server.EF6.Test", "Test\Linql.Sever.EF6.Test\Linql.Server.EF6.Test.csproj", "{3C4659B3-90E1-4757-BAB6-FA0E33666681}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +75,10 @@ Global
 		{DE5FDCD0-FC32-4A4A-AB8E-D2D851F83064}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE5FDCD0-FC32-4A4A-AB8E-D2D851F83064}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE5FDCD0-FC32-4A4A-AB8E-D2D851F83064}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C4659B3-90E1-4757-BAB6-FA0E33666681}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C4659B3-90E1-4757-BAB6-FA0E33666681}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C4659B3-90E1-4757-BAB6-FA0E33666681}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C4659B3-90E1-4757-BAB6-FA0E33666681}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,6 +91,7 @@ Global
 		{DEC2F9EB-EDE6-4D9D-8998-29005B2E8F1E} = {AB8700C7-0C9F-4AE4-9B84-4F0AE55151C9}
 		{724D24D0-42AC-4875-A735-96629AB45479} = {AB8700C7-0C9F-4AE4-9B84-4F0AE55151C9}
 		{DE5FDCD0-FC32-4A4A-AB8E-D2D851F83064} = {AB8700C7-0C9F-4AE4-9B84-4F0AE55151C9}
+		{3C4659B3-90E1-4757-BAB6-FA0E33666681} = {B3502CFF-E6A4-48E5-982D-8C2105A42ACB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BE494065-5944-4FED-858F-D9BC8347ECA2}
