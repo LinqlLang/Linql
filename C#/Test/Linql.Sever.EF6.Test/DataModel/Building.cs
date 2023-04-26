@@ -29,6 +29,50 @@ namespace Linql.Server.EF6.Test.DataModel
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DbGeometry Geometry { get; set;  }
 
+        public virtual List<BuildingData> Data { get; set; } 
 
+
+    }
+
+    [Table(DataModelConstants.Schema + nameof(BuildingData))]
+    public class BuildingData
+    {
+        [Key, Column(Order = 1)]
+        public int BuildingID { get; set; }
+
+        [ForeignKey(nameof(BuildingData.BuildingID))]
+        public virtual Building Building { get; set; }
+
+        [Key, Column(Order = 2)]
+        public int Year { get; set; }
+
+        [Key, Column(Order = 3)]
+        public int VariableID { get; set; }
+
+        [ForeignKey(nameof(BuildingData.VariableID))]
+        public virtual Variable Variable { get; set; }
+
+        public double Value { get; set; }
+
+        public BuildingData() { }
+
+        public BuildingData(int year, Variable Variable, double value)
+        {
+            this.Year = year;
+            this.Variable = Variable;
+            this.Value = value;
+        }
+    }
+
+    [Table(DataModelConstants.Schema + nameof(Variable))]
+    public class Variable
+    {
+        [Key]
+        public int VariableID { get; set; }
+
+        [Required]
+        [Index(IsUnique = true)]
+        [MaxLength(50)]
+        public string VariableName { get; set; }
     }
 }

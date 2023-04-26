@@ -1,23 +1,17 @@
-using Linql.Client;
-using Linql.Core;
-using Linql.Core.Test;
-using Linql.Server.EF6.Test.DataModel;
 using Linql.Test.Files;
-using System.Reflection;
-using System.Text.Json;
 
 namespace Linql.Server.EF6.Test
 {
     public class BuildingTest : TestFileTests
     {
-
+        bool ResetDatabase { get; set; } = true;
         EF6TestContext Context { get; set; } 
       
         [OneTimeSetUp]
         public override async Task Setup()
         {
             this.Context = new EF6TestContext();
-            await this.Context.Init();
+            await this.Context.Init(ResetDatabase);
             //await base.Setup();
             //List<DataModel> dataList = new List<DataModel>();
             //dataList.Where(r => true).ToList();

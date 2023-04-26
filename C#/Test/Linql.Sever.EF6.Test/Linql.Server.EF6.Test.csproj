@@ -23,31 +23,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="TestFiles\**">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Linql.Client\Linql.Client.csproj" />
-    <ProjectReference Include="..\..\Linql.Server\Linql.Server.csproj" />
-    <ProjectReference Include="..\Linql.Core.Test\Linql.Core.Test.csproj" />
     <ProjectReference Include="..\Linql.Test.Files\Linql.Test.Files.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Scripts\TableSetup.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Scripts\DbSetup.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestData\LatLongs.json">
+    <None Update="TestFiles\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="TestData\testdata.csv">
+    <None Update="Scripts\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestData\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+
   </ItemGroup>
 
+ 
 </Project>
