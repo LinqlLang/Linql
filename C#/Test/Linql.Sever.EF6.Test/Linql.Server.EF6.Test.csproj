@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Linql.Server\Linql.Server.csproj" />
     <ProjectReference Include="..\Linql.Test.Files\Linql.Test.Files.csproj" />
   </ItemGroup>
 
