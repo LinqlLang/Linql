@@ -34,7 +34,14 @@ namespace Linql.Server.EF6.Test
         {
             if (Reset == true)
             {
-                await this.RunScript("DbSetup.sql", true);
+                try
+                {
+                    await this.RunScript("DbSetup.sql", true);
+                }
+                catch(Exception ex)
+                {
+
+                }
 
             }
 

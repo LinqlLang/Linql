@@ -4,7 +4,7 @@ namespace Linql.Server.EF6.Test
 {
     public class BuildingTest : TestFileTests
     {
-        bool ResetDatabase { get; set; } = true;
+        bool ResetDatabase { get; set; } = false;
         EF6TestContext Context { get; set; } 
       
         [OneTimeSetUp]
