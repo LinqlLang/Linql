@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Linql.Core
 {
@@ -64,6 +66,18 @@ namespace Linql.Core
         public static LinqlType ToLinqlType(this Type Type)
         {
             return new LinqlType(Type);
+        }
+
+        public static async Task<object> GetGenericTaskResult(this Task Task)
+        {
+            await Task;
+            PropertyInfo resultProperty = Task.GetType().GetProperty(nameof(Task<object>.Result));
+
+            if(resultProperty != null)
+            {
+                return resultProperty.GetValue(Task);
+            }
+            return null;
         }
 
         public static bool IsAssignableFromOrImplements(this Type Type, Type TypeToCompare)

@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace Linql.Server
 {
@@ -78,6 +79,7 @@ namespace Linql.Server
                     throw new Exception($"Linql Search did not start with a function, or a LinqlSearch, but started with {exp.GetType().Name}");
                 }
             });
+
             return result;
         }
 
@@ -245,7 +247,19 @@ namespace Linql.Server
 
         public T Execute<T>(LinqlSearch Search, IEnumerable Queryable)
         {
+            Task<T> task = this.ExecuteAsync<T>(Search, Queryable);
+            return task.Result;
+        }
+
+        public async Task<T> ExecuteAsync<T>(LinqlSearch Search, IEnumerable Queryable)
+        {
             object result = this.Execute(Search, Queryable);
+
+            if (result is Task taskResult)
+            {
+                result = await taskResult.GetGenericTaskResult();
+            }
+
             return (T)result;
         }
 
