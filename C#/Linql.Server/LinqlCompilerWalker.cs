@@ -59,7 +59,6 @@ namespace Linql.Server
 
         }
 
-
         protected LambdaExpression VisitLambda(LinqlLambda Lambda, Type InputType, Expression Previous = null)
         {
             if (InputType == null)

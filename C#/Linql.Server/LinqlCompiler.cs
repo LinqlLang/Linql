@@ -263,6 +263,11 @@ namespace Linql.Server
             return (T)result;
         }
 
+        public async Task<object> ExecuteAsync(LinqlSearch Search, IEnumerable Queryable)
+        {
+            return await this.ExecuteAsync<object>(Search, Queryable);
+        }
+
         protected List<MethodInfo> GetMethodsForType(Type Type)
         {
             List<MethodInfo> methods;
@@ -289,6 +294,10 @@ namespace Linql.Server
             if (Type.TypeName == "List")
             {
                 typeName = typeof(List<>).Name;
+            }
+            else if(Type.TypeName == "object")
+            {
+                typeName = typeof(object).Name;
             }
 
             return this.ValidAssemblies.SelectMany(s => s.GetTypes()).FirstOrDefault(r => r.Name == typeName);

@@ -115,6 +115,13 @@ namespace Linql.Server.Test.Expressions
             this.TestFile(nameof(List_Int_Contains), 3);
         }
 
+        //[Test]
+        //public void List_Empty_Contains()
+        //{
+        //    this.TestFile(nameof(List_Empty_Contains), 0);
+        //}
+
+
 
         [Test]
         public void SimpleConstant()

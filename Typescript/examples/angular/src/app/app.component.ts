@@ -19,6 +19,8 @@ export class AppComponent implements OnInit
 
   BatchData: Array<any> | undefined;
 
+  PointSearch: LatLong = new LatLong(-77.036530, 38.897675);
+
   constructor(public context: LinqlContext, public customContext: CustomLinqlContext, public CD: ChangeDetectorRef)
   {
 
@@ -45,19 +47,20 @@ export class AppComponent implements OnInit
 
     this.StateData = await search.Where(r => r.State_Code!.Contains("A")).ToListAsync();
 
-    const serialEnd = performance.now()
+    const serialEnd = performance.now();
 
     console.log(`Time it takes to run sequentially: ${ serialEnd - serialStart } ms`)
 
 
-    const batchStart = performance.now()
+    const batchStart = performance.now();
 
     this.BatchData = await this.customContext.Batch(searches);
 
-    const batchEnd = performance.now()
+    const batchEnd = performance.now();
 
-    console.log(`Time it takes to run in batch: ${ batchEnd - batchStart } ms`)
+    console.log(`Time it takes to run in batch: ${ batchEnd - batchStart } ms`);
 
+    const latLongSearch = await search.Where(r => r.Geometry!.Contains(this.PointSearch.ToPoint())).ToListAsync();
     this.CD.markForCheck();
   }
 }
@@ -72,6 +75,7 @@ export class State
   Flowing_St: string | undefined;
   FID_1!: number;
   Data: Array<StateData> | undefined;
+  Geometry: Geometry | undefined;
 }
 
 export class StateData
@@ -82,3 +86,20 @@ export class StateData
   DateOfRecording!: Date;
 }
 
+export interface Geometry
+{
+  Contains(Item: Geometry): boolean;
+}
+
+export class LatLong
+{
+  constructor(public Latitude: number, public Longitude: number)
+  {
+
+  }
+
+  ToPoint(): Geometry
+  {
+    return this as any as Geometry;
+  }
+}

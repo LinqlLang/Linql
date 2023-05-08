@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <None Remove="TestFiles\Smoke\EmptyList.json" />
+    <None Remove="TestFiles\Smoke\List_Empty_Contains.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,6 +43,14 @@
 
   <ItemGroup>
     <Content Update="TestFiles\Smoke\EmptyList.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <PackageCopyToOutput>true</PackageCopyToOutput>
+    </Content>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Content Update="TestFiles\Smoke\List_Empty_Contains.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <PackageCopyToOutput>true</PackageCopyToOutput>
     </Content>

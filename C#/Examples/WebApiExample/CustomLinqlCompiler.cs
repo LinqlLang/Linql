@@ -16,7 +16,8 @@ namespace WebApiExample
                 typeof(Boolean).Assembly,
                 typeof(Enumerable).Assembly,
                 typeof(Queryable).Assembly,
-                typeof(Geometry).Assembly
+                typeof(Geometry).Assembly,
+                typeof(State).Assembly,
             };
 
             var geoJsonConverterFactory = new GeoJsonConverterFactory();

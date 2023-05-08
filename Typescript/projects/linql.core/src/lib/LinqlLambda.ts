@@ -13,9 +13,9 @@ export class LinqlLambda extends LinqlExpression
     public Clone(): this
     {
         const clone = new LinqlLambda();
-        clone.Body = this.Body?.Clone();
         clone.Next = this.Next?.Clone();
         clone.Parameters = this.Parameters?.map(r => r.Clone());
+        clone.Body = this.Body?.Clone();
         return clone as this;
     }
 

@@ -33,3 +33,16 @@ public class StateData
     public DateTime DateOfRecording { get; set; }
 
 }
+
+public class LatLong
+{
+
+    public double Latitude { get; set; }
+
+    public double Longitude { get; set; }
+
+    public Point ToPoint()
+    {
+        return new Point(new Coordinate(this.Latitude, this.Longitude));
+    }
+}

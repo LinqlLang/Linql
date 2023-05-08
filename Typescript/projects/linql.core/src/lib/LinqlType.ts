@@ -41,6 +41,13 @@ export class LinqlType
                         type.GenericParameters = new Array<LinqlType>();
                         type.GenericParameters.push(LinqlType.GetLinqlType(firstValue));
                     }
+                    else
+                    {
+                        const objectType = new LinqlType();
+                        objectType.TypeName = "object";
+                        type.GenericParameters = new Array<LinqlType>();
+                        type.GenericParameters.push(objectType);
+                    }
                 }
                 else
                 {

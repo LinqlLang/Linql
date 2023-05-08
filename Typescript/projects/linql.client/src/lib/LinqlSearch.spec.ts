@@ -89,6 +89,7 @@ class TestClass
         const newSearch = search.Where(r => true);
         await this._ExecuteTest("SimpleConstant", newSearch);
     }
+
     async SimpleBooleanProperty()
     {
         const search = this.context.Set<DataModel>(DataModel);
@@ -205,6 +206,15 @@ class TestClass
         await this._ExecuteTest("List_Int_Contains", newSearch);
     }
 
+    async Empty_List_Contains()
+    {
+        this.integers = [];
+        const search = this.context.Set<DataModel>(DataModel);
+        const newSearch = search.Where(r => this.integers.Contains(r.Integer));
+        await this._ExecuteTest("Empty_List_Contains", newSearch);
+    }
+
+
     async String_Contains()
     {
         const search = this.context.Set<DataModel>(DataModel);
@@ -215,6 +225,7 @@ class TestClass
 
     async List_Int_Count()
     {
+        this.integers = [1, 2, 3];
         const search = this.context.Set<DataModel>(DataModel);
         const newSearch = search.Where(r => this.integers.Count === 1);
         await this._ExecuteTest("List_Int_Count", newSearch);
@@ -301,7 +312,6 @@ class TestClass
         {
             console.log(json);
             console.log(compare);
-            debugger;
         }
         expect(json).toEqual(compare);
     }
