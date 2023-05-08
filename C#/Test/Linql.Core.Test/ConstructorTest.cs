@@ -4,14 +4,14 @@ namespace Linql.Core.Test
 {
     public class ConstructorTest
     {
-        [Test]
-        public void LinqlExpresion()
-        {
-            Assert.DoesNotThrow(() =>
-            {
-                LinqlExpression exp = new LinqlExpression();
-            });
-        }
+        //[Test]
+        //public void LinqlExpresion()
+        //{
+        //    Assert.DoesNotThrow(() =>
+        //    {
+        //        LinqlExpression exp = new LinqlExpression();
+        //    });
+        //}
 
         [Test]
         public void LinqlObject()

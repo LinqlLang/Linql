@@ -5,6 +5,10 @@ using System.Text.Json.Serialization;
 
 namespace Linql.Core
 {
+
+    /// <summary>
+    /// Base Type of Linql.  All LinqlExpressions derive from this type.
+    /// </summary>
     [JsonDerivedType(typeof(LinqlConstant), typeDiscriminator: nameof(LinqlConstant))]
     [JsonDerivedType(typeof(LinqlFunction), typeDiscriminator: nameof(LinqlFunction))]
     [JsonDerivedType(typeof(LinqlLambda), typeDiscriminator: nameof(LinqlLambda))]
@@ -13,13 +17,19 @@ namespace Linql.Core
     [JsonDerivedType(typeof(LinqlBinary), typeDiscriminator: nameof(LinqlBinary))]
     [JsonDerivedType(typeof(LinqlUnary), typeDiscriminator: nameof(LinqlUnary))]
     [JsonDerivedType(typeof(LinqlObject), typeDiscriminator: nameof(LinqlObject))]
-
-    public class LinqlExpression
+    public abstract class LinqlExpression
     {
+        /// <summary>
+        /// Represents the next linql expression.  
+        /// </summary>
         public LinqlExpression Next { get; set; }
 
         public LinqlExpression() { }
 
+        /// <summary>
+        /// Walks the linql expression Next property and returns the last item in that expression, including itself if Next is null.
+        /// </summary>
+        /// <returns></returns>
         public LinqlExpression GetLastExpressionInNextChain()
         {
             if(this.Next == null)

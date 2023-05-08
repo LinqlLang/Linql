@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Linql.Core
 {
+    /// <summary>
+    /// Represents 
+    /// </summary>
     public class LinqlBinary : LinqlExpression
     {
         public string BinaryName { get; set; }

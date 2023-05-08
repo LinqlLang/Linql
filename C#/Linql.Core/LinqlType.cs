@@ -6,16 +6,32 @@ using System.Text;
 
 namespace Linql.Core
 {
+    /// <summary>
+    /// Represents a type.  
+    /// </summary>
     public class LinqlType 
     {
         readonly static string ListType = "List";
 
+        /// <summary>
+        /// The name of the Type
+        /// </summary>
         public string TypeName { get; set; }
 
+        /// <summary>
+        /// Any generic parameters of the type.  
+        /// </summary>
         public List<LinqlType> GenericParameters { get; set; }
 
+        /// <summary>
+        /// This constructor is required for Json serialization/deserialization.  Should probably not use this.
+        /// </summary>
         public LinqlType() { }
 
+        /// <summary>
+        /// Creates a new LinqlType
+        /// </summary>
+        /// <param name="Type">The CSharp type</param>
         public LinqlType(Type Type)
         {
             this.GenericParameters = Type.IsConstructedGenericType ? Type.GetGenericArguments().Select(r => new LinqlType(r)).ToList() : null;
@@ -42,6 +58,10 @@ namespace Linql.Core
             }
         }
 
+        /// <summary>
+        /// Returns true if the LinqlType is a list
+        /// </summary>
+        /// <returns>true or false</returns>
         public bool IsList()
         {
             return this.TypeName == LinqlType.ListType;

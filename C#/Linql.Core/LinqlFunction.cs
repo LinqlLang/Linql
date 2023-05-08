@@ -5,14 +5,31 @@ using System.Text;
 
 namespace Linql.Core
 {
+    /// <summary>
+    /// Represents a function.  Lambdas are not Functions, but rather arguments to a function generally.
+    /// </summary>
     public class LinqlFunction : LinqlExpression
     {
+        /// <summary>
+        /// The name of the function
+        /// </summary>
         public string FunctionName { get; set; }
 
+        /// <summary>
+        /// Arguments to the function
+        /// </summary>
         public List<LinqlExpression> Arguments { get; set; }
 
+        /// <summary>
+        /// This constructor is required for Json serialization/deserialization.  Should probably not use this.
+        /// </summary>
         public LinqlFunction() { }
 
+        /// <summary>
+        /// Creates a LinqlFunction.
+        /// </summary>
+        /// <param name="FunctionName">The name of the Function</param>
+        /// <param name="Arguments">The Arguments to the function</param>
         public LinqlFunction(string FunctionName, List<LinqlExpression> Arguments = null) 
         {
             this.FunctionName = FunctionName;
