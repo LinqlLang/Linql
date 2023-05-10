@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Linql.Server", "Linql.Serve
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{B3502CFF-E6A4-48E5-982D-8C2105A42ACB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Linql.Server.Test", "Test\Linql.Sever.Test\Linql.Server.Test.csproj", "{C12FA28D-99C3-4C15-B442-AD5D3D300A8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Linql.Server.Test", "Test\Linql.Server.Test\Linql.Server.Test.csproj", "{C12FA28D-99C3-4C15-B442-AD5D3D300A8B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Linql.Core", "Linql.Core\Linql.Core.csproj", "{3141C0FA-AF7B-4F56-810F-499CDF753C52}"
 EndProject
@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientExample", "Examples\C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleDataModel", "Examples\ExampleDataModel\ExampleDataModel.csproj", "{DE5FDCD0-FC32-4A4A-AB8E-D2D851F83064}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Linql.Server.EF6.Test", "Test\Linql.Sever.EF6.Test\Linql.Server.EF6.Test.csproj", "{3C4659B3-90E1-4757-BAB6-FA0E33666681}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Linql.Server.EF6.Test", "Test\Linql.Server.EF6.Test\Linql.Server.EF6.Test.csproj", "{3C4659B3-90E1-4757-BAB6-FA0E33666681}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
