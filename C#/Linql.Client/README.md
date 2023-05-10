@@ -15,13 +15,13 @@ dotnet add package Linql.Client
 
 ## Basic Usage
 
-Create a LinqlContext: 
+### Create a LinqlContext
 
 ```cs
 LinqlContext Context = new LinqlContext("https://localhost:8080");
 ```
 
-Start a query: 
+### Start a Query
 
 ```cs
 LinqlSearch<MyModel> basicSearch = Context.Set<MyModel>();
@@ -33,3 +33,49 @@ var results = await Task.WhenAll(
     searchTwo.TwoListASync()
 )
 ```
+
+### Defaults 
+
+The provided LinqlContext above has the following defaults: 
+
+- Endpoint is set to {baseurl}/linql/{TypeName}"
+- Ignores serializing default values
+- PropertyNames are case insensitive 
+
+
+## Customization 
+
+To customize the LinqlContext, simply create your own derivation of the default LinqlContext.
+
+```cs
+using System.Text.Json.Serialization;
+using Linql.Client;
+using Linql.Core;
+using NetTopologySuite.IO.Converters;
+
+public class CustomLinqlContext : LinqlContext
+{
+    ///Override constructor to add GeoJson support and allow floating point literals. 
+    public CustomLinqlContext(string BaseUrl) : base(BaseUrl)
+    {
+        var geoJsonConverterFactory = new GeoJsonConverterFactory();
+        this.JsonOptions.Converters.Add(geoJsonConverterFactory);
+        this.JsonOptions.NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals;
+
+    }
+
+    ///Instead of {baseurl}/linql/{TypeName}, set the endpoint as {baseurl}/TypeName
+    protected override string GetEndpoint(LinqlSearch Search)
+    {
+        return $"{Search.Type.TypeName}";
+    }
+}
+```
+
+## Full Example
+
+Checkout our full example [here](../Examples/ClientExample/).
+
+## Development 
+
+TODO
