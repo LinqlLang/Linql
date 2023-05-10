@@ -124,7 +124,14 @@ Checkout our full example [here](../Examples/WebApiExample/).
 
 In our full example, as well as in the above sample, you can see the "Batching" technique.  Batching can significantly reduce the overhead of your application, by bundling requests together into one Http Request.  The server then multiplexes the results itself.
 
-After alpha, batching will be moved inside of the Linql.Server and Linql.Client libraries so that it is a default feature.
+Batching is mostly always desired, but requires that the server implement a Generic Controller interface.
+
+### Generic Controllers
+
+In order to use Linql for your entire data model, a generic controller interface is required.
+
+TODO: Show Generic Controller implementation
+
 ### EntityFramework 6 Support
 
 Linql is compatible with EntityFramework 6.  There are tests [here](../Test/Linql.Sever.EF6.Test/).
