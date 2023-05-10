@@ -40,7 +40,57 @@ dotnet add package Linql.Server
 
 #### **`Program.cs`**
 ```cs
-LinqlContext Context = new LinqlContext("https://localhost:8080");
+var builder = WebApplication.CreateBuilder(args);
+...
+builder.Services.AddSingleton<LinqlCompiler, CustomLinqlCompiler>();
+
+```
+
+
+#### **`StateController.cs`**
+```cs
+//Example Controller that returns StateData
+[ApiController]
+[Route("[controller]")]
+public class StateController : ControllerBase
+{
+    private readonly ILogger<StateController> _logger;
+
+    protected DataService DataService { get; set; }
+
+    protected LinqlCompiler Compiler { get; set; }
+
+    public StateController(ILogger<StateController> logger, DataService DataService, LinqlCompiler Compiler)
+    {
+        _logger = logger;
+        this.DataService = DataService;
+        this.Compiler = Compiler;
+
+    }
+
+    [HttpPost]
+    public object Linql(LinqlSearch Search)
+    {
+        object result = this.Compiler.Execute(Search, this.DataService.StateData.AsQueryable());
+        return result;
+    }
+
+    //A Batching Method Example.
+    [HttpPost("/Batch")]
+    public List<object> Batch(List<LinqlSearch> Searches)
+    {
+        ConcurrentDictionary<long, object> results = new ConcurrentDictionary<long, object>();
+        Parallel.ForEach(Searches, async (search, options, index) =>
+        {
+            LinqlCompiler compiler = new CustomLinqlCompiler();
+            object result = await compiler.ExecuteAsync(search, this.DataService.StateData.AsQueryable());
+            results.GetOrAdd(index, (key) => result);
+        });
+
+        return results.OrderBy(r => r.Key).Select(r => r.Value).ToList();
+    }
+}
+
 ```
 
 ### Start a Query
