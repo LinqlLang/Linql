@@ -2,7 +2,7 @@
 
 A C# Client for the Linql Language.  Allows you to use your api as if it were an IQueryable. 
 
-```csharp
+```cs
 LinqlSearch<DataModel> search = Context.Set<DataModel>();
 string output = await search.Where(r => r.Boolean && r.OneToOne.Boolean).ToListAsync();
 ```
@@ -17,13 +17,13 @@ dotnet add package Linql.Client
 
 Create a LinqlContext: 
 
-```csharp
+```cs
 LinqlContext Context = new LinqlContext("https://localhost:8080");
 ```
 
 Start a query: 
 
-```csharp
+```cs
 LinqlSearch<MyModel> basicSearch = Context.Set<MyModel>();
 LinqlSearch<MyModel> searchOne = basicSearch.Where(r => r.Integers.Contains(1));
 LinqlSearch<MyModel> searchTwo = basicSearch.Where(r => r.Integers.Contains(2));
