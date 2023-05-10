@@ -141,7 +141,8 @@ Linql should be compatible with EntityFramework Core as well.  I do not have tes
 ## Future Enhancements 
 
 - Support multi-line statements
-- Support multiple LinqlSearches in the same context, and allow interaction between them
+- Support multiple LinqlSearches in the same context, and allow interaction between them (Join)
+- Anonymous Types (which would then allow specific select statements)
 - Performance Tests
 - More test cases
 
