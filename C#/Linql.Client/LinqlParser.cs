@@ -8,28 +8,55 @@ using System.Reflection;
 
 namespace Linql.Client
 {
+    /// <summary>
+    /// The Default LinqlParser. LinqlParser extends ExpressionVisitor in order to parse Expression Trees.
+    /// </summary>
     public class LinqlParser : ExpressionVisitor
     {
+        /// <summary>
+        /// A stack of LinqlExpression that were processed.  This is required in order to correctly order the LinqlSearch, as we don't match CSharps order of expressions, but rather, a more human readable format.
+        /// </summary>
         internal Stack<LinqlExpression> LinqlStack { get; } = new Stack<LinqlExpression>();
 
+        /// <summary>
+        /// A stack of Expressions that were processed.  This is required in order to correctly order the LinqlSearch, as we don't match CSharps order of expressions, but rather, a more human readable format.
+        /// </summary>
         internal Stack<Expression> ExpressionStack { get; } = new Stack<Expression>();
 
+        /// <summary>
+        /// The root LinqlExpression
+        /// </summary>
         public LinqlExpression Root { get; protected set; }
 
+        /// <summary>
+        /// The Type of the Root Expression
+        /// </summary>
         public Type LinqlSearchRootType { get; set; }
 
+        /// <summary>
+        /// Adds a LinqlExpression and an Expression to their respective stacks.
+        /// </summary>
+        /// <param name="LinqlExpression">LinqlExpression to push</param>
+        /// <param name="CSharpExpression">CSharp Expression to push</param>
         protected void PushToStack(LinqlExpression LinqlExpression, Expression CSharpExpression)
         {
             LinqlStack.Push(LinqlExpression);
             ExpressionStack.Push(CSharpExpression);
         }
 
+        /// <summary>
+        /// Removes items from both the LinqlStack and the ExpressionStack
+        /// </summary>
         protected void PopStack()
         {
             LinqlStack.Pop();
             ExpressionStack.Pop();
         }
 
+        /// <summary>
+        /// Attaches an expression to the parser's context.  If Root is null, sets the Root to this expression
+        /// </summary>
+        /// <param name="ExpressionToAttach">The LinqlExpression to attach to the parser context.</param>
         protected void AttachToExpression(LinqlExpression ExpressionToAttach)
         {
             LinqlExpression previousExpression = LinqlStack.FirstOrDefault();
@@ -44,6 +71,10 @@ namespace Linql.Client
 
         }
 
+        /// <summary>
+        /// Pops Linql Expression Stack.  
+        /// </summary>
+        /// <param name="ExpressionToRemove">The Expression to pop</param>
         protected void RemoveFromPrevious(LinqlExpression ExpressionToRemove)
         {
             if (ExpressionToRemove != null)
@@ -52,6 +83,10 @@ namespace Linql.Client
             }
         }
 
+        /// <summary>
+        /// Creates a new LinqlParser and begins parsing the LinqlExpression
+        /// </summary>
+        /// <param name="LinqlExpression">The LinqlExpression to parse</param>
         public LinqlParser(Expression LinqlExpression) : base()
         {
             Visit(LinqlExpression);

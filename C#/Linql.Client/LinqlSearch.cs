@@ -8,6 +8,10 @@ using System.Linq.Expressions;
 
 namespace Linql.Client
 {
+    /// <summary>
+    /// LinqlSearch represents an IQueryable.  LinqlSearches should mostly be created through an ALinqlContext.
+    /// </summary>
+    /// <typeparam name="T">The type of the LinqlSearch</typeparam>
     [DebuggerDisplay("LinqlSearch {ElementType.Name}")]
     public class LinqlSearch<T> : LinqlSearch, IQueryable<T>
     {
@@ -17,6 +21,11 @@ namespace Linql.Client
             Expression = Expression.Constant(this);
         }
 
+        /// <summary>
+        /// Creates a LinqlSearch with the given LinqlContext as its Provider.
+        /// </summary>
+        /// <param name="Provider">The ALinqlContext Provider</param>
+        /// <exception cref="System.Exception">Provider cannot be null</exception>
         public LinqlSearch(ALinqlContext Provider) : base(typeof(T))
         {
             if (Provider == null)
@@ -28,6 +37,12 @@ namespace Linql.Client
         }
 
 
+        /// <summary>
+        /// Creates a LinqlSearch with a Provider and an Expression
+        /// </summary>
+        /// <param name="Provider">The ALinqlSearch provider</param>
+        /// <param name="Expression">The starting expression of the LinqlSearch</param>
+        /// <exception cref="System.Exception">Expression cannot be null</exception>
         public LinqlSearch(ALinqlContext Provider, Expression Expression) : this(Provider)
         {
             if (Expression == null)

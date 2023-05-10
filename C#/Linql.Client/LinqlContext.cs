@@ -10,30 +10,43 @@ using System.Threading.Tasks;
 
 namespace Linql.Client
 {
+    /// <summary>
+    /// The default implementation of a LinqlContext.  This context uses System.Text.Json for serialization/deserialization, and uses the built in HttpClient to make requests.
+    /// </summary>
     public class LinqlContext : ALinqlContext
     {
-        protected  HttpClient HttpClient { get; set; }
+        /// <summary>
+        /// .Net Http Client used to make requests.
+        /// </summary>
+        protected HttpClient HttpClient { get; set; }
+
+        /// <summary>
+        /// System.Text.Json serializer options. 
+        /// </summary>
         protected JsonSerializerOptions JsonOptions { get; set; }
 
+        /// <summary>
+        /// Returns the base url of the Linql Server.  This method will get/set the url directly off the HttpClient.BaseAddress.AbsoluteUri
+        /// </summary>
         public virtual string BaseUrl
         {
             get
             {
-                if(this.HttpClient != null)
+                if (this.HttpClient != null)
                 {
                     return this.HttpClient.BaseAddress.AbsoluteUri;
                 }
                 return null;
             }
-             set
+            set
             {
-                if(value == null)
+                if (value == null)
                 {
                     this.HttpClient = null;
                 }
                 else
                 {
-                    if(this.HttpClient == null)
+                    if (this.HttpClient == null)
                     {
                         this.HttpClient = new HttpClient();
                     }
@@ -42,6 +55,14 @@ namespace Linql.Client
             }
         }
 
+        /// <summary>
+        /// Creates a new LinqlContext with the optional BaseUrl or JsonOptions.
+        /// </summary>
+        /// <param name="BaseUrl">The baseurl of the Linql Server</param>
+        /// <param name="JsonOptions">JsonSerializerOptions if desired. By Default: 
+        /// DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+        /// PropertyNameCaseInsensitive = true
+        /// </param>
         public LinqlContext(string BaseUrl = null, JsonSerializerOptions JsonOptions = null)
         {
             this.BaseUrl = BaseUrl;
@@ -60,49 +81,57 @@ namespace Linql.Client
             }
         }
 
-
+        /// <summary>
+        /// Executes the LinqlSearch.  This method checks to make sure HttpClient is not null, extracts the endpoint, then calls SendHttpRequest.
+        /// </summary>
+        /// <typeparam name="TResult">The result of the LinqlSearch</typeparam>
+        /// <param name="Search">The LinqlSearch</param>
+        /// <returns>Returns a result of type TResult</returns>
+        /// <exception cref="System.Exception">Throws if HttpClient is not configured</exception>
         protected virtual async Task<TResult> GetResult<TResult>(LinqlSearch Search)
         {
-            if(this.HttpClient == null)
+            if (this.HttpClient == null)
             {
                 throw new System.Exception("No HttpClient was configured in this LinqlContext.  Please pass a BaseUrl string into the constructor or derive and override the HttpClient property.");
             }
 
             string url = this.GetEndpoint(Search);
-            return await this.SendHttpRequest< TResult>(url, Search);
-            
-        }
+            return await this.SendHttpRequest<TResult>(url, Search);
 
+        }
+        /// <summary>
+        /// Default implementation of sending a Linql HttpRequest.  By default, the Search is serialized, and then the request sent, received, and deserialized.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result</typeparam>
+        /// <param name="Endpoint">The Linql Server endpoint</param>
+        /// <param name="Search">The LinqlSearch</param>
+        /// <returns>A task with a result of type TResult</returns>
         protected virtual async Task<TResult> SendHttpRequest<TResult>(string Endpoint, LinqlSearch Search)
         {
-            string search = JsonSerializer.Serialize(Search, this.JsonOptions);
+            string search = this.ToJson(Search);
             StringContent requestContent = new StringContent(search, Encoding.UTF8, "application/json");
             HttpResponseMessage response = await this.HttpClient.PostAsync(Endpoint, requestContent);
             var contentStream = await response.Content.ReadAsStreamAsync();
             var result = await JsonSerializer.DeserializeAsync<TResult>(contentStream, this.JsonOptions);
             return result;
         }
-
+        /// <summary>
+        /// Allows you to force sending a LinqlSearch without having it materialize itself.  Used in extension methods that materialize the search.
+        /// </summary>
+        /// <typeparam name="TResult">The result type</typeparam>
+        /// <param name="LinqlSearch">The LinqlSearch to execute</param>
+        /// <returns>A Task of type TResult</returns>
         public override async Task<TResult> SendRequestAsync<TResult>(LinqlSearch LinqlSearch)
         {
             return await this.GetResult<TResult>(LinqlSearch);
         }
 
-        //public override TResult SendRequest<TResult>(Type Type, LinqlSearch LinqlSearch)
-        //{
-        //    Task <TResult> task = this.GetResult<TResult>(Type, LinqlSearch);
-        //    task.Wait();
-        //    return task.Result;
-        //}
-
-
-        //public override async Task<TResult> SendRequestAsync<TResult>(IQueryable LinqlSearch)
-        //{
-        //    LinqlSearch search = LinqlSearch.ToLinqlSearch();
-        //    Type type = LinqlSearch.GetType().GetEnumerableType();
-        //    return await this.GetResult<TResult>(type, search);
-        //}
-
+        /// <summary>
+        /// Allows you to force sending a LinqlSearch without having it materialize itself.  Used in extension methods that materialize the search.
+        /// </summary>
+        /// <typeparam name="TResult">The result type</typeparam>
+        /// <param name="LinqlSearch">The LinqlSearch to execute</param>
+        /// <returns>A TResult</returns>
         public override TResult SendRequest<TResult>(IQueryable LinqlSearch)
         {
             LinqlSearch search = LinqlSearch.ToLinqlSearch();
