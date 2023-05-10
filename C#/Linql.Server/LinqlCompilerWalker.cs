@@ -16,6 +16,15 @@ namespace Linql.Server
 {
     public partial class LinqlCompiler
     {
+
+        /// <summary>
+        /// Visit Root.  In the Visitor Pattern, you can call this method generically and it will dispatch to the correct branch. 
+        /// </summary>
+        /// <param name="Expression">The LinqlExpression</param>
+        /// <param name="InputType">The Root Type of this Expression Tree.</param>
+        /// <param name="Previous">The last expression in this chain.</param>
+        /// <returns>A C# Expression</returns>
+        /// <exception cref="Exception">Unsupported expression type.</exception>
         protected Expression Visit(LinqlExpression Expression, Type InputType, Expression Previous = null)
         {
 

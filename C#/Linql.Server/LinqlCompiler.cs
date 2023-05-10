@@ -13,20 +13,46 @@ using System.Threading.Tasks;
 
 namespace Linql.Server
 {
+    /// <summary>
+    /// Server side LinqlCompiler.  Takes a LinqlSearch/LinqlExpressions and turns them into CSharp expressions that can be executed.  Mimics an ExpressionTreevisitor. 
+    /// </summary>
     public partial class LinqlCompiler
     {
+        /// <summary>
+        /// The Assemblies that Linql will search for functionality.  
+        /// </summary>
         public HashSet<Assembly> ValidAssemblies { get; set; } = new HashSet<Assembly>();
+
 
         private readonly LinqlLambda StaticLambdaInstance = new LinqlLambda();
 
+        /// <summary>
+        /// Whether or not the LinqlCompiler should cache found Methods/Types
+        /// </summary>
         public bool UseCache { get; set; }
 
+        /// <summary>
+        /// Mapping of Methods that are Cached for a Type.
+        /// </summary>
         protected Dictionary<Type, List<MethodInfo>> MethodCache { get; set; } = new Dictionary<Type, List<MethodInfo>>();
 
+        /// <summary>
+        /// Local instance of known Parameters.  Parameters can be used anywhere down its expression tree, so we must be able to get reference to them.
+        /// </summary>
         protected Dictionary<string, ParameterExpression> Parameters { get; set; } = new Dictionary<string, ParameterExpression>();
 
+        /// <summary>
+        /// The Json serialization/deserialization options
+        /// </summary>
         protected JsonSerializerOptions JsonOptions { get; set; }
 
+        /// <summary>
+        /// Default LinqlCompile Constructor
+        /// </summary>
+        /// <param name="extensionAssemblies">Assemblies that Linql should search Extension Methods and Types in</param>
+        /// <param name="JsonOptions">Json Serialization/deserializaiton options</param>
+        /// <param name="UseCache">Whether or not Linql should use Cache for Methods and Types</param>
+        /// <param name="MethodCache">An existing instance of cached methods</param>
         public LinqlCompiler(HashSet<Assembly> extensionAssemblies = null, JsonSerializerOptions JsonOptions = null, bool UseCache = true, Dictionary<Type, List<MethodInfo>> MethodCache = null)
         {
             if (extensionAssemblies != null)
@@ -54,12 +80,23 @@ namespace Linql.Server
             }
         }
 
-        //Used for recursive lambda generation
+        /// <summary>
+        /// Internal constructor that's used when a nested LInqlCompile is created.  
+        /// </summary>
+        /// <param name="Parent">The Parent Linql Compiler.</param>
+        /// <param name="ParameterExpressions">Parameter expressions available to the child compiler.</param>
         protected LinqlCompiler(LinqlCompiler Parent, Dictionary<string, ParameterExpression> ParameterExpressions) : this(Parent.ValidAssemblies, Parent.JsonOptions, Parent.UseCache, Parent.MethodCache)
         {
             this.Parameters = ParameterExpressions;
         }
 
+        /// <summary>
+        /// Executes a LinqlSearch on an IEnumerable
+        /// </summary>
+        /// <param name="Search">The LinqlSearch to execute</param>
+        /// <param name="Queryable">The Datastore to query</param>
+        /// <returns>A result as an object</returns>
+        /// <exception cref="Exception">Throws when a LinqlSearch does not start with a Function or a Constant of type LinqlSearch</exception>
         public object Execute(LinqlSearch Search, IEnumerable Queryable)
         {
             object result = Queryable;
@@ -83,16 +120,29 @@ namespace Linql.Server
             return result;
         }
 
+        /// <summary>
+        /// Clears the Method Cache of this compiler.
+        /// </summary>
         public void ClearMethodCache()
         {
             this.MethodCache.Clear();
         }
 
+        /// <summary>
+        /// Clears the Method Cache for a particular type
+        /// </summary>
+        /// <param name="Type">The Type to clear cache for</param>
         public void ClearMethodCacheForType(Type Type)
         {
             this.MethodCache.Remove(Type);
         }
 
+        /// <summary>
+        /// The top most expression of a LinqlSearch.  This must be a Function.
+        /// </summary>
+        /// <param name="Function">The Starting Function.</param>
+        /// <param name="Queryable">The datastore to query</param>
+        /// <returns>The result as an object</returns>
         protected object TopLevelFunction(LinqlFunction Function, IEnumerable Queryable)
         {
             this.Parameters.Clear();
@@ -143,6 +193,13 @@ namespace Linql.Server
             return result;
         }
 
+        /// <summary>
+        /// Given an input and a method, turns the arguments of the method into the correct expression.  When the body is not an expression type, we compile the expression (into a Func).  Otherwise, we use an Expression.  
+        /// </summary>
+        /// <param name="InputObject">The Input object to operate on</param>
+        /// <param name="foundMethod">The Method to call on the input object</param>
+        /// <param name="ArgExpressions">The arguments, as expressions, to the method.</param>
+        /// <returns>A list of converted arguments.</returns>
         protected List<object> CompileArguments(object InputObject, MethodInfo foundMethod, IEnumerable<Expression> ArgExpressions)
         {
             List<object> methodArgs = new List<object>() { InputObject };
@@ -182,6 +239,12 @@ namespace Linql.Server
             return methodArgs;
         }
 
+        /// <summary>
+        /// Converted a LambdaExpression to the given Type
+        /// </summary>
+        /// <param name="MethodBodyType">The type to convert the lambda expression to</param>
+        /// <param name="Lambda">The original lambda expression</param>
+        /// <returns>A LambdaExpression of type MethodBodyType</returns>
         private LambdaExpression ConvertBodyType(Type MethodBodyType, LambdaExpression Lambda)
         {
             Type bodyType = MethodBodyType.GetGenericArguments().FirstOrDefault()?.GetGenericArguments()?.LastOrDefault();
@@ -194,6 +257,13 @@ namespace Linql.Server
             return Lambda;
         }
 
+        /// <summary>
+        /// Turns a generic method into a constructed generic method based on the SourceType, and the Arguments to the Method
+        /// </summary>
+        /// <param name="GenericMethod">A Generic Method definition</param>
+        /// <param name="SourceType">The datastore source type</param>
+        /// <param name="MethodArgs">The arguments to the method</param>
+        /// <returns></returns>
         protected MethodInfo CompileGenericMethod(MethodInfo GenericMethod, Type SourceType, IEnumerable<Expression> MethodArgs)
         {
             MethodInfo madeMethod = GenericMethod;
@@ -215,6 +285,12 @@ namespace Linql.Server
             return madeMethod;
         }
 
+        /// <summary>
+        /// I think this method matches a generic argument with the type of the supplied argument.  TODO: research this
+        /// </summary>
+        /// <param name="ParameterType"></param>
+        /// <param name="ArgumentType"></param>
+        /// <param name="GenericArgMapping"></param>
         protected void LoadGenericTypesFromArguments(Type ParameterType, Type ArgumentType, Dictionary<string, Type> GenericArgMapping)
         {
 
@@ -245,12 +321,26 @@ namespace Linql.Server
             }
         }
 
+        /// <summary>
+        /// Executes a LinqlSearch on a Queryable.
+        /// </summary>
+        /// <typeparam name="T">The result type of the execution</typeparam>
+        /// <param name="Search">The LinqlSearch.</param>
+        /// <param name="Queryable">The datasource</param>
+        /// <returns>A value of type T</returns>
         public T Execute<T>(LinqlSearch Search, IEnumerable Queryable)
         {
             Task<T> task = this.ExecuteAsync<T>(Search, Queryable);
             return task.Result;
         }
 
+        /// <summary>
+        /// Executes a LinqlSearch on a Queryable.
+        /// </summary>
+        /// <typeparam name="T">The result type of the execution</typeparam>
+        /// <param name="Search">The LinqlSearch.</param>
+        /// <param name="Queryable">The datasource</param>
+        /// <returns>A value of type T</returns>
         public async Task<T> ExecuteAsync<T>(LinqlSearch Search, IEnumerable Queryable)
         {
             object result = this.Execute(Search, Queryable);
@@ -263,11 +353,22 @@ namespace Linql.Server
             return (T)result;
         }
 
+        /// <summary>
+        /// Executes a LinqlSearch on a Queryable.
+        /// </summary>
+        /// <param name="Search">The LinqlSearch.</param>
+        /// <param name="Queryable">The datasource</param>
+        /// <returns>A value of type object</returns>
         public async Task<object> ExecuteAsync(LinqlSearch Search, IEnumerable Queryable)
         {
             return await this.ExecuteAsync<object>(Search, Queryable);
         }
 
+        /// <summary>
+        /// Gets all methods for a Type.  This includes extension methods, and instance methods.  This uses the internal Cache, as well as the UseCache value.
+        /// </summary>
+        /// <param name="Type">The Type to get methods from.</param>
+        /// <returns>A List of methods for this type.</returns>
         protected List<MethodInfo> GetMethodsForType(Type Type)
         {
             List<MethodInfo> methods;
@@ -288,6 +389,11 @@ namespace Linql.Server
             return methods;
         }
 
+        /// <summary>
+        /// Turns a LinqlType into a C# Type
+        /// </summary>
+        /// <param name="Type">The LinqlType to Convert</param>
+        /// <returns>A C# Type</returns>
         protected Type GetTypeFromLinqlObject(LinqlType Type)
         {
             string typeName = Type.TypeName;
@@ -303,6 +409,11 @@ namespace Linql.Server
             return this.ValidAssemblies.SelectMany(s => s.GetTypes()).FirstOrDefault(r => r.Name == typeName);
         }
 
+        /// <summary>
+        /// Gets all methods for a Type.  This includes extension methods, and instance methods.  This method does not use the internal cache. Call GetMethodsForType if you wish to use the cache.
+        /// </summary>
+        /// <param name="Type">The Type to get methods from.</param>
+        /// <returns>A List of methods for this type.</returns>
         protected List<MethodInfo> GetMethods(Type Type)
         {
             List<MethodInfo> allMethods = Type.GetMethods().ToList();
@@ -310,6 +421,11 @@ namespace Linql.Server
             return allMethods;
         }
 
+        /// <summary>
+        /// Gets all extension methods on the Type.  Linql searches its ValidAssemblies for all Extension Methods.  If you think your extension method should be found, and it isn't, make sure you add the Assembly to this.ValidAssemblies.
+        /// </summary>
+        /// <param name="extendedType">The type to get extension methods for.</param>
+        /// <returns>A List of MethodInfo</returns>
         protected IEnumerable<MethodInfo> GetExtensionMethods(Type extendedType)
         {
             IEnumerable<Type> types = this.ValidAssemblies.SelectMany(r => r.GetTypes()).Where(r => r.IsSealed && !r.IsGenericType && !r.IsNested);
@@ -340,6 +456,13 @@ namespace Linql.Server
             return assignableMethods.ToList();
         }
 
+        /// <summary>
+        /// Finds a method on a Type from a LinqlFunction and its Arguments.
+        /// </summary>
+        /// <param name="FunctionObjectType">The C# Type to Search</param>
+        /// <param name="function">The LinqlFunction to try and find</param>
+        /// <param name="Args">The Arguments to the LinqlFunction</param>
+        /// <returns>A MethodInfo that matches the supplied arguments, or null.</returns>
         protected MethodInfo FindMethod(Type FunctionObjectType, LinqlFunction function, List<Expression> Args)
         {
             IEnumerable<Type> argTypes = Args.Select(r => r.Type);
@@ -347,6 +470,13 @@ namespace Linql.Server
 
         }
 
+        /// <summary>
+        /// Finds a method on a Type from a LinqlFunction and its Arguments.
+        /// </summary>
+        /// <param name="FunctionObjectType">The C# Type to Search</param>
+        /// <param name="function">The LinqlFunction to try and find</param>
+        /// <param name="Args">The Arguments to the LinqlFunction</param>
+        /// <returns>A MethodInfo that matches the supplied arguments, or null.</returns>
         protected MethodInfo FindMethod(Type FunctionObjectType, LinqlFunction function, IEnumerable<Type> ArgTypes)
         {
             IEnumerable<MethodInfo> candidates = this.GetMethodsForType(FunctionObjectType);
