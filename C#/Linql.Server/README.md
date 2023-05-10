@@ -48,24 +48,24 @@ builder.Services.AddSingleton<LinqlCompiler, CustomLinqlCompiler>();
 #### **`CustomLinqlCompiler.cs`**
 ```cs
  public class CustomLinqlCompiler : LinqlCompiler
-    {
-        public CustomLinqlCompiler() : base() 
-        { 
-            //Loads .Net System types, as well as NetTopologySuite and Linq Assemblies
-            this.ValidAssemblies = new HashSet<Assembly>()
-            {
-                typeof(Boolean).Assembly,
-                typeof(Enumerable).Assembly,
-                typeof(Queryable).Assembly,
-                typeof(Geometry).Assembly,
-                typeof(State).Assembly,
-            };
+{
+    public CustomLinqlCompiler() : base() 
+    { 
+        //Loads .Net System types, as well as NetTopologySuite and Linq Assemblies
+        this.ValidAssemblies = new HashSet<Assembly>()
+        {
+            typeof(Boolean).Assembly,
+            typeof(Enumerable).Assembly,
+            typeof(Queryable).Assembly,
+            typeof(Geometry).Assembly,
+            typeof(State).Assembly,
+        };
 
-            //Add deserializer to Linql deserializer chain
-            var geoJsonConverterFactory = new GeoJsonConverterFactory();
-            this.JsonOptions.Converters.Add(geoJsonConverterFactory);
-        }
+        //Add deserializer to Linql deserializer chain
+        var geoJsonConverterFactory = new GeoJsonConverterFactory();
+        this.JsonOptions.Converters.Add(geoJsonConverterFactory);
     }
+}
 
 ```
 
