@@ -78,4 +78,9 @@ Checkout our full example [here](../Examples/ClientExample/).
 
 ## Development 
 
-TODO
+- Visual Studio 2022 
+- .Net 7 (requires Visual Studio Preview at the time of this writing.  Can change this to .Net 6 without issue)
+
+## Testing 
+
+Unit tests are located [here](../Test/Linql.Client.Test/).
