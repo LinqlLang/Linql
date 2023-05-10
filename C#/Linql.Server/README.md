@@ -119,6 +119,12 @@ public class StateController : ControllerBase
 
 Checkout our full example [here](../Examples/WebApiExample/).
 
+
+### Batching
+
+In our full example, as well as in the above sample, you can see the "Batching" technique.  Batching can significantly reduce the overhead of your application, by bundling requests together into one Http Request.  The server then multiplexes the results itself.
+
+After alpha, batching will be moved inside of the Linql.Server and Linql.Client libraries so that it is a default feature.
 ### EntityFramework 6 Support
 
 Linql is compatible with EntityFramework 6.  There are tests [here](../Test/Linql.Sever.EF6.Test/).
@@ -131,6 +137,13 @@ Linql should be compatible with EntityFramework Core as well.  I do not have tes
 
 - Visual Studio 2022 
 - .Net 7 (requires Visual Studio Preview at the time of this writing.  Can change this to .Net 6 without issue)
+
+## Future Enhancements 
+
+- Support multi-line statements
+- Support multiple LinqlSearches in the same context, and allow interaction between them
+- Performance Tests
+- More test cases
 
 ## Testing 
 
