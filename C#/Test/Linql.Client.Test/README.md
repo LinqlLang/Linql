@@ -1,6 +1,6 @@
 # Linql.Client.Test
 
-Unit tests for the Linql C# client. 
+Unit tests for the [Linql C# client](../../Linql.Client/). 
 
 ## Development 
 
