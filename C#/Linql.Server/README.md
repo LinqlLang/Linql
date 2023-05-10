@@ -115,61 +115,17 @@ public class StateController : ControllerBase
 }
 
 ```
+### Full Example
 
-### Start a Query
+Checkout our full example [here](../Examples/WebApiExample/).
 
-```cs
-LinqlSearch<MyModel> basicSearch = Context.Set<MyModel>();
-LinqlSearch<MyModel> searchOne = basicSearch.Where(r => r.Integers.Contains(1));
-LinqlSearch<MyModel> searchTwo = basicSearch.Where(r => r.Integers.Contains(2));
+## EntityFramework 6 Support
 
-var results = await Task.WhenAll(
-    searchOne.ToListAsync(),
-    searchTwo.TwoListASync()
-)
-```
+Linql is compatible with EntityFramework 6.  There are tests [here](../Test/Linql.Sever.EF6.Test/).
 
-### Defaults 
+## EntityFramework Core Support
 
-The provided LinqlContext above has the following defaults: 
-
-- Endpoint is set to {baseurl}/linql/{TypeName}"
-- Ignores serializing default values
-- PropertyNames are case insensitive 
-
-
-## Customization 
-
-To customize the LinqlContext, simply create your own derivation of the default LinqlContext.
-
-```cs
-using System.Text.Json.Serialization;
-using Linql.Client;
-using Linql.Core;
-using NetTopologySuite.IO.Converters;
-
-public class CustomLinqlContext : LinqlContext
-{
-    ///Override constructor to add GeoJson support and allow floating point literals. 
-    public CustomLinqlContext(string BaseUrl) : base(BaseUrl)
-    {
-        var geoJsonConverterFactory = new GeoJsonConverterFactory();
-        this.JsonOptions.Converters.Add(geoJsonConverterFactory);
-        this.JsonOptions.NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals;
-
-    }
-
-    ///Instead of {baseurl}/linql/{TypeName}, set the endpoint as {baseurl}/TypeName
-    protected override string GetEndpoint(LinqlSearch Search)
-    {
-        return $"{Search.Type.TypeName}";
-    }
-}
-```
-
-## Full Example
-
-Checkout our full example [here](../Examples/ClientExample/).
+Linql should be compatible with EntityFramework Core as well.  I do not have tests for this yet, but will be working on them soon.  Conceptually, there should be no issue.  
 
 ## Development 
 
@@ -178,4 +134,4 @@ Checkout our full example [here](../Examples/ClientExample/).
 
 ## Testing 
 
-Unit tests are located [here](../Test/Linql.Client.Test/).
+Unit tests are located [here](../Test/Linql.Server.Test/).
