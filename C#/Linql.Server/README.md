@@ -119,11 +119,11 @@ public class StateController : ControllerBase
 
 Checkout our full example [here](../Examples/WebApiExample/).
 
-## EntityFramework 6 Support
+### EntityFramework 6 Support
 
 Linql is compatible with EntityFramework 6.  There are tests [here](../Test/Linql.Sever.EF6.Test/).
 
-## EntityFramework Core Support
+### EntityFramework Core Support
 
 Linql should be compatible with EntityFramework Core as well.  I do not have tests for this yet, but will be working on them soon.  Conceptually, there should be no issue.  
 
