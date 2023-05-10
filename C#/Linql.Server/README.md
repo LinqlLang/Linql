@@ -34,15 +34,38 @@ object genericData = this.Compiler.Execute(search, this.Data);
 dotnet add package Linql.Server
 ```
 
-## Basic Usage
-
-### WebApi Usage
+## WebApi Usage
 
 #### **`Program.cs`**
 ```cs
 var builder = WebApplication.CreateBuilder(args);
 ...
 builder.Services.AddSingleton<LinqlCompiler, CustomLinqlCompiler>();
+
+```
+
+
+#### **`CustomLinqlCompiler.cs`**
+```cs
+ public class CustomLinqlCompiler : LinqlCompiler
+    {
+        public CustomLinqlCompiler() : base() 
+        { 
+            //Loads .Net System types, as well as NetTopologySuite and Linq Assemblies
+            this.ValidAssemblies = new HashSet<Assembly>()
+            {
+                typeof(Boolean).Assembly,
+                typeof(Enumerable).Assembly,
+                typeof(Queryable).Assembly,
+                typeof(Geometry).Assembly,
+                typeof(State).Assembly,
+            };
+
+            //Add deserializer to Linql deserializer chain
+            var geoJsonConverterFactory = new GeoJsonConverterFactory();
+            this.JsonOptions.Converters.Add(geoJsonConverterFactory);
+        }
+    }
 
 ```
 
