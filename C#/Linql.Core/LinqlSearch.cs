@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace Linql.Core
@@ -49,6 +50,16 @@ namespace Linql.Core
                 return "LinqlSearch";
             }
             return $"LinqlSearch<{this.Type.ToString()}>";
+        }
+
+        public override bool Equals(object obj)
+        {
+            if(obj.GetType() == this.GetType() && obj is LinqlSearch search)
+            {
+                return search.Type.Equals(this.Type)
+                    && this.Expressions.Zip(search.Expressions, (left, right) => left.Equals(right)).All(r => r);
+            }
+            return false;
         }
     }
 }

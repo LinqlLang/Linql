@@ -38,5 +38,18 @@ namespace Linql.Core
             this.UnaryName = UnaryName;
             this.Arguments = Arguments;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is LinqlUnary un)
+            {
+                return
+                    un.UnaryName == this.UnaryName
+                    && base.Equals(un);
+            }
+            return false;
+        }
+
+
     }
 }

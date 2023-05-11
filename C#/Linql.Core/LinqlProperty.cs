@@ -33,5 +33,17 @@ namespace Linql.Core
         {
             return this.PropertyName;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is LinqlProperty prop)
+            {
+                return
+                    prop.PropertyName == this.PropertyName
+                    && base.Equals(prop);
+            }
+            return false;
+        }
+
     }
 }

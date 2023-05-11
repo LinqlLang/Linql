@@ -30,5 +30,16 @@ namespace Linql.Core
         {
             return this.ParameterName;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is LinqlParameter param)
+            {
+                return param.ParameterName == this.ParameterName 
+                    && base.Equals(param);
+            }
+            return false;
+        }
+
     }
 }

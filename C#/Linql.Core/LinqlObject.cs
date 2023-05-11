@@ -53,6 +53,19 @@ namespace Linql.Core
         {
             return $"LinqlObject {this.Type.ToString()}";
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is LinqlObject linqlObj)
+            {
+                return
+                    linqlObj.Value.Equals(this.Value)
+                    && linqlObj.Type.Equals(this.Type)
+                    && base.Equals(linqlObj);
+            }
+            return false;
+        }
+
     }
 
 }

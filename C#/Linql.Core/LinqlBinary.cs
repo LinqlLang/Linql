@@ -29,5 +29,18 @@ namespace Linql.Core
             return this.BinaryName;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is LinqlBinary bin)
+            {
+                return
+                    bin.BinaryName == this.BinaryName
+                    && bin.Left.Equals(this.Right)
+                    && base.Equals(bin);
+            }
+            return false;
+        }
+
+
     }
 }

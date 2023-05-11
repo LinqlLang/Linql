@@ -38,5 +38,18 @@ namespace Linql.Core
             }
             return this.Next.GetLastExpressionInNextChain();
         }
+
+        public override bool Equals(object obj)
+        {
+            if(obj is LinqlExpression exp)
+            {
+                if(this.Next == null)
+                {
+                    return exp.Next == null;
+                }
+                return this.Next.Equals(exp.Next);
+            }
+            return false;
+        }
     }
 }

@@ -41,5 +41,34 @@ namespace Linql.Core
         {
             return $"LinqlConstant {this.ConstantType.ToString()}";
         }
+
+        public override bool Equals(object obj)
+        {
+            if(obj is LinqlConstant constant)
+            {
+                if(this.ConstantType.Equals(constant.ConstantType))
+                {
+                    bool valueEquals = false;
+
+                    if(this.Value == null)
+                    {
+                        valueEquals = constant.Value == null;
+                    }
+                    else
+                    {
+                        valueEquals = this.Value.Equals(constant.Value);
+                    }
+
+                    return valueEquals
+                        && base.Equals(constant);
+                }
+
+                return
+                    constant.Value.Equals(this.Value)
+                    && constant.ConstantType.Equals(this.ConstantType)
+                    && base.Equals(constant);
+            }
+            return false;
+        }
     }
 }

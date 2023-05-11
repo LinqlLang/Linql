@@ -47,5 +47,18 @@ namespace Linql.Core
 
             return $"{FunctionName}({argumentCount})";
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is LinqlFunction fun)
+            {
+                return
+                    fun.FunctionName == this.FunctionName
+                    && fun.Arguments.Count == this.Arguments.Count 
+                    && fun.Arguments.Zip(this.Arguments, (left, right) => left.Equals(right)).All( r => r)
+                    && base.Equals(fun);
+            }
+            return false;
+        }
     }
 }
