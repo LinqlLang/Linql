@@ -61,5 +61,27 @@ namespace Linql.Core
             }
             return false;
         }
+
+        /// <summary>
+        /// Tries to find the FindSearch Expression chain within the source LinqlSearch.  This will only search each Expression in the Expressions list in isolation.
+        /// </summary>
+        /// <param name="FindSearch">The LinqlSearch to find within the source.</param>
+        /// <returns>A List of found LinqlExpressions that match the FindSearch</returns>
+        public List<LinqlFindResult> Find(LinqlSearch FindSearch)
+        {
+            List<LinqlFindResult> results = new List<LinqlFindResult>();
+
+            this.Expressions.ForEach(r =>
+            {
+                LinqlExpression findExpression = FindSearch.Expressions.FirstOrDefault();
+
+                if(findExpression != null)
+                {
+                    results.AddRange(r.Find(findExpression));
+                }
+            });
+
+            return results;
+        }
     }
 }

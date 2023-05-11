@@ -50,6 +50,11 @@ namespace Linql.Core
             return false;
         }
 
+        public override List<LinqlFindResult> Find(LinqlExpression ExpressionToFind, LinqlFindResult CurrentResult = null)
+        {
+            List<LinqlFindResult> results = new List<LinqlFindResult>();
 
+            return results;
+        }
     }
 }

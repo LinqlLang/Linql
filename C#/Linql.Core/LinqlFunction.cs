@@ -60,5 +60,58 @@ namespace Linql.Core
             }
             return false;
         }
+
+        public override List<LinqlFindResult> Find(LinqlExpression ExpressionToFind, LinqlFindResult CurrentResult = null)
+        {
+            List<LinqlFindResult> results = new List<LinqlFindResult>();
+
+            if (ExpressionToFind is LinqlFunction fun)
+            {
+
+                bool match = fun.FunctionName == this.FunctionName
+                && fun.Arguments.Count == this.Arguments.Count;
+               
+                if (match)
+                {
+                    results.AddRange(this.FindMatchFound(ExpressionToFind, CurrentResult));
+                }
+            }
+
+            return results;
+        }
+
+        protected override List<LinqlFindResult> FindMatchFound(LinqlExpression ExpressionToFind, LinqlFindResult CurrentResult = null)
+        {
+            List<LinqlFindResult> results = new List<LinqlFindResult>();
+
+            if (CurrentResult == null)
+            {
+                CurrentResult = new LinqlFindResult(this);
+            }
+            else
+            {
+                CurrentResult.ExpressionPath.Add(this);
+            }
+
+            if (ExpressionToFind is LinqlFunction fun) {
+
+                if (this.Arguments.Count == 0 && fun.Arguments.Count == 0)
+                {
+                    CurrentResult.EndOfExpression = this;
+                    results.Add(CurrentResult);
+                }
+                else
+                {
+                    List<List<LinqlFindResult>> argResults = fun.Arguments.Zip(this.Arguments, (left, right) =>
+                    {
+                        return left.Find(right, CurrentResult.Clone());
+                    }).ToList();
+
+                    results.AddRange(argResults.SelectMany(r => r));
+                }
+            }
+            return results;
+        }
+
     }
 }

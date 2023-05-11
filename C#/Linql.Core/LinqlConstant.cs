@@ -70,5 +70,35 @@ namespace Linql.Core
             }
             return false;
         }
+
+        public override List<LinqlFindResult> Find(LinqlExpression ExpressionToFind, LinqlFindResult CurrentResult = null)
+        {
+            List<LinqlFindResult> results = new List<LinqlFindResult>();
+
+            if(ExpressionToFind is LinqlConstant constant)
+            {
+                bool equivalentTypes = this.ConstantType.TypesAreEquivalent(constant.ConstantType);
+                bool equivalentValues = false;
+                if (equivalentTypes == true)
+                {
+                    if(this.Value == null)
+                    {
+                        equivalentValues = constant.Value == null;
+                    }
+                    else
+                    {
+                        equivalentValues = this.Value.Equals(constant.Value);
+                    }
+                }
+
+                if(equivalentTypes && equivalentValues)
+                {
+                    results.AddRange(this.FindMatchFound(ExpressionToFind, CurrentResult));
+                }
+            }
+
+            return results;
+        }
+
     }
 }

@@ -43,7 +43,7 @@ namespace Linql.Server.Test
         }
 
         [Test]
-        public void SimpleEquals()
+        public void FindTrue()
         {
             IQueryable<DataModel> baseSearch = new LinqlSearch<DataModel>();
             baseSearch = baseSearch.Where(r => true);
@@ -54,108 +54,27 @@ namespace Linql.Server.Test
             LinqlSearch baseCompiled = baseSearch.ToLinqlSearch();
             LinqlSearch compareCompiled = compare.ToLinqlSearch();
 
-            Assert.IsTrue(baseCompiled.Equals(compareCompiled));
-            
+            List<LinqlFindResult> findResults = baseCompiled.Find(compareCompiled);
+            LinqlFindResult firstResult = findResults.FirstOrDefault();
+            Assert.IsTrue(findResults.Count == 1);
+            Assert.IsTrue(firstResult.ExpressionPath[0].Equals(compareCompiled.Expressions[0]));
         }
 
-        //[Test]
-        //public void SimpleDoesNotEqual()
-        //{
-        //    IQueryable<DataModel> baseSearch = new LinqlSearch<DataModel>();
-        //    baseSearch = baseSearch.Where(r => true);
+        [Test]
+        public void FindTrueShouldFail()
+        {
+            IQueryable<DataModel> baseSearch = new LinqlSearch<DataModel>();
+            baseSearch = baseSearch.Where(r => true);
 
-        //    IQueryable<DataModel> compare = new LinqlSearch<DataModel>();
-        //    compare = compare.Where(r => false);
+            IQueryable<DataModel> compare = new LinqlSearch<DataModel>();
+            compare = compare.Where(r => false);
 
-        //    LinqlSearch baseCompiled = baseSearch.ToLinqlSearch();
-        //    LinqlSearch compareCompiled = compare.ToLinqlSearch();
+            LinqlSearch baseCompiled = baseSearch.ToLinqlSearch();
+            LinqlSearch compareCompiled = compare.ToLinqlSearch();
 
-
-        //    Assert.IsFalse(baseCompiled.Equals(compareCompiled));
-
-        //}
-
-        //[Test]
-        //public void SimpleDoesNotEqualExtendedOne()
-        //{
-        //    IQueryable<DataModel> baseSearch = new LinqlSearch<DataModel>();
-        //    baseSearch = baseSearch.Where(r => true).Where(r => false); 
-
-        //    IQueryable<DataModel> compare = new LinqlSearch<DataModel>();
-        //    compare = compare.Where(r => true);
-
-        //    LinqlSearch baseCompiled = baseSearch.ToLinqlSearch();
-        //    LinqlSearch compareCompiled = compare.ToLinqlSearch();
-
-
-        //    Assert.IsFalse(baseCompiled.Equals(compareCompiled));
-
-        //}
-
-        //[Test]
-        //public void SimpleDoesNotEqualExtendedTwo()
-        //{
-        //    IQueryable<DataModel> baseSearch = new LinqlSearch<DataModel>();
-        //    baseSearch = baseSearch.Where(r => true);
-
-        //    IQueryable<DataModel> compare = new LinqlSearch<DataModel>();
-        //    compare = compare.Where(r => true).Where(r => false);
-
-        //    LinqlSearch baseCompiled = baseSearch.ToLinqlSearch();
-        //    LinqlSearch compareCompiled = compare.ToLinqlSearch();
-
-
-        //    Assert.IsFalse(baseCompiled.Equals(compareCompiled));
-
-        //}
-
-        //[Test]
-        //public void SimpleEqualsParamChange()
-        //{
-        //    IQueryable<DataModel> baseSearch = new LinqlSearch<DataModel>();
-        //    baseSearch = baseSearch.Where(r => true);
-
-        //    IQueryable<DataModel> compare = new LinqlSearch<DataModel>();
-        //    compare = compare.Where(s => true);
-
-        //    LinqlSearch baseCompiled = baseSearch.ToLinqlSearch();
-        //    LinqlSearch compareCompiled = compare.ToLinqlSearch();
-
-
-        //    Assert.IsFalse(baseCompiled.Equals(compareCompiled));
-
-        //}
-
-        //[Test]
-        //public void SimplePropertyEquals()
-        //{
-        //    IQueryable<DataModel> baseSearch = new LinqlSearch<DataModel>();
-
-        //    IQueryable<DataModel> compare = new LinqlSearch<DataModel>();
-
-        //    LinqlSearch baseCompiled = baseSearch.Select(r => r.Char).ToLinqlSearch();
-        //    LinqlSearch compareCompiled = compare.Select(r => r.Char).ToLinqlSearch();
-
-
-        //    Assert.IsTrue(baseCompiled.Equals(compareCompiled));
-
-        //}
-
-        //[Test]
-        //public void SimplePropertyDoesNotEquals()
-        //{
-        //    IQueryable<DataModel> baseSearch = new LinqlSearch<DataModel>();
-
-        //    IQueryable<DataModel> compare = new LinqlSearch<DataModel>();
-
-        //    LinqlSearch baseCompiled = baseSearch.Select(r => r.Char).ToLinqlSearch();
-        //    LinqlSearch compareCompiled = compare.Select(r => r.Byte).ToLinqlSearch();
-
-
-        //    Assert.IsFalse(baseCompiled.Equals(compareCompiled));
-
-        //}
-
-
+            List<LinqlFindResult> findResults = baseCompiled.Find(compareCompiled);
+            Assert.IsTrue(findResults.Count == 0);
+          
+        }
     }
 }

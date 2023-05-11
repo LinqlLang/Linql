@@ -51,5 +51,45 @@ namespace Linql.Core
             }
             return false;
         }
+
+        /// <summary>
+        /// Searches for an expression chain inside this expression chain
+        /// </summary>
+        /// <param name="ExpressionToFind">The expression chain to match</param>
+        /// <param name="CurrentResult">Indicates that a chain segment as already been found</param>
+        /// <returns>A list of LinqlFindResults.  This can be a list if the expression branches, and so that we can support finding multiple instances of a chain</returns>
+        public virtual List<LinqlFindResult> Find(LinqlExpression ExpressionToFind, LinqlFindResult CurrentResult = null)
+        {
+            List<LinqlFindResult> results = new List<LinqlFindResult>();
+
+            return results;
+        }
+
+        protected virtual List<LinqlFindResult> FindMatchFound(LinqlExpression ExpressionToFind, LinqlFindResult CurrentResult = null)
+        {
+            List<LinqlFindResult> results = new List<LinqlFindResult>();
+
+            if (CurrentResult == null)
+            {
+                CurrentResult = new LinqlFindResult(this);
+            }
+            else
+            {
+                CurrentResult.ExpressionPath.Add(this);
+            }
+
+            if(ExpressionToFind.Next == null)
+            {
+                CurrentResult.EndOfExpression = this;
+                results.Add(CurrentResult);
+            }
+            else if(ExpressionToFind.Next != null && this.Next != null)
+            {
+                results.AddRange(this.Next.Find(ExpressionToFind.Next, CurrentResult));
+            }
+
+            return results;
+        }
+
     }
 }

@@ -22,7 +22,9 @@ namespace Linql.Core
 
         public override string ToString()
         {
-            return this.Body.ToString();
+            List<string> parameterNames = this.Parameters.Where(r => r is LinqlParameter).Select(r => ((LinqlParameter)r).ParameterName).ToList();
+            string paramString = String.Join(",", parameterNames);
+            return $"({paramString}) => {this.Body.ToString()}";
         }
 
         public override bool Equals(object obj)
@@ -39,6 +41,49 @@ namespace Linql.Core
 
         }
 
+        public override List<LinqlFindResult> Find(LinqlExpression ExpressionToFind, LinqlFindResult CurrentResult = null)
+        {
+            List<LinqlFindResult> results = new List<LinqlFindResult>();
 
+            if (ExpressionToFind is LinqlLambda lam)
+            {
+                bool paramCountsMatch = this.Parameters.Count == lam.Parameters.Count;
+                if (paramCountsMatch)
+                {
+                    results.AddRange(this.FindMatchFound(ExpressionToFind, CurrentResult));
+                }
+            }
+
+            return results;
+        }
+
+        protected override List<LinqlFindResult> FindMatchFound(LinqlExpression ExpressionToFind, LinqlFindResult CurrentResult = null)
+        {
+            List<LinqlFindResult> results = new List<LinqlFindResult>();
+
+            if (CurrentResult == null)
+            {
+                CurrentResult = new LinqlFindResult(this);
+            }
+            else
+            {
+                CurrentResult.ExpressionPath.Add(this);
+            }
+
+            if (ExpressionToFind is LinqlLambda lam)
+            {
+
+                if (this.Body == null && lam.Body == null)
+                {
+                    results.Add(CurrentResult);
+                }
+                else if (this.Body != null)
+                {
+                    results.AddRange(this.Body.Find(lam.Body, CurrentResult));
+                }
+
+            }
+            return results;
+        }
     }
 }

@@ -67,6 +67,54 @@ namespace Linql.Core
             return this.TypeName == LinqlType.ListType;
         }
 
+        /// <summary>
+        /// Returns true if the LinqlType is a LinqlSearch
+        /// </summary>
+        /// <returns>true or false</returns>
+        public bool IsLinqlSearch()
+        {
+            return this.TypeName == nameof(LinqlSearch);
+        }
+
+        /// <summary>
+        /// Returns true if the LinqlType is a List or LinqlSearch
+        /// </summary>
+        /// <returns>True if the LinqlType is a List or a LinqlSearch</returns>
+        public bool IsListOrLinqlSearch()
+        {
+            return this.IsList() || this.IsLinqlSearch();
+        }
+
+        /// <summary>
+        /// Determines if Two types are essentially equivalent.  Used during Find.  
+        /// List == LinqlSearch in this context
+        /// </summary>
+        /// <param name="CompareType">The other LinqlType to compare</param>
+        /// <returns>true if the types are essentially equivalent.  Otherwise, false</returns>
+        public bool TypesAreEquivalent(LinqlType CompareType)
+        {
+            if(this.TypeName == CompareType.TypeName || (this.IsListOrLinqlSearch() && CompareType.IsListOrLinqlSearch()))
+            {
+                if(this.GenericParameters == CompareType.GenericParameters)
+                {
+                    return true;
+                }
+                else if(this.GenericParameters == null)
+                {
+                    return CompareType.GenericParameters == null;
+                }
+                else if(this.GenericParameters.Count == CompareType.GenericParameters?.Count)
+                {
+                    return this.GenericParameters.Zip(CompareType.GenericParameters, (left, right) =>
+                    {
+                        return left.TypesAreEquivalent(right);
+                    }).All(r => r);
+                }
+            }
+
+            return false;
+        }
+
         public override string ToString()
         {
             IEnumerable<string> genericTypes = this.GenericParameters?.Select(r => r.ToString());

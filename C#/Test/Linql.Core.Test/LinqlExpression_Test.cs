@@ -95,7 +95,7 @@ namespace Linql.Core.Test
             Assert.True(lam.Parameters.Contains(constant));
 
             string toString = lam.ToString();
-            Assert.That(toString, Is.EqualTo("LinqlConstant Boolean"));
+            Assert.That(toString, Is.EqualTo("() => LinqlConstant Boolean"));
 
 
         }
