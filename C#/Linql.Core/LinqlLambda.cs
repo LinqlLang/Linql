@@ -54,26 +54,5 @@ namespace Linql.Core
 
             return false;
         }
-
-        protected virtual List<LinqlFindResult> ContinueFind(LinqlExpression OriginalExpression, LinqlExpression ExpressionSegmentToFind, LinqlFindResult CurrentResult = null)
-        {
-            List<LinqlFindResult> results = new List<LinqlFindResult>();
-
-            if(ExpressionSegmentToFind is LinqlLambda lam)
-            {
-                if (lam.Body == null)
-                {
-                    CurrentResult.EndOfExpression = this;
-                    results.Add(CurrentResult);
-                }
-                else if (lam.Body != null && this.Body != null)
-                {
-                    results.AddRange(this.Body.Find(OriginalExpression, lam.Body, CurrentResult));
-                }
-
-            }
-
-            return results;
-        }
     }
 }

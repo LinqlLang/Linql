@@ -77,7 +77,8 @@ namespace Linql.Core
 
                 if(findExpression != null)
                 {
-                    results.AddRange(r.Find(findExpression));
+                    List<LinqlFindResult> result = r.Find(findExpression);
+                    results.AddRange(result);
                 }
             });
 

@@ -62,7 +62,7 @@ namespace Linql.Core
         {
             List<LinqlFindResult> results = new List<LinqlFindResult>();
             bool originalMatch = this.IsMatch(OriginalExpressionToFind);
-            bool segmentMatch = this.IsMatch(ExpressionSegmentToFind);
+            bool segmentMatch = OriginalExpressionToFind != ExpressionSegmentToFind && this.IsMatch(ExpressionSegmentToFind);
 
             if (originalMatch)
             {
@@ -73,6 +73,10 @@ namespace Linql.Core
             {
                 List<LinqlFindResult> segmentResults = this.FindMatchFound(OriginalExpressionToFind, ExpressionSegmentToFind, CurrentResult);
                 results.AddRange(segmentResults);
+            }
+            if(!originalMatch)
+            {
+                return this.ContinueFind(OriginalExpressionToFind, OriginalExpressionToFind, CurrentResult);
             }
 
             return results;

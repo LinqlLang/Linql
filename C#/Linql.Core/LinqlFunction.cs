@@ -67,13 +67,13 @@ namespace Linql.Core
             {
 
                 bool match = fun.FunctionName == this.FunctionName
-                && fun.Arguments.Count == this.Arguments.Count;
+                && fun.Arguments.Count == this.Arguments.Count
+                && this.Arguments.Zip(fun.Arguments, (left, right) => left.IsMatch(right)).All(r => r);
 
                 return match;
             }
 
             return false;
         }
-
     }
 }
