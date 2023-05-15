@@ -41,13 +41,18 @@ namespace Linql.Core
             return false;
         }
 
-        public override List<LinqlFindResult> Find(LinqlExpression ExpressionToFind, LinqlFindResult CurrentResult = null)
+        public override bool IsMatch(LinqlExpression ExprssionToCompare)
         {
-            List<LinqlFindResult> results = new List<LinqlFindResult>();
+            if (ExprssionToCompare is LinqlBinary bin)
+            {
+                return 
+                    this.BinaryName == bin.BinaryName
+                    && this.Left.IsMatch(bin.Left)
+                    && this.Right.IsMatch(bin.Right);
+            }
 
-            return results;
+            return false;
         }
-
 
     }
 }

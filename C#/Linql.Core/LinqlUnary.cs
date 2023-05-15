@@ -50,11 +50,17 @@ namespace Linql.Core
             return false;
         }
 
-        public override List<LinqlFindResult> Find(LinqlExpression ExpressionToFind, LinqlFindResult CurrentResult = null)
+        public override bool IsMatch(LinqlExpression ExprssionToCompare)
         {
-            List<LinqlFindResult> results = new List<LinqlFindResult>();
+            if (ExprssionToCompare is LinqlUnary un)
+            {
+                bool match = this.UnaryName == un.UnaryName 
+                    && base.IsMatch(un);
+                return match;
+            }
 
-            return results;
+            return false;
         }
+
     }
 }

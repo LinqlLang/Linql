@@ -66,11 +66,16 @@ namespace Linql.Core
             return false;
         }
 
-        public override List<LinqlFindResult> Find(LinqlExpression ExpressionToFind, LinqlFindResult CurrentResult = null)
+        public override bool IsMatch(LinqlExpression ExprssionToCompare)
         {
-            List<LinqlFindResult> results = new List<LinqlFindResult>();
+            if (ExprssionToCompare is LinqlObject obj)
+            {
+                bool match = this.Type.Equals(obj.Type)
+                    && base.IsMatch(obj);
+                return match;
+            }
 
-            return results;
+            return false;
         }
 
     }

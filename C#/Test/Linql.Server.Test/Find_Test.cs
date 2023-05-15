@@ -76,5 +76,23 @@ namespace Linql.Server.Test
             Assert.IsTrue(findResults.Count == 0);
           
         }
+
+        [Test]
+        public void FindTrueDownChain()
+        {
+            IQueryable<DataModel> baseSearch = new LinqlSearch<DataModel>();
+            baseSearch = baseSearch.Where(r => false).Where(r => true);
+
+            IQueryable<DataModel> compare = new LinqlSearch<DataModel>();
+            compare = compare.Where(r => true);
+
+            LinqlSearch baseCompiled = baseSearch.ToLinqlSearch();
+            LinqlSearch compareCompiled = compare.ToLinqlSearch();
+
+            List<LinqlFindResult> findResults = baseCompiled.Find(compareCompiled);
+            LinqlFindResult firstResult = findResults.FirstOrDefault();
+            Assert.IsTrue(findResults.Count == 1);
+            Assert.IsTrue(firstResult.ExpressionPath[0].Equals(compareCompiled.Expressions[0]));
+        }
     }
 }

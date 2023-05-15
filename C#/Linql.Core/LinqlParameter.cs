@@ -41,11 +41,15 @@ namespace Linql.Core
             return false;
         }
 
-        public override List<LinqlFindResult> Find(LinqlExpression ExpressionToFind, LinqlFindResult CurrentResult = null)
+        public override bool IsMatch(LinqlExpression ExprssionToCompare)
         {
-            List<LinqlFindResult> results = new List<LinqlFindResult>();
+            if (ExprssionToCompare is LinqlParameter param)
+            {
+                bool match = base.IsMatch(param);
+                return match;
+            }
 
-            return results;
+            return false;
         }
     }
 }

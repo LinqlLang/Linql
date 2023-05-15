@@ -71,17 +71,15 @@ namespace Linql.Core
             return false;
         }
 
-        public override List<LinqlFindResult> Find(LinqlExpression ExpressionToFind, LinqlFindResult CurrentResult = null)
+        public override bool IsMatch(LinqlExpression ExprssionToCompare)
         {
-            List<LinqlFindResult> results = new List<LinqlFindResult>();
-
-            if(ExpressionToFind is LinqlConstant constant)
+            if (ExprssionToCompare is LinqlConstant constant)
             {
                 bool equivalentTypes = this.ConstantType.TypesAreEquivalent(constant.ConstantType);
                 bool equivalentValues = false;
                 if (equivalentTypes == true)
                 {
-                    if(this.Value == null)
+                    if (this.Value == null)
                     {
                         equivalentValues = constant.Value == null;
                     }
@@ -91,14 +89,10 @@ namespace Linql.Core
                     }
                 }
 
-                if(equivalentTypes && equivalentValues)
-                {
-                    results.AddRange(this.FindMatchFound(ExpressionToFind, CurrentResult));
-                }
+                return equivalentValues && equivalentTypes;
             }
 
-            return results;
+            return false;
         }
-
     }
 }

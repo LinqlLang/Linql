@@ -40,49 +40,39 @@ namespace Linql.Core
             return false;
 
         }
-
-        public override List<LinqlFindResult> Find(LinqlExpression ExpressionToFind, LinqlFindResult CurrentResult = null)
+     
+        public override bool IsMatch(LinqlExpression ExprssionToCompare)
         {
-            List<LinqlFindResult> results = new List<LinqlFindResult>();
-
-            if (ExpressionToFind is LinqlLambda lam)
+            if (ExprssionToCompare is LinqlLambda lam)
             {
-                bool paramCountsMatch = this.Parameters.Count == lam.Parameters.Count;
-                if (paramCountsMatch)
-                {
-                    results.AddRange(this.FindMatchFound(ExpressionToFind, CurrentResult));
-                }
+                bool parameterCountMatch = this.Parameters.Count == lam.Parameters.Count;
+                bool bodyMatch = this.Body.IsMatch(lam.Body);
+                bool nextMatch = base.IsMatch(lam);
+
+                return parameterCountMatch && bodyMatch && nextMatch;
             }
 
-            return results;
+            return false;
         }
 
-        protected override List<LinqlFindResult> FindMatchFound(LinqlExpression ExpressionToFind, LinqlFindResult CurrentResult = null)
+        protected virtual List<LinqlFindResult> ContinueFind(LinqlExpression OriginalExpression, LinqlExpression ExpressionSegmentToFind, LinqlFindResult CurrentResult = null)
         {
             List<LinqlFindResult> results = new List<LinqlFindResult>();
 
-            if (CurrentResult == null)
+            if(ExpressionSegmentToFind is LinqlLambda lam)
             {
-                CurrentResult = new LinqlFindResult(this);
-            }
-            else
-            {
-                CurrentResult.ExpressionPath.Add(this);
-            }
-
-            if (ExpressionToFind is LinqlLambda lam)
-            {
-
-                if (this.Body == null && lam.Body == null)
+                if (lam.Body == null)
                 {
+                    CurrentResult.EndOfExpression = this;
                     results.Add(CurrentResult);
                 }
-                else if (this.Body != null)
+                else if (lam.Body != null && this.Body != null)
                 {
-                    results.AddRange(this.Body.Find(lam.Body, CurrentResult));
+                    results.AddRange(this.Body.Find(OriginalExpression, lam.Body, CurrentResult));
                 }
 
             }
+
             return results;
         }
     }
