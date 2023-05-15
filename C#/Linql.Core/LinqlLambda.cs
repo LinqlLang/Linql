@@ -40,7 +40,7 @@ namespace Linql.Core
             return false;
 
         }
-     
+
         public override bool IsMatch(LinqlExpression ExprssionToCompare)
         {
             if (ExprssionToCompare is LinqlLambda lam)
@@ -59,11 +59,8 @@ namespace Linql.Core
         {
             List<LinqlExpression> results = new List<LinqlExpression>();
 
-            if (ExpressionToFind is LinqlLambda lam)
-            {
-                List<LinqlExpression> bodyMatch = lam.Body.Find(ExpressionToFind);
-                results.AddRange(bodyMatch);
-            }
+            List<LinqlExpression> bodyMatch = this.Body.Find(ExpressionToFind);
+            results.AddRange(bodyMatch);
 
             List<LinqlExpression> baseMatch = base.ContinueFind(ExpressionToFind);
             results.AddRange(baseMatch);

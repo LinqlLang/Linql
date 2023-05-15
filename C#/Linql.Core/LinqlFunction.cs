@@ -80,15 +80,14 @@ namespace Linql.Core
         {
             List<LinqlExpression> results = new List<LinqlExpression>();
 
-            if (ExpressionToFind is LinqlFunction fun)
+     
+            List<LinqlExpression> argMatches = this.Arguments.SelectMany(r =>
             {
-                List<LinqlExpression> argMatches = fun.Arguments.SelectMany(r =>
-                {
-                    return r.Find(ExpressionToFind);
-                }).ToList();
+                return r.Find(ExpressionToFind);
+            }).ToList();
                
-                results.AddRange(argMatches);
-            }
+            results.AddRange(argMatches);
+            
 
             List<LinqlExpression> baseMatch = base.ContinueFind(ExpressionToFind);
             results.AddRange(baseMatch);

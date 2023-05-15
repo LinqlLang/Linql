@@ -111,5 +111,21 @@ namespace Linql.Server.Test
             List<LinqlExpression> findResults = baseCompiled.Find(compareCompiled);
             Assert.IsTrue(findResults.Count == 2);
         }
+
+        [Test]
+        public void FindTrueNextedChain()
+        {
+            IQueryable<DataModel> baseSearch = new LinqlSearch<DataModel>();
+            baseSearch = baseSearch.SelectMany(r => r.ListRecusrive.Where(s => true));
+
+            IQueryable<DataModel> compare = new LinqlSearch<DataModel>();
+            compare = compare.Where(r => true);
+
+            LinqlSearch baseCompiled = baseSearch.ToLinqlSearch();
+            LinqlSearch compareCompiled = compare.ToLinqlSearch();
+
+            List<LinqlExpression> findResults = baseCompiled.Find(compareCompiled);
+            Assert.IsTrue(findResults.Count == 1);
+        }
     }
 }

@@ -17,7 +17,7 @@ namespace Linql.Core
 
         public LinqlBinary() { }
 
-        public LinqlBinary(string BinaryName, LinqlExpression Left = null, LinqlExpression Right = null) 
+        public LinqlBinary(string BinaryName, LinqlExpression Left = null, LinqlExpression Right = null)
         {
             this.BinaryName = BinaryName;
             this.Left = Left;
@@ -45,7 +45,7 @@ namespace Linql.Core
         {
             if (ExprssionToCompare is LinqlBinary bin)
             {
-                return 
+                return
                     this.BinaryName == bin.BinaryName
                     && this.Left.IsMatch(bin.Left)
                     && this.Right.IsMatch(bin.Right);
@@ -58,14 +58,13 @@ namespace Linql.Core
         {
             List<LinqlExpression> results = new List<LinqlExpression>();
 
-            if(ExpressionToFind is LinqlBinary bin)
-            {
-                List<LinqlExpression> leftMatch = bin.Left.Find(ExpressionToFind);
-                List<LinqlExpression> rightMatch = bin.Right.Find(ExpressionToFind);
 
-                results.AddRange(leftMatch);
-                results.AddRange(rightMatch);
-            }
+            List<LinqlExpression> leftMatch = this.Left.Find(ExpressionToFind);
+            List<LinqlExpression> rightMatch = this.Right.Find(ExpressionToFind);
+
+            results.AddRange(leftMatch);
+            results.AddRange(rightMatch);
+
 
             List<LinqlExpression> baseMatch = base.ContinueFind(ExpressionToFind);
             results.AddRange(baseMatch);

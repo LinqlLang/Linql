@@ -34,7 +34,7 @@ namespace Linql.Core
         /// </summary>
         /// <param name="UnaryName">The name of the Unary Operation</param>
         /// <param name="Arguments">The arguments to the Unary Operation</param>
-        public LinqlUnary(string UnaryName, List<LinqlExpression> Arguments = null) 
+        public LinqlUnary(string UnaryName, List<LinqlExpression> Arguments = null)
         {
             this.UnaryName = UnaryName;
             this.Arguments = Arguments;
@@ -55,7 +55,7 @@ namespace Linql.Core
         {
             if (ExprssionToCompare is LinqlUnary un)
             {
-                bool match = this.UnaryName == un.UnaryName 
+                bool match = this.UnaryName == un.UnaryName
                     && base.IsMatch(un);
                 return match;
             }
@@ -67,15 +67,13 @@ namespace Linql.Core
         {
             List<LinqlExpression> results = new List<LinqlExpression>();
 
-            if (ExpressionToFind is LinqlUnary un)
+            List<LinqlExpression> argMatches = this.Arguments.SelectMany(r =>
             {
-                List<LinqlExpression> argMatches = un.Arguments.SelectMany(r =>
-                {
-                    return r.Find(ExpressionToFind);
-                }).ToList();
+                return r.Find(ExpressionToFind);
+            }).ToList();
 
-                results.AddRange(argMatches);
-            }
+            results.AddRange(argMatches);
+
 
             List<LinqlExpression> baseMatch = base.ContinueFind(ExpressionToFind);
             results.AddRange(baseMatch);
