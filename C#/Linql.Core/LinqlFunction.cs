@@ -75,5 +75,26 @@ namespace Linql.Core
 
             return false;
         }
+
+        protected override List<LinqlExpression> ContinueFind(LinqlExpression ExpressionToFind)
+        {
+            List<LinqlExpression> results = new List<LinqlExpression>();
+
+            if (ExpressionToFind is LinqlFunction fun)
+            {
+                List<LinqlExpression> argMatches = fun.Arguments.SelectMany(r =>
+                {
+                    return r.Find(ExpressionToFind);
+                }).ToList();
+               
+                results.AddRange(argMatches);
+            }
+
+            List<LinqlExpression> baseMatch = base.ContinueFind(ExpressionToFind);
+            results.AddRange(baseMatch);
+
+            return results;
+        }
+
     }
 }

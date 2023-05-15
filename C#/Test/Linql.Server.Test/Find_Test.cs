@@ -54,10 +54,10 @@ namespace Linql.Server.Test
             LinqlSearch baseCompiled = baseSearch.ToLinqlSearch();
             LinqlSearch compareCompiled = compare.ToLinqlSearch();
 
-            List<LinqlFindResult> findResults = baseCompiled.Find(compareCompiled);
-            LinqlFindResult firstResult = findResults.FirstOrDefault();
+            List<LinqlExpression> findResults = baseCompiled.Find(compareCompiled);
+            LinqlExpression firstResult = findResults.FirstOrDefault();
             Assert.IsTrue(findResults.Count == 1);
-            Assert.IsTrue(firstResult.ExpressionPath[0].Equals(compareCompiled.Expressions[0]));
+            Assert.IsTrue(firstResult.Equals(compareCompiled.Expressions[0].Next));
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace Linql.Server.Test
             LinqlSearch baseCompiled = baseSearch.ToLinqlSearch();
             LinqlSearch compareCompiled = compare.ToLinqlSearch();
 
-            List<LinqlFindResult> findResults = baseCompiled.Find(compareCompiled);
+            List<LinqlExpression> findResults = baseCompiled.Find(compareCompiled);
             Assert.IsTrue(findResults.Count == 0);
           
         }
@@ -89,10 +89,27 @@ namespace Linql.Server.Test
             LinqlSearch baseCompiled = baseSearch.ToLinqlSearch();
             LinqlSearch compareCompiled = compare.ToLinqlSearch();
 
-            List<LinqlFindResult> findResults = baseCompiled.Find(compareCompiled);
-            LinqlFindResult firstResult = findResults.FirstOrDefault();
+            List<LinqlExpression> findResults = baseCompiled.Find(compareCompiled);
+            LinqlExpression firstResult = findResults.FirstOrDefault();
             Assert.IsTrue(findResults.Count == 1);
-            Assert.IsTrue(firstResult.ExpressionPath[0].Equals(compareCompiled.Expressions[0]));
+            Assert.IsTrue(firstResult.Equals(compareCompiled.Expressions[0].Next));
+        }
+
+
+        [Test]
+        public void FindTrueBothChains()
+        {
+            IQueryable<DataModel> baseSearch = new LinqlSearch<DataModel>();
+            baseSearch = baseSearch.Where(r => true).Where(r => true);
+
+            IQueryable<DataModel> compare = new LinqlSearch<DataModel>();
+            compare = compare.Where(r => true);
+
+            LinqlSearch baseCompiled = baseSearch.ToLinqlSearch();
+            LinqlSearch compareCompiled = compare.ToLinqlSearch();
+
+            List<LinqlExpression> findResults = baseCompiled.Find(compareCompiled);
+            Assert.IsTrue(findResults.Count == 2);
         }
     }
 }

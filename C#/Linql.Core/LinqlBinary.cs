@@ -54,5 +54,24 @@ namespace Linql.Core
             return false;
         }
 
+        protected override List<LinqlExpression> ContinueFind(LinqlExpression ExpressionToFind)
+        {
+            List<LinqlExpression> results = new List<LinqlExpression>();
+
+            if(ExpressionToFind is LinqlBinary bin)
+            {
+                List<LinqlExpression> leftMatch = bin.Left.Find(ExpressionToFind);
+                List<LinqlExpression> rightMatch = bin.Right.Find(ExpressionToFind);
+
+                results.AddRange(leftMatch);
+                results.AddRange(rightMatch);
+            }
+
+            List<LinqlExpression> baseMatch = base.ContinueFind(ExpressionToFind);
+            results.AddRange(baseMatch);
+
+            return results;
+        }
+
     }
 }

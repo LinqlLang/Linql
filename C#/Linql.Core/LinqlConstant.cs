@@ -88,8 +88,9 @@ namespace Linql.Core
                         equivalentValues = this.Value.Equals(constant.Value);
                     }
                 }
+                bool baseEquals = base.IsMatch(ExprssionToCompare);
 
-                return equivalentValues && equivalentTypes;
+                return equivalentValues && equivalentTypes && baseEquals;
             }
 
             return false;

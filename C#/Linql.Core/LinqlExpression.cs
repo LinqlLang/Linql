@@ -51,34 +51,18 @@ namespace Linql.Core
             }
             return false;
         }
-
-        public virtual List<LinqlFindResult> Find(LinqlExpression ExpressionToFind)
+        public virtual List<LinqlExpression> Find(LinqlExpression ExpressionToFind)
         {
-            List<LinqlFindResult> results = this.Find(ExpressionToFind, ExpressionToFind);
-            return results;
-        }
-
-        public virtual List<LinqlFindResult> Find(LinqlExpression OriginalExpressionToFind, LinqlExpression ExpressionSegmentToFind, LinqlFindResult CurrentResult = null)
-        {
-            List<LinqlFindResult> results = new List<LinqlFindResult>();
-            bool originalMatch = this.IsMatch(OriginalExpressionToFind);
-            bool segmentMatch = OriginalExpressionToFind != ExpressionSegmentToFind && this.IsMatch(ExpressionSegmentToFind);
+            List<LinqlExpression> results = new List<LinqlExpression>();
+            bool originalMatch = this.IsMatch(ExpressionToFind);
 
             if (originalMatch)
             {
-                List<LinqlFindResult> originalResults = this.FindMatchFound(OriginalExpressionToFind, OriginalExpressionToFind);
-                results.AddRange(originalResults);
-            }
-            if(segmentMatch)
-            {
-                List<LinqlFindResult> segmentResults = this.FindMatchFound(OriginalExpressionToFind, ExpressionSegmentToFind, CurrentResult);
-                results.AddRange(segmentResults);
-            }
-            if(!originalMatch)
-            {
-                return this.ContinueFind(OriginalExpressionToFind, OriginalExpressionToFind, CurrentResult);
+                results.Add(this);
             }
 
+            List<LinqlExpression> nestedResults = this.ContinueFind(ExpressionToFind);
+            results.AddRange(nestedResults);
             return results;
         }
 
@@ -96,42 +80,17 @@ namespace Linql.Core
             return this.Next.IsMatch(ExpressionToCompare.Next);
         }
 
-        protected virtual LinqlFindResult AddMatchToResult(LinqlExpression ExpressionToAdd, LinqlFindResult CurrentResult = null)
+        protected virtual List<LinqlExpression> ContinueFind(LinqlExpression ExpressionToFind)
         {
-            if (CurrentResult == null)
-            {
-                CurrentResult = new LinqlFindResult(this);
-            }
-            else
-            {
-                CurrentResult.ExpressionPath.Add(this);
-            }
+            List<LinqlExpression> results = new List<LinqlExpression>();
 
-            return CurrentResult;
-        }
-
-        protected virtual List<LinqlFindResult> ContinueFind(LinqlExpression OriginalExpression, LinqlExpression ExpressionSegmentToFind, LinqlFindResult CurrentResult = null)
-        {
-            List<LinqlFindResult> results = new List<LinqlFindResult>();
-
-            if (ExpressionSegmentToFind.Next == null)
+            if(this.Next != null)
             {
-                CurrentResult.EndOfExpression = this;
-                results.Add(CurrentResult);
-            }
-            else if (ExpressionSegmentToFind.Next != null && this.Next != null)
-            {
-                results.AddRange(this.Next.Find(OriginalExpression, ExpressionSegmentToFind.Next, CurrentResult));
+                List<LinqlExpression> nextResult = this.Next.Find(ExpressionToFind);
+                results.AddRange(nextResult);
             }
 
             return results;
-        }
- 
-        protected virtual List<LinqlFindResult> FindMatchFound(LinqlExpression OriginalExpression, LinqlExpression ExpressionSegmentToFind, LinqlFindResult CurrentResult = null)
-        {
-            CurrentResult = this.AddMatchToResult(ExpressionSegmentToFind, CurrentResult);
-            return this.ContinueFind(OriginalExpression, ExpressionSegmentToFind, CurrentResult);
-        }
-
+        } 
     }
 }
