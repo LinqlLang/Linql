@@ -51,31 +51,31 @@ namespace Linql.Core
             return false;
         }
 
-        public override bool IsMatch(LinqlExpression ExprssionToCompare)
+        public override bool IsMatch(LinqlExpression ExprssionToCompare, LinqlFindOption FindOption = LinqlFindOption.Exact)
         {
             if (ExprssionToCompare is LinqlUnary un)
             {
                 bool match = this.UnaryName == un.UnaryName
-                    && base.IsMatch(un);
+                    && base.IsMatch(un, FindOption);
                 return match;
             }
 
             return false;
         }
 
-        protected override List<LinqlExpression> ContinueFind(LinqlExpression ExpressionToFind)
+        protected override List<LinqlExpression> ContinueFind(LinqlExpression ExpressionToFind, LinqlFindOption FindOption = LinqlFindOption.Exact)
         {
             List<LinqlExpression> results = new List<LinqlExpression>();
 
             List<LinqlExpression> argMatches = this.Arguments.SelectMany(r =>
             {
-                return r.Find(ExpressionToFind);
+                return r.Find(ExpressionToFind, FindOption);
             }).ToList();
 
             results.AddRange(argMatches);
 
 
-            List<LinqlExpression> baseMatch = base.ContinueFind(ExpressionToFind);
+            List<LinqlExpression> baseMatch = base.ContinueFind(ExpressionToFind, FindOption);
             results.AddRange(baseMatch);
 
             return results;

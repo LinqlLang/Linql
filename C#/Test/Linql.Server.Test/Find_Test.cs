@@ -127,5 +127,53 @@ namespace Linql.Server.Test
             List<LinqlExpression> findResults = baseCompiled.Find(compareCompiled);
             Assert.IsTrue(findResults.Count == 1);
         }
+
+        [Test]
+        public void OverrideTake()
+        {
+            IQueryable<DataModel> baseSearch = new LinqlSearch<DataModel>();
+            baseSearch = baseSearch.SelectMany(r => r.ListRecusrive.Where(s => true)).Skip(0).Take(100);
+
+            IQueryable<DataModel> compare = new LinqlSearch<DataModel>();
+            compare = compare.Take(100);
+
+            LinqlSearch baseCompiled = baseSearch.ToLinqlSearch();
+            LinqlSearch compareCompiled = compare.ToLinqlSearch();
+
+            List<LinqlExpression> findResults = baseCompiled.Find(compareCompiled);
+            Assert.IsTrue(findResults.Count == 1);
+        }
+
+        [Test]
+        public void OverrideTakeExactFail()
+        {
+            IQueryable<DataModel> baseSearch = new LinqlSearch<DataModel>();
+            baseSearch = baseSearch.SelectMany(r => r.ListRecusrive.Where(s => true)).Skip(0).Take(100);
+
+            IQueryable<DataModel> compare = new LinqlSearch<DataModel>();
+            compare = compare.Take(10);
+
+            LinqlSearch baseCompiled = baseSearch.ToLinqlSearch();
+            LinqlSearch compareCompiled = compare.ToLinqlSearch();
+
+            List<LinqlExpression> findResults = baseCompiled.Find(compareCompiled);
+            Assert.IsTrue(findResults.Count == 0);
+        }
+
+        [Test]
+        public void OverrideTakeSimilar()
+        {
+            IQueryable<DataModel> baseSearch = new LinqlSearch<DataModel>();
+            baseSearch = baseSearch.SelectMany(r => r.ListRecusrive.Where(s => true)).Skip(0).Take(100);
+
+            IQueryable<DataModel> compare = new LinqlSearch<DataModel>();
+            compare = compare.Take(10);
+
+            LinqlSearch baseCompiled = baseSearch.ToLinqlSearch();
+            LinqlSearch compareCompiled = compare.ToLinqlSearch();
+
+            List<LinqlExpression> findResults = baseCompiled.Find(compareCompiled, LinqlFindOption.Similar);
+            Assert.IsTrue(findResults.Count == 1);
+        }
     }
 }

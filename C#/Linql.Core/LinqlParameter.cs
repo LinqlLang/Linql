@@ -41,11 +41,11 @@ namespace Linql.Core
             return false;
         }
 
-        public override bool IsMatch(LinqlExpression ExprssionToCompare)
+        public override bool IsMatch(LinqlExpression ExprssionToCompare, LinqlFindOption FindOption = LinqlFindOption.Exact)
         {
             if (ExprssionToCompare is LinqlParameter param)
             {
-                bool match = base.IsMatch(param);
+                bool match = base.IsMatch(param, FindOption);
                 return match;
             }
 

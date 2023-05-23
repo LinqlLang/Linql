@@ -41,13 +41,13 @@ namespace Linql.Core
 
         }
 
-        public override bool IsMatch(LinqlExpression ExprssionToCompare)
+        public override bool IsMatch(LinqlExpression ExprssionToCompare, LinqlFindOption FindOption = LinqlFindOption.Exact)
         {
             if (ExprssionToCompare is LinqlLambda lam)
             {
                 bool parameterCountMatch = this.Parameters.Count == lam.Parameters.Count;
-                bool bodyMatch = this.Body.IsMatch(lam.Body);
-                bool nextMatch = base.IsMatch(lam);
+                bool bodyMatch = this.Body.IsMatch(lam.Body, FindOption);
+                bool nextMatch = base.IsMatch(lam, FindOption);
 
                 return parameterCountMatch && bodyMatch && nextMatch;
             }
@@ -55,14 +55,14 @@ namespace Linql.Core
             return false;
         }
 
-        protected override List<LinqlExpression> ContinueFind(LinqlExpression ExpressionToFind)
+        protected override List<LinqlExpression> ContinueFind(LinqlExpression ExpressionToFind, LinqlFindOption FindOption = LinqlFindOption.Exact)
         {
             List<LinqlExpression> results = new List<LinqlExpression>();
 
-            List<LinqlExpression> bodyMatch = this.Body.Find(ExpressionToFind);
+            List<LinqlExpression> bodyMatch = this.Body.Find(ExpressionToFind, FindOption);
             results.AddRange(bodyMatch);
 
-            List<LinqlExpression> baseMatch = base.ContinueFind(ExpressionToFind);
+            List<LinqlExpression> baseMatch = base.ContinueFind(ExpressionToFind, FindOption);
             results.AddRange(baseMatch);
 
             return results;

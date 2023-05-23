@@ -51,22 +51,22 @@ namespace Linql.Core
             }
             return false;
         }
-        public virtual List<LinqlExpression> Find(LinqlExpression ExpressionToFind)
+        public virtual List<LinqlExpression> Find(LinqlExpression ExpressionToFind, LinqlFindOption FindOption = LinqlFindOption.Exact)
         {
             List<LinqlExpression> results = new List<LinqlExpression>();
-            bool originalMatch = this.IsMatch(ExpressionToFind);
+            bool originalMatch = this.IsMatch(ExpressionToFind, FindOption);
 
             if (originalMatch)
             {
                 results.Add(this);
             }
 
-            List<LinqlExpression> nestedResults = this.ContinueFind(ExpressionToFind);
+            List<LinqlExpression> nestedResults = this.ContinueFind(ExpressionToFind, FindOption);
             results.AddRange(nestedResults);
             return results;
         }
 
-        public virtual bool IsMatch(LinqlExpression ExpressionToCompare)
+        public virtual bool IsMatch(LinqlExpression ExpressionToCompare, LinqlFindOption FindOption = LinqlFindOption.Exact)
         {
             if(this.Next == null && ExpressionToCompare.Next != null)
             {
@@ -77,16 +77,16 @@ namespace Linql.Core
                 return true;
             }
 
-            return this.Next.IsMatch(ExpressionToCompare.Next);
+            return this.Next.IsMatch(ExpressionToCompare.Next, FindOption);
         }
 
-        protected virtual List<LinqlExpression> ContinueFind(LinqlExpression ExpressionToFind)
+        protected virtual List<LinqlExpression> ContinueFind(LinqlExpression ExpressionToFind, LinqlFindOption FindOption = LinqlFindOption.Exact)
         {
             List<LinqlExpression> results = new List<LinqlExpression>();
 
             if(this.Next != null)
             {
-                List<LinqlExpression> nextResult = this.Next.Find(ExpressionToFind);
+                List<LinqlExpression> nextResult = this.Next.Find(ExpressionToFind, FindOption);
                 results.AddRange(nextResult);
             }
 

@@ -66,12 +66,12 @@ namespace Linql.Core
             return false;
         }
 
-        public override bool IsMatch(LinqlExpression ExprssionToCompare)
+        public override bool IsMatch(LinqlExpression ExprssionToCompare, LinqlFindOption FindOption = LinqlFindOption.Exact)
         {
             if (ExprssionToCompare is LinqlObject obj)
             {
                 bool match = this.Type.Equals(obj.Type)
-                    && base.IsMatch(obj);
+                    && base.IsMatch(obj, FindOption);
                 return match;
             }
 

@@ -67,7 +67,7 @@ namespace Linql.Core
         /// </summary>
         /// <param name="FindSearch">The LinqlSearch to find within the source.</param>
         /// <returns>A List of found LinqlExpressions that match the FindSearch</returns>
-        public List<LinqlExpression> Find(LinqlSearch FindSearch)
+        public List<LinqlExpression> Find(LinqlSearch FindSearch, LinqlFindOption FindOption = LinqlFindOption.Exact)
         {
             List<LinqlExpression> results = new List<LinqlExpression>();
 
@@ -77,7 +77,7 @@ namespace Linql.Core
 
                 if(findExpression != null)
                 {
-                    List<LinqlExpression> result = r.Find(findExpression);
+                    List<LinqlExpression> result = r.Find(findExpression, FindOption);
                     results.AddRange(result);
                 }
             });

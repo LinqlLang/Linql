@@ -71,7 +71,7 @@ namespace Linql.Core
             return false;
         }
 
-        public override bool IsMatch(LinqlExpression ExprssionToCompare)
+        public override bool IsMatch(LinqlExpression ExprssionToCompare, LinqlFindOption FindOption = LinqlFindOption.Exact)
         {
             if (ExprssionToCompare is LinqlConstant constant)
             {
@@ -83,12 +83,16 @@ namespace Linql.Core
                     {
                         equivalentValues = constant.Value == null;
                     }
-                    else
+                    else if(FindOption == LinqlFindOption.Exact)  
                     {
                         equivalentValues = this.Value.Equals(constant.Value);
                     }
+                    else
+                    {
+                        equivalentValues = equivalentTypes;
+                    }
                 }
-                bool baseEquals = base.IsMatch(ExprssionToCompare);
+                bool baseEquals = base.IsMatch(ExprssionToCompare, FindOption);
 
                 return equivalentValues && equivalentTypes && baseEquals;
             }
