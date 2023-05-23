@@ -74,7 +74,7 @@ namespace Linql.Server.Test
 
             List<LinqlExpression> findResults = baseCompiled.Find(compareCompiled);
             Assert.IsTrue(findResults.Count == 0);
-          
+
         }
 
         [Test]
@@ -174,6 +174,45 @@ namespace Linql.Server.Test
 
             List<LinqlExpression> findResults = baseCompiled.Find(compareCompiled, LinqlFindOption.Similar);
             Assert.IsTrue(findResults.Count == 1);
+        }
+
+
+        [Test]
+        public void OverrideTakeCheckCount()
+        {
+            IQueryable<DataModel> baseSearch = new LinqlSearch<DataModel>();
+            baseSearch = baseSearch.Skip(0).Take(100);
+
+            IQueryable<DataModel> compare = new LinqlSearch<DataModel>();
+            compare = compare.Take(10);
+
+            LinqlSearch baseCompiled = baseSearch.ToLinqlSearch();
+            LinqlSearch compareCompiled = compare.ToLinqlSearch();
+
+            List<LinqlExpression> findResults = baseCompiled.Find(compareCompiled, LinqlFindOption.Similar);
+            Assert.IsTrue(findResults.Count == 1);
+
+            findResults.ForEach(r =>
+            {
+                if (r is LinqlFunction fun)
+                {
+                    fun.Arguments.ForEach(arg =>
+                    {
+                        if (arg is LinqlConstant constant)
+                        {
+                            constant.Value = 10;
+                        }
+                    });
+                }
+            });
+
+            Assert.DoesNotThrow(() =>
+            {
+                IEnumerable<DataModel> data = this.Compiler.Execute<IEnumerable<DataModel>>(baseCompiled, this.Data);
+
+                Assert.That(data.Count(), Is.EqualTo(10));
+            });
+
         }
     }
 }
