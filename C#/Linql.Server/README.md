@@ -3,28 +3,31 @@
 A C# Server for the Linql Language.  Allows your api to be used as if it were an IQueryable. 
 
 ```cs
-//Some LinqlSearch string
-string json = "SomeLinqlSearchJson";
-
-//Set the assemblies that are valid inside the LinqlContext
-HashSet<Assembly> assemblies = new HashSet<Assembly>()
+public class Program 
 {
-    typeof(Boolean).Assembly,
-    typeof(Enumerable).Assembly,
-    typeof(Queryable).Assembly
-};
+    //Some LinqlSearch string
+    string json = "SomeLinqlSearchJson";
 
-//Create a LinqlCompiler with the assemblies we care about
-LinqlCompiler Compiler = new LinqlCompiler(assemblies);
+    //Set the assemblies that are valid inside the LinqlContext
+    HashSet<Assembly> assemblies = new HashSet<Assembly>()
+    {
+        typeof(Boolean).Assembly,
+        typeof(Enumerable).Assembly,
+        typeof(Queryable).Assembly
+    };
 
-//Turn the json into a generic LinqlSearch
-LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
+    //Create a LinqlCompiler with the assemblies we care about
+    LinqlCompiler Compiler = new LinqlCompiler(assemblies);
+
+    //Turn the json into a generic LinqlSearch
+    LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
 
 
-//Execute the LinqlSearch either with a concrete type, or generically
-IEnumerable<DataModel> typedData = this.Compiler.Execute<IEnumerable<DataModel>>(search, this.Data);
+    //Execute the LinqlSearch either with a concrete type, or generically
+    IEnumerable<DataModel> typedData = this.Compiler.Execute<IEnumerable<DataModel>>(search, this.Data);
 
-object genericData = this.Compiler.Execute(search, this.Data);
+    object genericData = this.Compiler.Execute(search, this.Data);
+}
 
 ```
 

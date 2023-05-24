@@ -19,16 +19,6 @@ namespace Linql.Server.EF6.Test
         {
             this.Context = new EF6TestContext();
             await this.Context.Init(ResetDatabase);
-            //await base.Setup();
-            //List<DataModel> dataList = new List<DataModel>();
-            //dataList.Where(r => true).ToList();
-            //foreach (int index in Enumerable.Range(1, 100))
-            //{
-            //    DataModel data = new CompiledDataModel(index, true);
-            //    dataList.Add(data);
-            //}
-
-            //Data = dataList.AsQueryable();
 
             HashSet<Assembly> assemblies = new HashSet<Assembly>()
             {
