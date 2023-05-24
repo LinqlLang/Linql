@@ -134,7 +134,7 @@ TODO: Show Generic Controller implementation
 
 ### EntityFramework 6 Support
 
-Linql is compatible with EntityFramework 6.  There are tests [here](../Test/Linql.Sever.EF6.Test/).
+Linql is compatible with EntityFramework 6.  There are tests [here](../Test/Linql.Server.EF6.Test/).
 
 ### EntityFramework Core Support
 
