@@ -46,6 +46,17 @@ namespace Linql.Server
         /// </summary>
         protected JsonSerializerOptions JsonOptions { get; set; }
 
+
+        /// <summary>
+        /// Defines before compiler hooks.  
+        /// </summary>
+        protected List<LinqlBeforeExecutionHook> BeforeHooks { get; set; } = new List<LinqlBeforeExecutionHook>();
+
+        /// <summary>
+        /// Defines after compiler hooks.  
+        /// </summary>
+        protected List<LinqlAfterExecutionHook> AfterHooks { get; set; } = new List<LinqlAfterExecutionHook>();
+
         /// <summary>
         /// Default LinqlCompile Constructor
         /// </summary>
@@ -88,6 +99,8 @@ namespace Linql.Server
         protected LinqlCompiler(LinqlCompiler Parent, Dictionary<string, ParameterExpression> ParameterExpressions) : this(Parent.ValidAssemblies, Parent.JsonOptions, Parent.UseCache, Parent.MethodCache)
         {
             this.Parameters = ParameterExpressions;
+            this.BeforeHooks = Parent.BeforeHooks;
+            this.AfterHooks = Parent.AfterHooks;
         }
 
         /// <summary>
@@ -117,7 +130,23 @@ namespace Linql.Server
                 }
             });
 
-            return result;
+            return result.UnwrapTask();
+        }
+
+        /// <summary>
+        /// Registers a LinqlHook into this LinqlCompiler
+        /// </summary>
+        /// <param name="Hook">The LinqlCompilerHook</param>
+        public void AddHook(LinqlCompilerHook Hook)
+        {
+            if(Hook is LinqlBeforeExecutionHook before)
+            {
+                this.BeforeHooks.Add(before);
+            }
+            else if(Hook is LinqlAfterExecutionHook after)
+            {
+                this.AfterHooks.Add(after);
+            }
         }
 
         /// <summary>
@@ -143,7 +172,7 @@ namespace Linql.Server
         /// <param name="Function">The Starting Function.</param>
         /// <param name="Queryable">The datastore to query</param>
         /// <returns>The result as an object</returns>
-        protected object TopLevelFunction(LinqlFunction Function, IEnumerable Queryable)
+        protected async Task<object> TopLevelFunction(LinqlFunction Function, IEnumerable Queryable)
         {
             this.Parameters.Clear();
 
@@ -184,7 +213,14 @@ namespace Linql.Server
 
             List<object> methodArgs = this.CompileArguments(Queryable, madeMethod, argExpressions);
 
+            List<LinqlBeforeExecutionHook> beforeHooks = this.BeforeHooks.Where(r => r.IsValid).ToList();
+            List<LinqlAfterExecutionHook> afterHooks = this.AfterHooks.Where(r => r.IsValid).ToList();
+
+            await Task.WhenAll(beforeHooks.Select(r => r.Hook(Function, Queryable, genericType, madeMethod, methodArgs)));
+
             object result = madeMethod.Invoke(null, methodArgs.ToArray());
+
+            await Task.WhenAll(afterHooks.Select(r => r.Hook(Function, Queryable, genericType, madeMethod, methodArgs, result)));
 
             if (Function.Next != null)
             {
@@ -345,10 +381,7 @@ namespace Linql.Server
         {
             object result = this.Execute(Search, Queryable);
 
-            if (result is Task taskResult)
-            {
-                result = await taskResult.GetGenericTaskResult();
-            }
+            result = await result.UnwrapTaskAsync();
 
             return (T)result;
         }

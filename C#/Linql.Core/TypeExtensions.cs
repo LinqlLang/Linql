@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -117,7 +118,7 @@ namespace Linql.Core
         /// </summary>
         /// <param name="Task">The task to extract the result from</param>
         /// <returns>The Result of the task, or null if the Task was of type void</returns>
-        public static async Task<object> GetGenericTaskResult(this Task Task)
+        public static async Task<object> GetGenericTaskResultAsync(this Task Task)
         {
             await Task;
             PropertyInfo resultProperty = Task.GetType().GetProperty(nameof(Task<object>.Result));
@@ -127,6 +128,57 @@ namespace Linql.Core
                 return resultProperty.GetValue(Task);
             }
             return null;
+        }
+
+        /// <summary>
+        /// Extracts a result from a generic Task
+        /// </summary>
+        /// <param name="Task">The task to extract the result from</param>
+        /// <returns>The Result of the task, or null if the Task was of type void</returns>
+        public static object GetGenericTaskResult(this Task Task)
+        {
+            Task.Wait();
+            PropertyInfo resultProperty = Task.GetType().GetProperty(nameof(Task<object>.Result));
+
+            if (resultProperty != null)
+            {
+                return resultProperty.GetValue(Task);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Unwraps a task until a materialized result is available.
+        /// </summary>
+        /// <param name="Object">The object to unwrap</param>
+        /// <returns>The Result of the task if the Object is a task, otherwise, the object</returns>
+        public static async Task<object> UnwrapTaskAsync(this object Object)
+        {
+            if(Object is Task Task)
+            {
+                await Task;
+                Object = await Task.GetGenericTaskResultAsync();
+                return await Object.UnwrapTaskAsync();
+            }
+
+            return Object;
+        }
+
+        /// <summary>
+        /// Unwraps a task until a materialized result is available.
+        /// </summary>
+        /// <param name="Object">The object to unwrap</param>
+        /// <returns>The Result of the task if the Object is a task, otherwise, the object</returns>
+        public static object UnwrapTask(this object Object)
+        {
+            if (Object is Task Task)
+            {
+                Task.Wait();
+                Object = Task.GetGenericTaskResult();
+                return Object.UnwrapTask();
+            }
+
+            return Object;
         }
 
         /// <summary>
