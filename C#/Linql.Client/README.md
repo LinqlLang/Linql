@@ -78,8 +78,8 @@ Checkout our full example [here](../Examples/ClientExample/).
 
 ## Development 
 
-- Visual Studio 2022 
-- .Net 7 (requires Visual Studio Preview at the time of this writing.  Can change this to .Net 6 without issue)
+- Visual Studio 2022 17.4
+- .Net 7
 
 ## Testing 
 

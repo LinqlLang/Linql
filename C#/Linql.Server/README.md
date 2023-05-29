@@ -248,7 +248,7 @@ In conjunction with Linql's Find functionality and lifecycle hooks, this strateg
 
 ## Development 
 
-- Visual Studio 2022 
+- Visual Studio 2022 17.4 
 - .Net 7 to run tests and example projects.
 
 ## Future Enhancements 
