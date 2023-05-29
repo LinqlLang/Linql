@@ -2,6 +2,7 @@ using Linql.Client;
 using Linql.Core;
 using Linql.Core.Test;
 using Linql.Test.Files;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Json;
 
@@ -12,6 +13,23 @@ namespace Linql.Server.Test
         public IQueryable<DataModel> Data { get; set; }
 
         public LinqlCompiler Compiler { get; set; }
+
+        public LinqlBeforeExecutionHook NoSelect { get; set; } = new LinqlBeforeExecutionHook((fun, input, inputType, method, args) =>
+        {
+            MemberInfo prop = typeof(DataModel).GetMember(nameof(DataModel.Decimal)).FirstOrDefault();
+
+            if(fun.FunctionName == nameof(Queryable.Select))
+            {
+                LambdaExpression lam = args.Where(r => r is LambdaExpression).Cast<LambdaExpression>().FirstOrDefault();
+
+                if(lam != null && lam.Body is MemberExpression member && member.Member == prop)
+                {
+                    throw new Exception($"Not allowed to select into property {nameof(DataModel.Decimal)} on type {nameof(DataModel)}");
+                }
+            }
+
+            return Task.CompletedTask;
+        });
 
 
         [OneTimeSetUp]
@@ -43,21 +61,24 @@ namespace Linql.Server.Test
         }
 
         [Test]
-        public void FindTrue()
+        public void SelectNotAllowedDecimal()
         {
-            //IQueryable<DataModel> baseSearch = new LinqlSearch<DataModel>();
-            //baseSearch = baseSearch.Where(r => true);
+            LinqlSearch<DataModel> search = new LinqlSearch<DataModel>();
+            IQueryable<decimal> decimalSearch = search.Select(r => r.Decimal);
 
-            //IQueryable<DataModel> compare = new LinqlSearch<DataModel>();
-            //compare = compare.Where(r => true);
+            this.Compiler.AddHook(this.NoSelect);
 
-            //LinqlSearch baseCompiled = baseSearch.ToLinqlSearch();
-            //LinqlSearch compareCompiled = compare.ToLinqlSearch();
+            Assert.Catch(() =>
+            {
+                this.Compiler.Execute(decimalSearch.ToLinqlSearch(), this.Data);
+            });
 
-            //List<LinqlExpression> findResults = baseCompiled.Find(compareCompiled);
-            //LinqlExpression firstResult = findResults.FirstOrDefault();
-            //Assert.IsTrue(findResults.Count == 1);
-            //Assert.IsTrue(firstResult.Equals(compareCompiled.Expressions[0].Next));
+            this.Compiler.RemoveHook(this.NoSelect);
+
+            Assert.DoesNotThrow(() =>
+            {
+                this.Compiler.Execute(decimalSearch.ToLinqlSearch(), this.Data);
+            });
         }
     }
 }

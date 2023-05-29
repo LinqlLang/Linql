@@ -110,27 +110,28 @@ namespace Linql.Server
         /// <param name="Queryable">The Datastore to query</param>
         /// <returns>A result as an object</returns>
         /// <exception cref="Exception">Throws when a LinqlSearch does not start with a Function or a Constant of type LinqlSearch</exception>
-        public object Execute(LinqlSearch Search, IEnumerable Queryable)
+        public async Task<object> ExecuteAsync(LinqlSearch Search, IEnumerable Queryable)
         {
             object result = Queryable;
 
-            Search.Expressions?.ForEach(exp =>
+            foreach(LinqlExpression exp in Search.Expressions)
             {
-                if(exp is LinqlConstant constant && constant.ConstantType.TypeName == nameof(LinqlSearch))
+                if (exp is LinqlConstant constant && constant.ConstantType.TypeName == nameof(LinqlSearch))
                 {
-                    result = this.TopLevelFunction(constant.Next as LinqlFunction, Queryable);
+                    result = await this.TopLevelFunction(constant.Next as LinqlFunction, Queryable);
                 }
                 else if (exp is LinqlFunction function)
                 {
-                    result = this.TopLevelFunction(function, Queryable);
+                    result = await this.TopLevelFunction(function, Queryable);
                 }
                 else
                 {
                     throw new Exception($"Linql Search did not start with a function, or a LinqlSearch, but started with {exp.GetType().Name}");
                 }
-            });
+                result = await result.UnwrapTaskAsync();
+            }
 
-            return result.UnwrapTask();
+            return result;
         }
 
         /// <summary>
@@ -146,6 +147,22 @@ namespace Linql.Server
             else if(Hook is LinqlAfterExecutionHook after)
             {
                 this.AfterHooks.Add(after);
+            }
+        }
+
+        /// <summary>
+        /// Unregisters a LinqlHook into this LinqlCompiler
+        /// </summary>
+        /// <param name="Hook">The LinqlCompilerHook</param>
+        public void RemoveHook(LinqlCompilerHook Hook)
+        {
+            if (Hook is LinqlBeforeExecutionHook before)
+            {
+                this.BeforeHooks.Remove(before);
+            }
+            else if (Hook is LinqlAfterExecutionHook after)
+            {
+                this.AfterHooks.Remove(after);
             }
         }
 
@@ -367,6 +384,14 @@ namespace Linql.Server
         public T Execute<T>(LinqlSearch Search, IEnumerable Queryable)
         {
             Task<T> task = this.ExecuteAsync<T>(Search, Queryable);
+            task.Wait();
+            return task.Result;
+        }
+
+        public object Execute(LinqlSearch Search, IEnumerable Queryable)
+        {
+            Task<object> task = this.ExecuteAsync<object>(Search, Queryable);
+            task.Wait();
             return task.Result;
         }
 
@@ -379,22 +404,8 @@ namespace Linql.Server
         /// <returns>A value of type T</returns>
         public async Task<T> ExecuteAsync<T>(LinqlSearch Search, IEnumerable Queryable)
         {
-            object result = this.Execute(Search, Queryable);
-
-            result = await result.UnwrapTaskAsync();
-
+            object result = await this.ExecuteAsync(Search, Queryable);
             return (T)result;
-        }
-
-        /// <summary>
-        /// Executes a LinqlSearch on a Queryable.
-        /// </summary>
-        /// <param name="Search">The LinqlSearch.</param>
-        /// <param name="Queryable">The datasource</param>
-        /// <returns>A value of type object</returns>
-        public async Task<object> ExecuteAsync(LinqlSearch Search, IEnumerable Queryable)
-        {
-            return await this.ExecuteAsync<object>(Search, Queryable);
         }
 
         /// <summary>
