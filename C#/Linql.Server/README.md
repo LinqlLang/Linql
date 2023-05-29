@@ -175,7 +175,8 @@ if(findResults.Count() == 0)
 }
 else
 {
-    //Go through the results, compare the limits, and override if they exceeded the limit.  Realisitcally, we'd only expect 1 item in findResults, but we loop through for consistency.
+    //Go through the results, compare the limits, and override if they exceeded the limit.  
+    //Realisitcally, we'd only expect 1 item in findResults, but we loop through for consistency.
     findResults.ForEach(r =>
     {
         if (r is LinqlFunction fun)
@@ -221,7 +222,22 @@ LinqlCompilerHook disableSelectHook = new LinqlBeforeExecutionHook((fun, input, 
 ...
 
 //Add the hook into the linql compiler.  There is a corresponding RemoveHook method as well. 
-this.Compiler.AddHook(this.NoSelect);
+this.Compiler.AddHook(disableSelectHook);
+
+```
+
+#### **`AfterExecutionHookExample.cs`**
+```cs 
+//Example prototype of after execution hooks
+LinqlCompilerHook afterExecutionHook = new LinqlAfterExecutionHook((fun, input, inputType, method, args, object) =>
+{
+   ...
+});
+
+...
+
+//Add the hook into the linql compiler.  There is a corresponding RemoveHook method as well. 
+this.Compiler.AddHook(afterExecutionHook);
 
 ```
 
