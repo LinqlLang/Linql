@@ -240,6 +240,11 @@ LinqlCompilerHook afterExecutionHook = new LinqlAfterExecutionHook((fun, input, 
 this.Compiler.AddHook(afterExecutionHook);
 
 ```
+### ORM Row Level Permissioning  
+
+If using an ORM, and row level access control can be achieved by backing the data model generated for a user to point to views that enforce row level permissions.
+
+In conjunction with Linql's Find functionality and lifecycle hooks, this strategy provides an "open" experience for consumers while allowing developers to enforce data access controls at scale.   
 
 ## Development 
 
