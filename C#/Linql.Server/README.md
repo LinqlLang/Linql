@@ -92,25 +92,27 @@ public class StateController : ControllerBase
     }
 
     [HttpPost]
-    public object Linql(LinqlSearch Search)
+    public async Task<object> Linql(LinqlSearch Search)
     {
-        object result = this.Compiler.Execute(Search, this.DataService.StateData.AsQueryable());
+        object result = await this.Compiler.ExecuteAsync(Search, this.DataService.StateData.AsQueryable());
         return result;
     }
 
     //A Batching Method Example.
     [HttpPost("/Batch")]
-    public List<object> Batch(List<LinqlSearch> Searches)
+    public async Task<List<object>> Batch(List<LinqlSearch> Searches)
     {
-        ConcurrentDictionary<long, object> results = new ConcurrentDictionary<long, object>();
-        Parallel.ForEach(Searches, async (search, options, index) =>
+        List<Task<object>> tasks = Searches.Select(r =>
         {
             LinqlCompiler compiler = new CustomLinqlCompiler();
-            object result = await compiler.ExecuteAsync(search, this.DataService.StateData.AsQueryable());
-            results.GetOrAdd(index, (key) => result);
-        });
+            Task<object> result = compiler.ExecuteAsync(r, this.DataService.StateData.AsQueryable());
+            return result;
+        }).ToList();
 
-        return results.OrderBy(r => r.Key).Select(r => r.Value).ToList();
+        var taskResults = await Task.WhenAll(tasks);
+        List<object> results = taskResults.ToList();
+
+        return results;
     }
 }
 
@@ -119,34 +121,119 @@ public class StateController : ControllerBase
 
 Checkout our full example [here](../Examples/WebApiExample/).
 
+## Library Support
+### EntityFramework 6
 
+Linql is compatible with EntityFramework 6.  There are tests [here](../Test/Linql.Server.EF6.Test/).
+
+### EntityFramework Core
+
+Linql should be compatible with EntityFramework Core as well.  I do not have tests for this yet, but will be working on them soon.  Conceptually, there should be no issue.  
+
+## Advanced Concepts
 ### Batching
 
-In our full example, as well as in the above sample, you can see the "Batching" technique.  Batching can significantly reduce the overhead of your application, by bundling requests together into one Http Request.  The server then multiplexes the results itself.
+In our full example, as well as in the above sample, you can see the "Batching" technique.  Batching can significantly reduce the overhead of your application, by bundling requests together into one Http Request.  The server then multiplexes the results.
 
 Batching is mostly always desired, but requires that the server implement a Generic Controller interface.
 
 ### Generic Controllers
 
-In order to use Linql for your entire data model, a generic controller interface is required.
+It's obviously advantageous to use Linql over your entire data model.  To do so, a generic controller interface is preferrable.  An example of this will be provided at a later date.
 
-TODO: Show Generic Controller implementation
+### Information Extraction
 
-### EntityFramework 6 Support
+Find functionality built into the library allows application developers to search for patterns within linql searches in order to implement more advanced logic.  
 
-Linql is compatible with EntityFramework 6.  There are tests [here](../Test/Linql.Server.EF6.Test/).
+Find has two [options](../Linql.Core/LinqlFindOption.cs), Exact and Similar.  
 
-### EntityFramework Core Support
+Exact will only return results if the statements exactly match, while Similar will do its best to try and find things that relatively match.  Either method will recursively try to find the expression anywhere in the expression tree.  
 
-Linql should be compatible with EntityFramework Core as well.  I do not have tests for this yet, but will be working on them soon.  Conceptually, there should be no issue.  
+Only the first expression in the comparison search is used for matching.  
+
+A common usecase is to limit the max number of objects returned for types.  
+
+#### **`EnforceLimit.cs`**
+```cs 
+LinqlSearch someLinqlSearch;
+
+//Set some limit
+int limit = 500;
+
+//Create a search that will look for the Take method
+IQueryable<DataModel> takeSearch = new LinqlSearch<DataModel>();
+takeSearch = takeSearch.Take(500);
+LinqlSearch takeCompiled = takeSearch.ToLinqlSearch();
+
+//Look for an expression that is similar ot the take method
+List<LinqlExpression> findResults = someLinqlSearch.Find(takeCompiled, LinqlFindOption.Similar);
+
+//If not method is found, splice the take expression into the user supplied search
+if(findResults.Count() == 0)
+{
+    takeSearch.Expression.LastOrDefault()?.Next = takeSearch.Expressions.FirstOrDefault();
+}
+else
+{
+    //Go through the results, compare the limits, and override if they exceeded the limit.  Realisitcally, we'd only expect 1 item in findResults, but we loop through for consistency.
+    findResults.ForEach(r =>
+    {
+        if (r is LinqlFunction fun)
+        {
+            fun.Arguments.ForEach(arg =>
+            {
+                if (arg is LinqlConstant constant && constant.Value > limit)
+                {
+                    constant.Value = limit;
+                }
+            });
+        }
+    });
+}
+```
+
+### Compiler Hooks
+
+The first level of Linql searches provide a before and after lifecycle hook method.  These can be used to provide advanced logic before and after expressions are executed.  
+
+In example, suppose I want to disallow the selection of a particular property.  I can accomplish this like so: 
+
+#### **`DisablePropertySelectionHook.cs`**
+```cs 
+//Create the linql hook
+LinqlCompilerHook disableSelectHook = new LinqlBeforeExecutionHook((fun, input, inputType, method, args) =>
+{
+    MemberInfo prop = typeof(DataModel).GetMember(nameof(DataModel.Decimal)).FirstOrDefault();
+
+    if(fun.FunctionName == nameof(Queryable.Select))
+    {
+        LambdaExpression lam = args.Where(r => r is LambdaExpression).Cast<LambdaExpression>().FirstOrDefault();
+
+        if(lam != null && lam.Body is MemberExpression member && member.Member == prop)
+        {
+            throw new Exception($"Not allowed to select into property {nameof(DataModel.Decimal)} on type {nameof(DataModel)}");
+        }
+    }
+
+    return Task.CompletedTask;
+});
+
+...
+
+//Add the hook into the linql compiler.  There is a corresponding RemoveHook method as well. 
+this.Compiler.AddHook(this.NoSelect);
+
+```
 
 ## Development 
 
 - Visual Studio 2022 
-- .Net 7 (requires Visual Studio Preview at the time of this writing.  Can change this to .Net 6 without issue)
+- .Net 7 to run tests and example projects.
 
 ## Future Enhancements 
 
+- Better Find/Hook support 
+- Allow linql queries to continue after materialization 
 - Support multi-line statements
 - Support multiple LinqlSearches in the same context, and allow interaction between them (Join)
 - Anonymous Types (which would then allow specific select statements)
