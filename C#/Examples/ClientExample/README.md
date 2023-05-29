@@ -14,4 +14,4 @@ Add debuggers as you please to see the data returned and mess around with the ap
 
 ## Notes
 
-This example creates a [CustomLinqlContext](./CustomLinqlContext.cs) in order to override the default endpoint.  To read more about endpoint defaults, see [Linql.Server](../../Linql.Server/).
+This example creates a [CustomLinqlContext](./CustomLinqlContext.cs) in order to override the default endpoint.  To read more about endpoint defaults, see [Linql.Client](../../Linql.Client/).
