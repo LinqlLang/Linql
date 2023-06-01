@@ -1,6 +1,6 @@
 {
   "name": "linql.client-node-fetch",
-  "version": "1.0.0-alpha9",
+  "version": "1.0.0-alpha10",
   "peerDependencies": {
     "linql.client": "^1.0.0-alpha8",
     "node-fetch": "^3.3.1"

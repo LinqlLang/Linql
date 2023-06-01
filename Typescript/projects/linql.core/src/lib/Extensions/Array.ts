@@ -1,26 +1,26 @@
 import { IGrouping } from "./IGrouping";
-import { BooleanExpression, AnyExpression, OneToManyExpression } from "./Types";
+import { BooleanExpression, AnyExpression, OneToManyExpression, TransformExpression } from "./Types";
 
 declare global
 {
     export interface Array<T>
     {
         Contains(ItemToCompare: T): boolean;
-        Any(Expression: BooleanExpression<T> | undefined): boolean;
-        All(Expression: BooleanExpression<T> | undefined): boolean;
-        Average<S extends number>(Expression: AnyExpression<S> | undefined): number;
+        Any(Expression?: BooleanExpression<T>): boolean;
+        All(Expression: BooleanExpression<T>): boolean;
+        Average(Expression?: TransformExpression<T, number>): number;
         Distinct(): Array<T>;
         GroupBy<S>(Expression: AnyExpression<S>): Array<IGrouping<S, T>>;
-        FirstOrDefault(Expression: BooleanExpression<T> | undefined): boolean;
-        LastOrDefault(Expression: BooleanExpression<T> | undefined): boolean;
-        Min<S extends number>(Expression: AnyExpression<S> | undefined): number;
-        Max<S extends number>(Expression: AnyExpression<S> | undefined): number;
-        MinBy<S extends number>(Expression: AnyExpression<S> | undefined): T;
-        MaxBy<S extends number>(Expression: AnyExpression<S> | undefined): T;
-        Select<S>(Expression: AnyExpression<S>): Array<S>;
+        FirstOrDefault(Expression?: BooleanExpression<T>): T;
+        LastOrDefault(Expression?: BooleanExpression<T>): T;
+        Min(Expression: TransformExpression<T, number>): number;
+        Max(Expression: TransformExpression<T, number>): number;
+        MinBy<S>(Expression?: TransformExpression<T, S>): T;
+        MaxBy<S>(Expression?: TransformExpression<T, S>): T;
+        Select<S>(Expression: TransformExpression<T, S>): Array<S>;
         SelectMany<S>(Expression: OneToManyExpression<T, S>): Array<S>;
         Skip(Count: number): Array<T>;
-        Sum<S extends number>(Expression: AnyExpression<S> | undefined): number;
+        Sum(Expression?: TransformExpression<T, number>): number;
         Take(Count: number): Array<T>;
         Where(Expression: BooleanExpression<T>): Array<T>;
         Count: number;
@@ -40,7 +40,7 @@ Array.prototype.Contains = function <T>(ItemToCompare: T | undefined)
     }
 };
 
-Array.prototype.Any = function <T>(Expression: BooleanExpression<T> | undefined)
+Array.prototype.Any = function <T>(Expression?: BooleanExpression<T>)
 {
 
     if (!Expression)
@@ -58,7 +58,7 @@ Array.prototype.All = function <T>(Expression: BooleanExpression<T>)
     return this.every(Expression);
 };
 
-Array.prototype.Average = function <T, S extends number>(Expression: AnyExpression<S> | undefined)
+Array.prototype.Average = function <T>(Expression?: TransformExpression<T, number>)
 {
     return this.Sum(Expression) / this.length;
 };
@@ -73,7 +73,7 @@ Array.prototype.GroupBy = function <T, S>(Expression: AnyExpression<S>)
 {
     const map = new Map<S, IGrouping<S, T>>();
 
-    this.map(Expression).forEach((r, index) => 
+    this.map(Expression).forEach((r, index) =>
     {
         const item = this[index];
         let group = map.get(r);
@@ -92,7 +92,7 @@ Array.prototype.GroupBy = function <T, S>(Expression: AnyExpression<S>)
 
 };
 
-Array.prototype.FirstOrDefault = function <T>(Expression: BooleanExpression<T> | undefined)
+Array.prototype.FirstOrDefault = function <T>(Expression?: BooleanExpression<T>)
 {
     if (Expression)
     {
@@ -104,7 +104,7 @@ Array.prototype.FirstOrDefault = function <T>(Expression: BooleanExpression<T> |
     }
 }
 
-Array.prototype.LastOrDefault = function <T>(Expression: BooleanExpression<T> | undefined)
+Array.prototype.LastOrDefault = function <T>(Expression?: BooleanExpression<T>)
 {
     const reverse = this.reverse();
     if (Expression)
@@ -116,7 +116,7 @@ Array.prototype.LastOrDefault = function <T>(Expression: BooleanExpression<T> | 
         return reverse.find(r => true);
     }
 }
-Array.prototype.Min = function <T, S extends number>(Expression: AnyExpression<S> | undefined)
+Array.prototype.Min = function <T>(Expression?: TransformExpression<T, number>)
 {
     let numbers: Array<number>;
 
@@ -132,7 +132,7 @@ Array.prototype.Min = function <T, S extends number>(Expression: AnyExpression<S
     return Math.min(...numbers);
 }
 
-Array.prototype.Max = function <T, S extends number>(Expression: AnyExpression<S> | undefined)
+Array.prototype.Max = function <T>(Expression?: TransformExpression<T, number>)
 {
     let numbers: Array<number>;
 
@@ -149,9 +149,8 @@ Array.prototype.Max = function <T, S extends number>(Expression: AnyExpression<S
 }
 
 
-Array.prototype.MinBy = function <T, S extends number>(Expression: AnyExpression<S> | undefined)
+Array.prototype.MinBy = function <T, S>(Expression?: TransformExpression<T, S>)
 {
-    const minBy = this.Min(Expression);
     let map = this;
 
     if (Expression)
@@ -159,21 +158,23 @@ Array.prototype.MinBy = function <T, S extends number>(Expression: AnyExpression
         map = this.map(Expression);
     }
 
-    const index = map.indexOf(minBy);
+    let zip = map.map((r, index) => [r, this[index]]);
 
-    if (index < 0)
+    const order = zip.sort((left, right) => left[0] - right[0]);
+    const first = order.FirstOrDefault();
+
+    if (first)
     {
-        return null;
+        return first[1];
     }
     else
     {
-        return this[index];
+        return first;
     }
 }
 
-Array.prototype.MaxBy = function <T, S extends number>(Expression: AnyExpression<S> | undefined)
+Array.prototype.MaxBy = function <T, S>(Expression?: TransformExpression<T, S>)
 {
-    const minBy = this.Max(Expression);
     let map = this;
 
     if (Expression)
@@ -181,19 +182,22 @@ Array.prototype.MaxBy = function <T, S extends number>(Expression: AnyExpression
         map = this.map(Expression);
     }
 
-    const index = map.indexOf(minBy);
+    let zip = map.map((r, index) => [r, this[index]]);
 
-    if (index < 0)
+    const order = zip.sort((left, right) => left[0] - right[0]);
+    const last = order.LastOrDefault();
+
+    if (last)
     {
-        return null;
+        return last[1];
     }
     else
     {
-        return this[index];
+        return last;
     }
 }
 
-Array.prototype.Select = function <T, S>(Expression: AnyExpression<S>)
+Array.prototype.Select = function <T, S>(Expression: TransformExpression<T, S>)
 {
     return this.map(Expression);
 }
@@ -213,7 +217,7 @@ Array.prototype.Take = function <T, S>(Count: number)
     return this.slice(0, Count);
 }
 
-Array.prototype.Sum = function <T, S extends number>(Expression: AnyExpression<S> | undefined)
+Array.prototype.Sum = function <T>(Expression?: TransformExpression<T, number>)
 {
     let map = this;
 
