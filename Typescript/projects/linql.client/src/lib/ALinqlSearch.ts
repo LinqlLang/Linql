@@ -77,16 +77,6 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
         return this.CustomLinqlFunction<T>("Where", Expression);
     }
 
-    public Any(Expression: BooleanExpression<T> | string)
-    {
-        return this.CustomLinqlFunction<T>("Any", Expression);
-    }
-
-    public All(Expression: BooleanExpression<T> | string)
-    {
-        return this.CustomLinqlFunction<T>("All", Expression);
-    }
-
     public Distinct()
     {
         return this.CustomLinqlFunction<T>("Distinct", undefined);
@@ -183,6 +173,46 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
     async LastOrDefaultAsync(Predicate: BooleanExpression<T> | string | undefined = undefined): Promise<T | undefined>
     {
         return this.executeCustomLinqlFunction("FirstOrDefaultAsync", Predicate);
+    }
+
+    public AnyAsync(Predicate?: BooleanExpression<T> | string) : Promise<boolean>
+    {
+        return this.executeCustomLinqlFunction("AnyAsync", Predicate);
+    }
+
+    public AllAsync(Predicate?: BooleanExpression<T> | string) : Promise<boolean>
+    {
+        return this.executeCustomLinqlFunction("AllAsync", Predicate);
+    }
+
+    public MinAsync(Predicate?: TransformExpression<T, number> | string) : Promise<number>
+    {
+        return this.executeCustomLinqlFunction("MinAsync", Predicate);
+    }
+
+    public MaxAsync(Predicate?: TransformExpression<T, number> | string) : Promise<number>
+    {
+        return this.executeCustomLinqlFunction("MaxAsync", Predicate);
+    }
+
+    public MinByAsync(Predicate: TransformExpression<T, number> | string) : Promise<T>
+    {
+        return this.executeCustomLinqlFunction("MinAsync", Predicate);
+    }
+
+    public MaxByAsync(Predicate: TransformExpression<T, number> | string) : Promise<T>
+    {
+        return this.executeCustomLinqlFunction("MaxAsync", Predicate);
+    }
+
+    public SumAsync(Predicate?: TransformExpression<T, number> | string) : Promise<number>
+    {
+        return this.executeCustomLinqlFunction("SumAsync", Predicate);
+    }
+
+    public AverageAsync(Predicate?: TransformExpression<T, number> | string) : Promise<number>
+    {
+        return this.executeCustomLinqlFunction("AverageAsync", Predicate);
     }
 
     //#endregion

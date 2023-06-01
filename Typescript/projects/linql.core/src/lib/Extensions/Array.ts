@@ -15,8 +15,8 @@ declare global
         LastOrDefault(Expression?: BooleanExpression<T>): T;
         Min(Expression: TransformExpression<T, number>): number;
         Max(Expression: TransformExpression<T, number>): number;
-        MinBy<S>(Expression?: TransformExpression<T, S>): T;
-        MaxBy<S>(Expression?: TransformExpression<T, S>): T;
+        MinBy<S>(Expression: TransformExpression<T, S>): T;
+        MaxBy<S>(Expression: TransformExpression<T, S>): T;
         Select<S>(Expression: TransformExpression<T, S>): Array<S>;
         SelectMany<S>(Expression: OneToManyExpression<T, S>): Array<S>;
         Skip(Count: number): Array<T>;
@@ -149,7 +149,7 @@ Array.prototype.Max = function <T>(Expression?: TransformExpression<T, number>)
 }
 
 
-Array.prototype.MinBy = function <T, S>(Expression?: TransformExpression<T, S>)
+Array.prototype.MinBy = function <T, S>(Expression: TransformExpression<T, S>)
 {
     let map = this;
 
@@ -173,7 +173,7 @@ Array.prototype.MinBy = function <T, S>(Expression?: TransformExpression<T, S>)
     }
 }
 
-Array.prototype.MaxBy = function <T, S>(Expression?: TransformExpression<T, S>)
+Array.prototype.MaxBy = function <T, S>(Expression: TransformExpression<T, S>)
 {
     let map = this;
 
