@@ -197,12 +197,12 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
 
     public MinByAsync(Predicate: TransformExpression<T, number> | string) : Promise<T>
     {
-        return this.executeCustomLinqlFunction("MinAsync", Predicate);
+        return this.executeCustomLinqlFunction("MinByAsync", Predicate);
     }
 
     public MaxByAsync(Predicate: TransformExpression<T, number> | string) : Promise<T>
     {
-        return this.executeCustomLinqlFunction("MaxAsync", Predicate);
+        return this.executeCustomLinqlFunction("MaxByAsync", Predicate);
     }
 
     public SumAsync(Predicate?: TransformExpression<T, number> | string) : Promise<number>
