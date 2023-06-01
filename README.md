@@ -29,7 +29,7 @@ const statesICareAbout: Array<State> = search
 ```python
 codesICareAbout = ["al", "ma"]
 result = list(
-    Where(lambda r: 
+    filter(lambda r: 
     r in 
         [t.upper() for t in codesICareAbout], 
     states
@@ -43,7 +43,7 @@ List<String> codesICareAbout = Arrays.asList("al", "ma");
 
 List<State> statesICareAbout = states
 .stream()
-.filter(r => codesICareAbout.stream().map(t => t.toUpperCase()).collect(Collectors.toList().contains(r))
+.filter(r => codesICareAbout.stream().map(t => t.toUpperCase()).collect(Collectors.toList()).contains(r))
 .collect(Collectors.toList());
 ```
 
