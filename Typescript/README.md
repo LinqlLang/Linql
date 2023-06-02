@@ -21,14 +21,6 @@ search.Where(r => r.State_Code!.Contains("A")).ToListAsyncSearch();
 | React       | [Full](./projects/linql.client-fetch/)      | n/a         | Needs native framework wr apper                                                                                         |
 | Vanilla     | [Full](./projects/linql.client-fetch/)      | n/a         |
 
-## Getting Started
-
-### Recommended 
-- node 16+
-- npm 8+
-
-> **_NOTE:_**  If using npm < 8, dependant packages may need to be installed along side.  Later versions of npm have transitive dependency resolution enabled automatically if using package-lock version 2.
-
 # Concepts
 ## TypeName Resolution 
 
