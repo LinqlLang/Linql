@@ -14,12 +14,12 @@ search.Where(r => r.State_Code!.Contains("A")).ToListAsyncSearch();
 
 ## Current Support
 
-| Environment | Client                                      | Server      | Notes                                                                                                                   |
-| ----------- | ------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Node        | [Full](./projects/linql.client-node-fetch/) | Not Started | [linql.client-fetch](./projects/linql.client-fetch/) and [linql.client-node-fetch](./projects/linql.client-node-fetch/) |
-| Angular     | [Full](./projects/linql.client-angular/)    | n/a         | Has native framework wrapper                                                                                            |
+| Environment | Client                                      | Server      | Notes                                                                                                                   | Example                     |
+| ----------- | ------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| Node        | [Full](./projects/linql.client-node-fetch/) | Not Started | [linql.client-fetch](./projects/linql.client-fetch/) and [linql.client-node-fetch](./projects/linql.client-node-fetch/) | [link](./examples/node/)    |
+| Angular     | [Full](./projects/linql.client-angular/)    | n/a         | Has native framework wrapper                                                                                            | [link](./examples/angular/) |
 | React       | [Full](./projects/linql.client-fetch/)      | n/a         | Needs native framework wr apper                                                                                         |
-| Vanilla     | [Full](./projects/linql.client-fetch/)      | n/a         |
+| Vanilla     | [Full](./projects/linql.client-fetch/)      | n/a         |                                                                                                                         |
 
 # Concepts
 ## TypeName Resolution 
@@ -47,7 +47,7 @@ export class State
 
 By default, the generated route is `linql/{GetTypeName(ObjectConstructor)}`.
 
-In example, the `State` object used as an example above would generate `linql/State`.
+The `State` object used above would generate `linql/State`, as the static `Type` member is equal to `State`.
 
 ## Idempotent
 
@@ -69,10 +69,10 @@ For a full list of available functions: [LinqlSearch](./projects/linql.client/sr
 
 ```typescript
 const inMemoryArray: Array<State> = [...];
-const valid = intArray.Where(r => r.StateID > 2).Max();
+const inMemoryMax = intArray.Where(r => r.StateID > 2).Max();
 
-const search = this.LinqlContext.Set<State>(State, { this: this });
-const max = await search.Where(r => r.StateID > 2).MaxAsync();
+const apiArray = this.LinqlContext.Set<State>(State, { this: this });
+const apiMax = await apiArray.Where(r => r.StateID > 2).MaxAsync();
 ```
 
 ## Using Variables
@@ -112,10 +112,19 @@ const isNull = search.Where(r => r.NullableInteger === undefined);
 
 `Nullable` support can be enhanced with a direct integration with [TypescriptGenerator](), which will be a project I release at a later date.
 
+## Dynamic Queries
+
+`Linql` methods accept both `arrow functions` and `strings` as predicates.  This can allow you to do dynamic generation of queries. 
+
+```typescript
+const value = 1;
+const method = "<";
+search.Where(`r => r.Integer ${method} ${value}`).ToListAsync();
+```
+
 ## Custom LinqlContext 
 
-
-Overriding the default `LinqlContext` allows customized endpoint generation, authentication, `TypeName` resolution, and other customizations.  To do so, simply inherit from the default `LinqlContext`.
+Overriding the default `LinqlContext` allows customized endpoint generation, authentication, and `TypeName` resolution.  To do so, simply inherit from the default `LinqlContext`.
 
 In the below example, we show a `CustomLinqlContext` which overrides the route generation, overrides the `TypeName Resolution`, and adds a `Batch` functionality.
 
