@@ -3,6 +3,8 @@
 Provides native linql client support for angular.  
 
 [Linql Overview]("../../../../README.md)
+
+[Angular example](../../examples/angular/)
 ## Example Usage
 
 ```typescript
@@ -64,9 +66,7 @@ export class AppComponent implements OnInit
 ```
 ## Custom LinqlContext
 
-Overriding the default LinqlContext can provide developers to customize endpoint generation, authentication, and type name resolution.  To do so, simply create your custom implementation, and provide it in your app module.
-
-#### **`CustomLinqlContext.ts`**
+Create a `CustomLinqlContext` allows developers to customize endpoint generation, authentication, and type name resolution. 
 
 Implement a [CustomLinqlContext](../../README.md#custom-linqlcontext).
 
@@ -97,4 +97,3 @@ import { LinqlClientAngularModule } from 'linql.client-angular';
 })
 export class AppModule { }
 ```
-
