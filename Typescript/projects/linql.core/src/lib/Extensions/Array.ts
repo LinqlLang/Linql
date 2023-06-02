@@ -1,29 +1,29 @@
 import { IGrouping } from "./IGrouping";
-import { BooleanExpression, AnyExpression, OneToManyExpression, TransformExpression } from "./Types";
+import { AnyExpression, BooleanExpression, OneToManyExpression, TransformExpression } from "./Types";
 
 declare global
 {
     export interface Array<T>
     {
-        Contains(ItemToCompare: T): boolean;
-        Any(Expression?: BooleanExpression<T>): boolean;
         All(Expression: BooleanExpression<T>): boolean;
+        Any(Expression?: BooleanExpression<T>): boolean;
         Average(Expression?: TransformExpression<T, number>): number;
+        Contains(ItemToCompare: T): boolean;
+        Count: number;
         Distinct(): Array<T>;
-        GroupBy<S>(Expression: AnyExpression<S>): Array<IGrouping<S, T>>;
         FirstOrDefault(Expression?: BooleanExpression<T>): T;
+        GroupBy<S>(Expression: AnyExpression<S>): Array<IGrouping<S, T>>;
         LastOrDefault(Expression?: BooleanExpression<T>): T;
-        Min(Expression: TransformExpression<T, number>): number;
         Max(Expression: TransformExpression<T, number>): number;
-        MinBy<S>(Expression: TransformExpression<T, S>): T;
         MaxBy<S>(Expression: TransformExpression<T, S>): T;
+        Min(Expression: TransformExpression<T, number>): number;
+        MinBy<S>(Expression: TransformExpression<T, S>): T;
         Select<S>(Expression: TransformExpression<T, S>): Array<S>;
         SelectMany<S>(Expression: OneToManyExpression<T, S>): Array<S>;
         Skip(Count: number): Array<T>;
         Sum(Expression?: TransformExpression<T, number>): number;
         Take(Count: number): Array<T>;
         Where(Expression: BooleanExpression<T>): Array<T>;
-        Count: number;
 
     }
 }

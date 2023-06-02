@@ -1,7 +1,7 @@
 import * as Acorn from 'acorn';
 import * as AcornWalk from 'acorn-walk';
 import * as ESTree from 'estree';
-import { AnyExpression, LinqlBinary, LinqlConstant, LinqlExpression, LinqlFunction, LinqlLambda, LinqlObject, LinqlParameter, LinqlProperty, LinqlType, LinqlUnary } from "linql.core";
+import { AnyExpression, LinqlBinary, LinqlConstant, LinqlExpression, LinqlFunction, LinqlLambda, LinqlObject, LinqlParameter, LinqlProperty, LinqlType, LinqlUnary, ITypeNameProvider } from "linql.core";
 
 
 
@@ -13,7 +13,7 @@ export class LinqlParser
 
     Root: LinqlExpression | undefined;
 
-    constructor(protected RootExpression: AnyExpression<any> | string | undefined | Acorn.Node, protected ArgumentContext: {})
+    constructor(protected RootExpression: AnyExpression<any> | string | undefined | Acorn.Node, protected ArgumentContext: {}, protected TypeNameProvider: ITypeNameProvider)
     {
         this.Visit();
     }
@@ -137,7 +137,7 @@ export class LinqlParser
             linqlLambda.Parameters.push(param);
         });
 
-        const bodyParser = new LinqlParser(lambda.body as Acorn.Node, this.ArgumentContext);
+        const bodyParser = new LinqlParser(lambda.body as Acorn.Node, this.ArgumentContext, this.TypeNameProvider);
         linqlLambda.Body = bodyParser.Root;
     }
 
@@ -145,7 +145,7 @@ export class LinqlParser
     {
         const cast = Node as any as ESTree.Literal;
         const value = cast.value;
-        const type = LinqlType.GetLinqlType(value);
+        const type = LinqlType.GetLinqlType(value, this.TypeNameProvider);
         const constant = new LinqlConstant(type, value);
         this.AttachToExpression(constant);
         this.PushToStack(constant, Node);
@@ -172,12 +172,14 @@ export class LinqlParser
             }
             else
             {
-                expression = new LinqlConstant(LinqlType.GetLinqlType(value), value);
+                const type = LinqlType.GetLinqlType(value, this.TypeNameProvider);
+                expression = new LinqlConstant(type, value);
             }
         }
         else if (node.name === "undefined")
         {
-            expression = new LinqlConstant(LinqlType.GetLinqlType(undefined), undefined);
+            const type = LinqlType.GetLinqlType(undefined, this.TypeNameProvider);
+            expression = new LinqlConstant(type, undefined);
         }
         else
         {
@@ -227,13 +229,13 @@ export class LinqlParser
                     }
                     else
                     {
-                        const type = LinqlType.GetLinqlType(value);
+                        const type = LinqlType.GetLinqlType(value, this.TypeNameProvider);
                         expression = new LinqlConstant(type, value);
                     }
                 }
                 else
                 {
-                    expression = new LinqlConstant(LinqlType.GetLinqlType(null), null);
+                    expression = new LinqlConstant(LinqlType.GetLinqlType(null, this.TypeNameProvider), null);
                 }
 
                 if (expression)
@@ -341,8 +343,8 @@ export class LinqlParser
             const left = node.left;
             const right = node.right;
 
-            const leftParser = new LinqlParser(left as Acorn.Node, this.ArgumentContext);
-            const rightParser = new LinqlParser(right as Acorn.Node, this.ArgumentContext);
+            const leftParser = new LinqlParser(left as Acorn.Node, this.ArgumentContext, this.TypeNameProvider);
+            const rightParser = new LinqlParser(right as Acorn.Node, this.ArgumentContext, this.TypeNameProvider);
 
             binary.Left = leftParser.Root;
             binary.Right = rightParser.Root;
@@ -399,13 +401,13 @@ export class LinqlParser
 
         linqlFunction.Arguments = node.arguments.map(s =>
         {
-            const parser = new LinqlParser(s as Acorn.Node, this.ArgumentContext);
+            const parser = new LinqlParser(s as Acorn.Node, this.ArgumentContext, this.TypeNameProvider);
             return parser.Root;
         }) as Array<LinqlExpression>;
 
         if (callee.object)
         {
-            const parser = new LinqlParser(callee.object as Acorn.Node, this.ArgumentContext);
+            const parser = new LinqlParser(callee.object as Acorn.Node, this.ArgumentContext, this.TypeNameProvider);
             functionCallee = parser.Root;
         }
 

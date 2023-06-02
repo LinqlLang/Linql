@@ -1,27 +1,177 @@
-# LinqlClient
+# Linql
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.0.2.
+`Linql` is a next generation graph api library.  It's primary goal is to provide language-native graph api integration to achieve consistency and scale across the web. 
 
-## Development server
+These repos focus on Typescript/Javascript implementations.  
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Example Usage
 
-## Code scaffolding
+```typescript
+const search = this.customContext.Set<State>(State, { this: this });
+search.Where(r => r.State_Code!.Contains("A")).ToListAsyncSearch();
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## Build
+## Current Support
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+| Environment | Client                                      | Server      | Notes                                                                                                                   |
+| ----------- | ------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Node        | [Full](./projects/linql.client-node-fetch/) | Not Started | [linql.client-fetch](./projects/linql.client-fetch/) and [linql.client-node-fetch](./projects/linql.client-node-fetch/) |
+| Angular     | [Full](./projects/linql.client-angular/)    | n/a         | Has native framework wrapper                                                                                            |
+| React       | [Full](./projects/linql.client-fetch/)      | n/a         | Needs native framework wr apper                                                                                         |
+| Vanilla     | [Full](./projects/linql.client-fetch/)      | n/a         |
 
-## Running unit tests
+## Getting Started
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### Recommended 
+- node 16+
+- npm 8+
 
-## Running end-to-end tests
+> **_NOTE:_**  If using npm < 8, dependant packages may need to be installed along side.  Later versions of npm have transitive dependency resolution enabled automatically if using package-lock version 2.
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+# Concepts
+## TypeName Resolution 
 
-## Further help
+When an `object` is used within a LinqlSearch, the LinqlContext's `GetTypeName` function is used to resolve the name of that object.  By default, `GetTypeName` implementation is as follows: 
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+- Check for the existance of a static `Type` member on the constructor.  
+- If static `Type` does not exist, choose `constructor.name`.
+
+The static `Type` member, or some custom implementation, **is required to support minified code**, as **class names are generally clobbered** during minification.
+
+#### **`ModelExample.ts`**
+```typescript
+export class State
+{
+  //Default way to handle code miniification 
+  static Type = "State";
+  StateID!: number;
+  StateCode!: string;
+  State_Name!: string;
+}
+```
+
+## EndPoint Resolution
+
+By default, the generated route is `linql/{GetTypeName(ObjectConstructor)}`.
+
+In example, the `State` object used as an example above would generate `linql/State`.
+
+## Idempotent
+
+`Linql` is **idempotent**, allowing for LinqlSearches to be built on top of one another.
+
+```typescript
+const search = this.LinqlContext.Set<State>(State, { this: this });
+const baseQuery = search.Where(r => r.StateCode.Contains("a"));
+//branch 2 queries off the base query
+const search2 = baseQuery.Where(r => r.State_Name!.ToLower().Contains(this.StateSearch));
+const search3 = baseQuery.Where(r => r.State_Name.Contains("b"));
+```
+
+## Linq Emulation
+
+`Linql` comes bundled with a naiive implementation of linq, which adds additional methods to `Array` and `String`.
+
+For a full list of available functions: [LinqlSearch](./projects/linql.client/src/lib/ALinqlSearch.ts), [Array](./projects//linql.core/src/lib/Extensions/Array.ts), [String](./projects/linql.core/src/lib/Extensions/String.ts).
+
+```typescript
+const inMemoryArray: Array<State> = [...];
+const valid = intArray.Where(r => r.StateID > 2).Max();
+
+const search = this.LinqlContext.Set<State>(State, { this: this });
+const max = await search.Where(r => r.StateID > 2).MaxAsync();
+```
+
+## Using Variables
+
+Javascript has no access to the stack at runtime, and therefore it is **impossible to use locally scoped variables inside of a linql search**.  
+
+To circumnavigate this, `Linql` emulates the stack with the *incantation* `{ this: this }`. 
+
+Other variables can be stuck into the stack, but due to code minification, this is not advised. 
+
+```typescript
+export class SomeClass
+{
+    StatesICareAbout: Array<string> = ["ma", "al"];
+    ...
+    async GetData()
+    {
+        //Define this inside of the stack with the incantation 
+        const search = this.LinqlContext.Set<State>(State, { this: this });
+        const results = await search.Where(r => this.StatesICareAbout.Contains(r.StateCode)).ToListAsync();
+    }
+}
+```
+## Nullable Types
+
+`Nullable` types can be accessed by using the `non-null asertion operator` on `strings` and with `INullable` casting for non-string types.
+
+```typescript
+//Ignore nullable string
+search.Where(r => r.StringProperty!.Contains("A")).ToListAsync();
+//Check for not null and then cast to INullable
+const notNull = search.Where(r => r.NullableInteger !== undefined && (r.NullableInteger as any as INullable<number>).Value === 1);
+//Get where Is Null
+const isNull = search.Where(r => r.NullableInteger === undefined);
+```
+
+`Nullable` support can be enhanced with a direct integration with [TypescriptGenerator](), which will be a project I release at a later date.
+
+## Custom LinqlContext 
+
+
+Overriding the default `LinqlContext` allows customized endpoint generation, authentication, `TypeName` resolution, and other customizations.  To do so, simply inherit from the default `LinqlContext`.
+
+In the below example, we show a `CustomLinqlContext` which overrides the route generation, overrides the `TypeName Resolution`, and adds a `Batch` functionality.
+
+#### **`CustomLinqlContext.ts`**
+```typescript
+export class CustomLinqlContext extends LinqlContext
+{
+    override GetRoute(Search: LinqlSearch<any>)
+    {
+        if (Search.Type.TypeName)
+        {
+            return Search.Type.TypeName;
+        }
+        return "";
+    }
+    async Batch<T>(...values: Array<T>): Promise<Array<T>>
+    {
+        const searches = values.Where(r => (r as Object).constructor === this.LinqlSearchType) as Array<ALinqlSearch<any>>;
+        const sanitizedSearches = searches.map(r => this.GetOptimizedSearch(r));
+        const results = await lastValueFrom(this.Client.post(`${ this.BaseUrl }Batch`, sanitizedSearches));
+        return results as Array<T>;
+    }
+
+    override GetTypeName(Type: string | GenericConstructor<any>): string
+    {
+        if (typeof Type !== "string")
+        {
+            const anyCast = Type as any;
+            const type = anyCast["Type"];
+
+            if (type)
+            {
+                return type;
+            }
+        }
+        return super.GetTypeName(Type);
+    }
+
+}
+```
+
+## Batching
+
+The modern web is filled with many small requests.  If you check your devtools at anytime, it's filled with network requests.
+
+To alleviate this issue, `Batch` functionality is strongly recommended, and must be enabled on your [server](../C%23/Linql.Server/README.md).
+
+If your server supports it, you can batch many requests together into a single network request, and the `Linql` server will return all the results of a Batch in a single request. 
+
+The above example shows a naiive implementation of how to implement `Batch` that hits the `/Batch` endpoint of the backend. 
+
+This functionality may be migrated into the core of `Linql` in the future, and include functionality to also accept non-linql requests and zip the results together, as well as include better type definitions that can infer .

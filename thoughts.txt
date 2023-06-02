@@ -19,3 +19,10 @@ Is it worht it?  Is this just a curiosity?  Will people actually use it?  Does i
 The typescript generator?  having already done it.
 
 May not actually be idempotent
+
+Need to interface out Context and Search in the typescript version
+
+Batch needs to infer its types.  Take a look at flow example: 
+https://medium.com/ackee/typescript-function-composition-and-recurrent-types-a9efbc8e7736
+
+angular version might want to have observable methods as well

@@ -1,4 +1,4 @@
-import { AnyExpression, BooleanExpression, GenericConstructor, IGrouping, LinqlConstant, LinqlExpression, LinqlFunction, LinqlSearch, LinqlType, TransformExpression } from "linql.core";
+import { AnyExpression, BooleanExpression, GenericConstructor, IGrouping, LinqlConstant, LinqlExpression, LinqlFunction, LinqlSearch, LinqlType, TransformExpression, ITypeNameProvider } from "linql.core";
 import { AOrderedLinqlSearch } from "./AOrderedLinqlSearch";
 import { LinqlParser } from "./LinqlParser";
 
@@ -85,6 +85,11 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
     public Select<S>(Expression: TransformExpression<T, S>)
     {
         return this.CustomLinqlFunction<S>("Select", Expression);
+    }
+
+    public Include<S>(Expression: TransformExpression<T, S> | string)
+    {
+        return this.CustomLinqlFunction<T>("Select", Expression);
     }
 
     public SelectMany<S>(Expression: TransformExpression<T, S>)
@@ -175,42 +180,42 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
         return this.executeCustomLinqlFunction("FirstOrDefaultAsync", Predicate);
     }
 
-    public AnyAsync(Predicate?: BooleanExpression<T> | string) : Promise<boolean>
+    public AnyAsync(Predicate?: BooleanExpression<T> | string): Promise<boolean>
     {
         return this.executeCustomLinqlFunction("AnyAsync", Predicate);
     }
 
-    public AllAsync(Predicate?: BooleanExpression<T> | string) : Promise<boolean>
+    public AllAsync(Predicate?: BooleanExpression<T> | string): Promise<boolean>
     {
         return this.executeCustomLinqlFunction("AllAsync", Predicate);
     }
 
-    public MinAsync(Predicate?: TransformExpression<T, number> | string) : Promise<number>
+    public MinAsync(Predicate?: TransformExpression<T, number> | string): Promise<number>
     {
         return this.executeCustomLinqlFunction("MinAsync", Predicate);
     }
 
-    public MaxAsync(Predicate?: TransformExpression<T, number> | string) : Promise<number>
+    public MaxAsync(Predicate?: TransformExpression<T, number> | string): Promise<number>
     {
         return this.executeCustomLinqlFunction("MaxAsync", Predicate);
     }
 
-    public MinByAsync(Predicate: TransformExpression<T, number> | string) : Promise<T>
+    public MinByAsync(Predicate: TransformExpression<T, number> | string): Promise<T>
     {
         return this.executeCustomLinqlFunction("MinByAsync", Predicate);
     }
 
-    public MaxByAsync(Predicate: TransformExpression<T, number> | string) : Promise<T>
+    public MaxByAsync(Predicate: TransformExpression<T, number> | string): Promise<T>
     {
         return this.executeCustomLinqlFunction("MaxByAsync", Predicate);
     }
 
-    public SumAsync(Predicate?: TransformExpression<T, number> | string) : Promise<number>
+    public SumAsync(Predicate?: TransformExpression<T, number> | string): Promise<number>
     {
         return this.executeCustomLinqlFunction("SumAsync", Predicate);
     }
 
-    public AverageAsync(Predicate?: TransformExpression<T, number> | string) : Promise<number>
+    public AverageAsync(Predicate?: TransformExpression<T, number> | string): Promise<number>
     {
         return this.executeCustomLinqlFunction("AverageAsync", Predicate);
     }
@@ -218,7 +223,7 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
     //#endregion
 }
 
-export abstract class ALinqlContext
+export abstract class ALinqlContext implements ITypeNameProvider
 {
     constructor(public LinqlSearchType: LinqlSearchConstructor<any>, public BaseUrl: string, public ArgumentContext: {} = {})
     {
@@ -235,7 +240,7 @@ export abstract class ALinqlContext
         {
             ArgumentContext = this.ArgumentContext;
         }
-        const parser = new LinqlParser(Expression, ArgumentContext);
+        const parser = new LinqlParser(Expression, ArgumentContext, this);
         return parser.Root;
     }
 
@@ -245,11 +250,20 @@ export abstract class ALinqlContext
         return JSON.stringify(copy);
     }
 
-    GetTypeName(Type: string | GenericConstructor<any>)
+    GetTypeName(Type: string | GenericConstructor<any>): string
     {
+        const anyCast = Type as any;
         if (typeof Type === "string")
         {
             return Type;
+        }
+        else if (anyCast.constructor && anyCast.constructor.name !== "Function")
+        {
+            return this.GetTypeName(anyCast.constructor);
+        }
+        else if (anyCast["Type"])
+        {
+            return anyCast["Type"];
         }
         else
         {
@@ -257,17 +271,9 @@ export abstract class ALinqlContext
         }
     }
 
-    protected GetSearchTypeString<T>(Search: ALinqlSearch<T>)
+    private GetSearchTypeString<T>(Search: ALinqlSearch<T>)
     {
-        let searchTypeString: string;
-        if (typeof Search.ModelType === "string")
-        {
-            searchTypeString = Search.ModelType;
-        }
-        else
-        {
-            searchTypeString = Search.ModelType.name;
-        }
+        let searchTypeString: string = this.GetTypeName(Search.ModelType);
         return searchTypeString;
     }
 

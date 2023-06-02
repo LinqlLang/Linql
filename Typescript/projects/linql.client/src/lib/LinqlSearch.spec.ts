@@ -2,7 +2,6 @@ import { LinqlSearch } from "./LinqlSearch";
 import { ALinqlContext, LinqlSearchConstructor } from "./ALinqlSearch";
 import { LinqlContext } from "./LinqlContext";
 import { TestFileLoader } from "./test/TestfileLoader";
-import "../../../linql.core/src/lib/Extensions/Array";
 import { INullable } from "../../../linql.core/src/lib/Extensions/INullable";
 import { LinqlObject, LinqlType } from "linql.core";
 
@@ -54,7 +53,8 @@ class TestClass
     constructor()
     {
         const testData = this._CreateDataModel();
-        this.objectTest = new LinqlObject<DataModel>(testData);
+        const type = LinqlType.GetLinqlType(testData, this.context);
+        this.objectTest = new LinqlObject<DataModel>(testData, type);
     }
 
     private _CreateDataModel(Integer?: number)
@@ -184,7 +184,10 @@ class TestClass
 
     async LinqlObject()
     {
-        this.objectTest = new LinqlObject(this._CreateDataModel());
+        const value = this._CreateDataModel();
+        const type = LinqlType.GetLinqlType(value, this.context);
+        this.objectTest = new LinqlObject(value, type);
+
         const search = this.context.Set<DataModel>(DataModel);
         const newSearch = search.Where(r => this.objectTest.Value.Integer == r.Integer);
         await this._ExecuteTest("LinqlObject", newSearch);
@@ -192,7 +195,9 @@ class TestClass
 
     async LinqlObject_NonZero()
     {
-        this.objectTest = new LinqlObject(this._CreateDataModel(1));
+        const value = this._CreateDataModel(1);
+        const type = LinqlType.GetLinqlType(value, this.context);
+        this.objectTest = new LinqlObject(value, type);
         const search = this.context.Set<DataModel>(DataModel);
         const newSearch = search.Where(r => this.objectTest.Value.Integer == r.Integer);
         await this._ExecuteTest("LinqlObject_NonZero", newSearch);
@@ -206,12 +211,12 @@ class TestClass
         await this._ExecuteTest("List_Int_Contains", newSearch);
     }
 
-    async Empty_List_Contains()
+    async EmptyList()
     {
         this.integers = [];
         const search = this.context.Set<DataModel>(DataModel);
         const newSearch = search.Where(r => this.integers.Contains(r.Integer));
-        await this._ExecuteTest("Empty_List_Contains", newSearch);
+        await this._ExecuteTest("EmptyList", newSearch);
     }
 
 

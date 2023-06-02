@@ -1,3 +1,5 @@
+import { ITypeNameProvider } from "./ITypeNameProvider";
+
 export class LinqlType
 {
     static readonly ListType: string = "List";
@@ -11,7 +13,7 @@ export class LinqlType
         return this.TypeName == LinqlType.ListType;
     }
 
-    static GetLinqlType(Value: any)
+    static GetLinqlType(Value: any, TypeNameProvider: ITypeNameProvider)
     {
         const type = new LinqlType();
 
@@ -39,7 +41,7 @@ export class LinqlType
                     if (firstValue)
                     {
                         type.GenericParameters = new Array<LinqlType>();
-                        type.GenericParameters.push(LinqlType.GetLinqlType(firstValue));
+                        type.GenericParameters.push(LinqlType.GetLinqlType(firstValue, TypeNameProvider));
                     }
                     else
                     {
@@ -51,7 +53,7 @@ export class LinqlType
                 }
                 else
                 {
-                    type.TypeName = Value.constructor.name;
+                    type.TypeName = TypeNameProvider.GetTypeName(Value);
                 }
                 break;
             case "undefined":

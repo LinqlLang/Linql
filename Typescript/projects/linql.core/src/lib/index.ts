@@ -14,4 +14,4 @@ export * from "./Extensions/IGrouping";
 export * from "./Extensions/Types";
 export * from "./Extensions/INullable";
 export * from "./Extensions/String";
-
+export * from "./ITypeNameProvider";
