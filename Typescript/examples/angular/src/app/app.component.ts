@@ -46,7 +46,6 @@ export class AppComponent implements OnInit
 
     observable.ToListObservable().subscribe(r =>
     {
-      debugger;
     });
 
     const search3 = search.Where(r => r.State_Name!.ToLower().Contains(this.StateSearch));
