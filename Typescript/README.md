@@ -9,6 +9,9 @@ These repos focus on Typescript/Javascript implementations.
 ## Example Usage
 
 ```typescript
+import { LinqlSearch, LinqlContext } from 'linql.client';
+...
+const context = new LinqlContext(LinqlSearch, "https://localhost:7113", { this: this });
 const search = this.customContext.Set<State>(State, { this: this });
 search.Where(r => r.State_Code!.Contains("A")).ToListAsyncSearch();
 ```
