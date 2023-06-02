@@ -2,6 +2,9 @@
 
 A C# Server for the Linql Language.  Allows your api to be used as if it were an IQueryable. 
 
+[Linql Overview](../../README.md)
+
+
 ```cs
 //Some LinqlSearch string
 string json = "SomeLinqlSearchJson";

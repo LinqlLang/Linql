@@ -2,6 +2,8 @@
 
 A C# Client for the Linql Language.  Allows you to use your api as if it were an IQueryable. 
 
+[Linql Overview](../../README.md)
+
 ```cs
 LinqlSearch<DataModel> search = Context.Set<DataModel>();
 string output = await search.Where(r => r.Boolean && r.OneToOne.Boolean).ToListAsync();

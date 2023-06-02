@@ -4,6 +4,8 @@
 
 These repos focus on Typescript/Javascript implementations.  
 
+[Linql Overview](../README.md)
+
 ## Example Usage
 
 ```typescript
