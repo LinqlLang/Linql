@@ -30,6 +30,8 @@ export class AppComponent implements OnInit
   {
     const search = this.customContext.Set<State>(State, { this: this });
 
+    const observable = this.customContext.SetObservable<State>(State, { this: this });
+
     const searches = [
       search.ToListAsyncSearch(),
       search.Where(r => r.State_Code!.Contains("A")).ToListAsyncSearch(),
@@ -41,6 +43,11 @@ export class AppComponent implements OnInit
 
     const results = await search.ToListAsync();
     this.StateData = results;
+
+    observable.ToListObservable().subscribe(r =>
+    {
+      debugger;
+    });
 
     const search3 = search.Where(r => r.State_Name!.ToLower().Contains(this.StateSearch));
     this.StateSearchData = await search3.ToListAsync();

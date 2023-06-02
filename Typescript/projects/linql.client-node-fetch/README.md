@@ -11,13 +11,16 @@ A linql client implementation that uses node-fetch.
 ### Installation
 
 ```bash
-npm i linql.client-fetch
+npm i linql.client-node-fetch
 ```
 
 Create a context, and then start using.
 
 ```typescript
-const context = new CustomLinqlContext(LinqlSearch, "https://localhost:7113", { this: this });
+import { NodeFetchLinqlContext } from "linql.client-fetch";
+import { LinqlSearch } from "linql.client";
+
+const context = new NodeFetchLinqlContext(LinqlSearch, "https://localhost:7113", { this: this });
 const states = this.context.Set<State>(State);
 const firstState = await states.FirstOrDefaultAsync();
 ```

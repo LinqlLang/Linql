@@ -8,7 +8,7 @@ Provides native linql client support for angular.
 ## Example Usage
 
 ```typescript
-const search = this.customContext.Set<State>(State, { this: this });
+const search = this.context.Set<State>(State, { this: this });
 search.Where(r => r.State_Code!.Contains("A")).ToListAsyncSearch();
 ```
 ## Getting Started
@@ -44,6 +44,8 @@ export class AppModule { }
 
 #### **`app.component.ts`**
 ```typescript
+import { LinqlContext } from 'linql.client-angular';
+
 @Component({
   selector: 'app-component',
   templateUrl: './app.component.html',
@@ -58,12 +60,25 @@ export class AppComponent implements OnInit
 
   async ngOnInit()
   {
-    const search = this.customContext.Set<State>(State, { this: this });
+    const search = this.context.Set<State>(State, { this: this });
     this.StateData = await search.Where(r => r.State_Code!.Contains("A")).ToListAsync();
     this.CD.markForCheck();
   }
 }
 ```
+## Observable Support
+
+This version of linql supports Observable methods by using the `SetObservable` method and the `Observable` variants of materialization functions.
+
+```typescript
+const observableSearch = Context.SetObservable<State>(State, { this: this });
+
+observableSearch.ToListObservable().subscribe(r =>
+{
+});
+
+```
+
 ## Custom LinqlContext
 
 Create a `CustomLinqlContext` allows developers to customize endpoint generation, authentication, and type name resolution. 

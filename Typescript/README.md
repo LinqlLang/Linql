@@ -139,7 +139,7 @@ search.Where(`r => r.Integer ${method} ${value}`).ToListAsync();
 
 ## Custom LinqlContext 
 
-Overriding the default `LinqlContext` allows customized endpoint generation, authentication, and `TypeName` resolution.  To do so, simply inherit from the default `LinqlContext`.
+Overriding the default `LinqlContext` allows customized endpoint generation, authentication, and `TypeName` resolution.  To do so, simply inherit from the default `LinqlContext` from the linql package that matches your usecase. 
 
 In the below example, we show a `CustomLinqlContext` which overrides the route generation, overrides the `TypeName Resolution`, and adds a `Batch` functionality.
 
@@ -155,6 +155,7 @@ export class CustomLinqlContext extends LinqlContext
         }
         return "";
     }
+    
     async Batch<T>(...values: Array<T>): Promise<Array<T>>
     {
         const searches = values.Where(r => (r as Object).constructor === this.LinqlSearchType) as Array<ALinqlSearch<any>>;

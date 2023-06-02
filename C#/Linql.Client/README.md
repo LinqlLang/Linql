@@ -41,7 +41,7 @@ var results = await Task.WhenAll(
 
 The provided LinqlContext above has the following defaults: 
 
-- Endpoint is set to {baseurl}/linql/{TypeName}"
+- Endpoint is set to `{BaseUrl}/linql/{TypeName}`
 - Ignores serializing default values
 - PropertyNames are case insensitive 
 
