@@ -2,7 +2,7 @@
 
 A linql client implementation that uses native fetch. 
 
-[Linql Overview]("../../../../README.md)
+[Linql Typescript Overview]("../../../../README.md)
 
 ## Getting Started 
 

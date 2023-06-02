@@ -2,5 +2,5 @@
 
 Core functionality of javascript linql clients.  
 
-[Linql Overview]("../../../../README.md)
+[Linql Typescript Overview]("../../../../README.md)
 

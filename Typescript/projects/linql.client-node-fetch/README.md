@@ -2,7 +2,7 @@
 
 A linql client implementation that uses node-fetch. 
 
-[Linql Overview](../../../../README.md)
+[Linql Typescript Overview]("../../../../README.md)
 
 [Node Example](../../examples/node/)
 

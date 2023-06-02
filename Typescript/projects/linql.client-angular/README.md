@@ -2,7 +2,7 @@
 
 Provides native linql client support for angular.  
 
-[Linql Overview]("../../../../README.md)
+[Linql Typescript Overview]("../../../../README.md)
 
 [Angular example](../../examples/angular/)
 ## Example Usage
@@ -68,7 +68,7 @@ export class AppComponent implements OnInit
 ```
 ## Observable Support
 
-This version of linql supports Observable methods by using the `SetObservable` method and the `Observable` variants of materialization functions.
+This version of linql supports `Observable` methods by using the `SetObservable` method and the `Observable` variants of materialization functions.
 
 ```typescript
 const observableSearch = Context.SetObservable<State>(State, { this: this });
