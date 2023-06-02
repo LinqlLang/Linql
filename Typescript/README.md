@@ -26,6 +26,16 @@ search.Where(r => r.State_Code!.Contains("A")).ToListAsyncSearch();
 | React       | [Full](./projects/linql.client-fetch/)      | n/a         | Needs native framework wr apper                                                                                         |
 | Vanilla     | [Full](./projects/linql.client-fetch/)      | n/a         |                                                                                                                         |
 
+## Network Implementation
+
+| Package                 | Implementation       | Import                                                           |
+| ----------------------- | -------------------- | ---------------------------------------------------------------- |
+| linql.client            | Native fetch         | `import { LinqlContext } from linql.client;`                     |
+| linql.client-angular    | @angular/common/http | `import { LinqlContext } from linql.client-angular;`             |
+| linql.client-fetch      | Native Fetch         | `import { FetchLinqlContext } from linql.client-fetch;`          |
+| linql.client-node-fetch | node-fetch           | `import { NodeFetchLinqlContext } from linql.client-node-fetch;` |
+
+
 # Concepts
 ## TypeName Resolution 
 
