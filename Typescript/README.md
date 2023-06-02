@@ -92,13 +92,14 @@ export class SomeClass
     {
         //Define this inside of the stack with the incantation 
         const search = this.LinqlContext.Set<State>(State, { this: this });
+        //Use the variable by accessing it through 'this'
         const results = await search.Where(r => this.StatesICareAbout.Contains(r.StateCode)).ToListAsync();
     }
 }
 ```
 ## Nullable Types
 
-`Nullable` types can be accessed by using the `non-null asertion operator` on `strings` and with `INullable` casting for non-string types.
+`Nullable` members are operated on using the `non-null asertion operator (!)`  on `strings` and with `INullable` casting for non-string types.
 
 ```typescript
 //Ignore nullable string
@@ -167,3 +168,13 @@ If your server supports it, you can batch many requests together into a single n
 The above example shows a naiive implementation of how to implement `Batch` that hits the `/Batch` endpoint of the backend. 
 
 This functionality may be migrated into the core of `Linql` in the future, and include functionality to also accept non-linql requests and zip the results together, as well as include better type definitions that can infer .
+
+```typescript
+const searches = [
+    search.ToListAsyncSearch(),
+    search.Where(r => r.State_Code!.Contains("A")).ToListAsyncSearch(),
+    search.Where(r => r.State_Name!.ToLower().Contains(this.StateSearch)),
+    search.FirstOrDefaultSearch()
+];
+const batchResults = await this.customContext.Batch(searches);
+```
