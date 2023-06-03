@@ -20,7 +20,6 @@ LinqlCompiler Compiler = new LinqlCompiler(assemblies);
 //Turn the json into a generic LinqlSearch
 LinqlSearch? search = JsonSerializer.Deserialize<LinqlSearch>(json);
 
-
 //Execute the LinqlSearch either with a concrete type, or generically
 IEnumerable<DataModel> typedData = this.Compiler.Execute<IEnumerable<DataModel>>(search, this.Data);
 
