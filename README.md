@@ -4,6 +4,21 @@ Linql is a next generation graph api library.  It's primary goal is to provide l
 
 [Read the white paper](./WhitePaper.md)  
 
+## Unparalleled Developer Experience 
+
+Because Linql is language-native, it is small, light-weight, and robust.  
+
+Using Linql allows you to interact with your api with compile-time safety and full typeahead support, significantly reducing developer time in comparison to other systems.
+
+#### **`Typescript`**
+
+![Typescript typeahead](./assets/typeahead.ts.gif)
+
+#### **`C#`**
+
+![C# typeahead](./assets/typeahead.csharp.gif)
+
+
 ## Client Examples
 
 #### **`C#`**
