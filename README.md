@@ -56,7 +56,7 @@ List<State> statesICareAbout = states
 
 ## Developer Support
 
-If Linql resonates with you, please consider supporting the project.  As of now, I am the only developer and tough times have come for me, so I could use whatever support anyone can give.  
+If Linql resonates with you, please consider supporting the project.  
 
 ### Ethereum
 
@@ -64,7 +64,7 @@ If Linql resonates with you, please consider supporting the project.  As of now,
 0x50373B51Cb601827CcC1Dc5472251031d2fdBF89
 ```
 
-### Please Hire Me
+### Hire Me
 
 [LinkedIn](https://www.linkedin.com/in/kris-sodroski-60001480/)
 
@@ -72,4 +72,7 @@ If Linql resonates with you, please consider supporting the project.  As of now,
 
 ## Acknowledgements 
 
-Big thanks to Jeff Bender, [Manjot Chahal](https://www.linkedin.com/in/manjot-chahal-96740198/) and [Sushmita Chaudhari](https://www.linkedin.com/in/sushmitachaudhari/) for exploring some of these concepts with me over the years.  
+Big thanks to: 
+- [Jeff Bender](https://github.com/jeffbender) for his unwavering support and mentorship
+- [Manjot Chahal](https://www.linkedin.com/in/manjot-chahal-96740198/) for scoping out acorn
+- [Sushmita Chaudhari](https://www.linkedin.com/in/sushmitachaudhari/) for scoping out System.Text.Json in it's prerelease 
