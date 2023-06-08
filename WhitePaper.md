@@ -137,8 +137,8 @@ Filtering TestObjects by `NestedObject` and/or `ArrayObject` is many times impos
 
 `REST`'s insistence of placing so much information in the url makes complex searching unreliable and unmaintainable, if not completely impossible due to [URL Length Limitations](https://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers).  
 
-### 4. One-to-One Development
+### 5. One-to-One Development
 
-#### 5. N+1 Data Requests
+### 6. N+1 Data Requests
 
-#### 6. Request Queue Bottleneck 
+### 7. Request Queue Bottleneck 
