@@ -18,34 +18,61 @@ Over the years, architectural tastes changed, such as preferring `JSON` over `XM
 
 ## The Silver Bullet - REST 
 
-In the early 2000s, representational state transfer (`Rest`) was introduced in an attempt to standardize request and response design across the web.  While fundamentally helpful as a guideline, `Rest`'s non-specific constraints caused many unintended consequences.    
+In the early 2000s, representational state transfer (`REST`) was introduced in an attempt to standardize request and response design across the web.  While fundamentally helpful as a guideline, `REST`'s non-specific constraints caused many unintended consequences.    
 
-`Rest` emphasizes that compliant servers should have a `uniform interface` defined by [four constraints](https://en.wikipedia.org/wiki/Representational_state_transfer#Uniform_interface).  Of these constraints, `resource identification in requests` has had the most detrimental impact on interoperability across the web. 
+`REST` emphasizes that compliant servers should have a `uniform interface` defined by [four constraints](https://en.wikipedia.org/wiki/Representational_state_transfer#Uniform_interface).  Of these constraints, `resource identification in requests` has had the most detrimental impact on interoperability across the web. 
 
-Without an explicitly stated implementation, `Rest` architectures evolved to mirror `HTTP` resource requests, with `data access` exclusively being performed through `HTTP GET` with user defined `filters` in the `query string`.
+Without an explicitly stated implementation, `REST` architectures evolved to mirror `HTTP` resource requests, with `data access` exclusively being performed through `HTTP GET` with user defined `filters` in the `query string`.
 
-Despite `Rest`'s efforts to reduce complexity and create a generic multipurpose interface, the complexity of modern web capabilities elucidate foundational issues with it's design. 
+Despite `REST`'s efforts to reduce complexity and create a generic multipurpose interface, the complexity of modern web capabilities elucidate foundational issues with it's design. 
 
 ### Limited Filtering Capabilities
 
 At first glance, `resource identification in requests` seems to provide an common interface for `Types`. 
 
-Imagine I have the following data model: 
+Imagine I have the following data model with a `unique identifier`: 
 
 ```typescript
-class User 
+class TestObject 
 {
-    UserID: number;
-    UserName: string;
+    ID: number;
 }
 ```
 
-Filtering to get a specific `User` by their `UserID` is relatively simple.
+Filtering to get a specific `TestObject` by it's `ID` is relatively simple.
 
-> `GET` /User/{`UserID`}
+```powershell
+curl GET /TestObject/{ID}
+```
 
+By adding a `composite unique identifier`, a common scenario for complex applications, a significant issue arrises. 
 
+```typescript
+class TestObject 
+{
+    ID-1: number;
+    ID-2: number;
+}
+```
 
+In this case, which is the correct order? 
+
+```powershell
+curl GET /TestObject/{ID-1}/{ID-2}
+curl GET /TestObject/{ID-2}/{ID-1}
+```
+
+While extreme, imagine there were `N` unique identifiers.  How would `REST` handle that situation? 
+
+```typescript
+class TestObject 
+{
+    ID-1: number;
+    ID-2: number;
+    ...
+    ID-N: number;
+}
+```
 
 ### Duplicate Use of HTTP Methods
 
