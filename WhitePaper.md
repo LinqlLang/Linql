@@ -28,7 +28,7 @@ Despite `REST`'s efforts to reduce complexity and create a generic multipurpose 
 
 ### 1. Primary Key Filtering 
 
-At first glance, `resource identification in requests` seems to provide an common interface for `Types` based on their `uniqueness`. 
+At first glance, `resource identification in requests` seems to provide a common interface for `Types` based on their `uniqueness`. 
 
 Imagine I have the following data model with a `unique identifier`: 
 
@@ -78,7 +78,11 @@ class TestObject
 curl GET /TestObject/{ID-1}/{ID-2}/.../{ID-N}
 ```
 
+This request format requires client's to be intricately aware of a data model's internal implementation while also tying request complexity to the complexity of it's uniqueness.
+
 ### 2. Property Filtering
+
+Nonunique properties 
 
 ### 3. URL Max Length Limitations
 
