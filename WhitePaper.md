@@ -26,9 +26,9 @@ Without an explicitly stated implementation, `REST` architectures evolved to mir
 
 Despite `REST`'s efforts to reduce complexity and create a generic multipurpose interface, the complexity of modern web capabilities elucidate foundational issues with it's design. 
 
-### Limited Filtering Capabilities
+### 1. Primary Key Filtering 
 
-At first glance, `resource identification in requests` seems to provide an common interface for `Types`. 
+At first glance, `resource identification in requests` seems to provide an common interface for `Types` based on their `uniqueness`. 
 
 Imagine I have the following data model with a `unique identifier`: 
 
@@ -62,7 +62,7 @@ curl GET /TestObject/{ID-1}/{ID-2}
 curl GET /TestObject/{ID-2}/{ID-1}
 ```
 
-While extreme, imagine there were `N` unique identifiers.  How would `REST` handle that situation? 
+While extreme, imagine there were `N` unique identifiers.  How would `REST` handle this situation? 
 
 ```typescript
 class TestObject 
@@ -74,12 +74,16 @@ class TestObject
 }
 ```
 
-### Duplicate Use of HTTP Methods
+```powershell
+curl GET /TestObject/{ID-1}/{ID-2}/.../{ID-N}
+```
 
-### URL Max Length Limitations
+### 2. Property Filtering
 
-#### One-to-One Development
+### 3. URL Max Length Limitations
 
-#### N+1 Data Requests
+### 4. One-to-One Development
 
-#### Request Queue Bottleneck 
+#### 5. N+1 Data Requests
+
+#### 6. Request Queue Bottleneck 
