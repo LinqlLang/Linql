@@ -78,13 +78,64 @@ class TestObject
 curl GET /TestObject/{ID-1}/{ID-2}/.../{ID-N}
 ```
 
-This request format requires client's to be intricately aware of a data model's internal implementation while also tying request complexity to the complexity of it's uniqueness.
+This request format requires clients to be aware of the data model's internal implementation while also coupling request complexity to uniqueness complexity. 
 
-### 2. Property Filtering
+### 2. Language-Dependant Search
 
-Nonunique properties 
+Searching data is generally implemented through the `plural` endpoint.  
 
-### 3. URL Max Length Limitations
+```powershell
+curl GET /TestObjects
+```
+
+These plural endpoints create inconsistencies based on the language of the developers.
+
+```powershell
+curl GET /TestObjects
+curl GET /Mouses <-- Nonstandard plural
+curl GET /Boxes  <-- Nonstandard plural
+```
+
+### 3. Inadiquet Search
+
+`Nonunique properties` are generally appended as `Query Parameters` in `REST`.  Let's take our TestObject from before and modify it.
+
+```typescript
+class TestObject 
+{
+    ID: number;
+    TestObjectName: string;
+}
+```
+
+Filtering on TestObjectName `equals` some `Value` is relatively simple.  
+
+```powershell
+curl GET /TestObjects?TestObjectName={Value}
+```
+
+But filtering data where `TestObjectName` `contains` some `Value` is illdefined by `REST`.  This has lead to many custom implementations, such as `LHS Brackets` and `RHS Colon`.
+
+```powershell
+curl GET /TestObjects?TestObjectName[contains]={Value}&ID[gte]=4
+```
+
+Despite these efforts, most modern applications would benefit from even more advanced filtering capabilities, such as searching through `nestings` and `lists`.
+
+```typescript
+class TestObject 
+{
+    ID: number;
+    NestedObject: TestObject;
+    ArrayObject: Array<TestObject>;
+}
+```
+
+Filtering TestObjects by `NestedObject` and/or `ArrayObject` is many times impossible to accomplish with `REST` architectures.
+
+### 4. URL Max Length Limitations
+
+`REST`'s insistence of placing so much information in the url makes complex searching unreliable and unmaintainable, if not completely impossible due to [URL Length Limitations](https://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers).  
 
 ### 4. One-to-One Development
 
