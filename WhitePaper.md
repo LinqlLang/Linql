@@ -139,7 +139,7 @@ Filtering TestObjects by `NestedObject` and/or `ArrayObject` is many times impos
 
 ### 5. One-to-One Development
 
-Due to insufficient capabailities, `Services` have generally been developed to contain many endpoints, each designed to satisify custom searching.
+Due to insufficient capabailities, `services` have generally been developed to contain many endpoints, each designed to satisify custom searching.
 
 For one, development teams generally create a controller that at minimum, contains surrogates for the HTTP methods.  Additional methods are then added on to support common usecases that `REST` cannot inherently support.  
 
@@ -166,6 +166,54 @@ public class TestObjectController : Controller
 An example of this architecture can be seen in the [Azure Dev Ops Repositories endpoint](https://learn.microsoft.com/en-us/rest/api/azure/devops/git/repositories?view=azure-devops-rest-7.1), which contains multiple endpoints for specific use cases.
 
 As developers couple controllers, types, and actions in a one-to-one configuration, systems grow to unprecedented sizes and quickly become unmaintainable, clunky, and confusing.    
-### 6. N+1 Data Requests
+### 6. One More Request
 
-### 7. Request Queue Bottleneck 
+Because each resource is segregated behind its own controller, `REST` clients typically contain many requests, run sequentially. 
+
+Imagine I have the following model, and wish to find all `states` that have a Springfield `city`.
+
+```typescript
+class City 
+{
+    CityID: number;
+    CityName: string;
+    StateID: number; 
+}
+
+class State 
+{
+    StateID: number;
+    StateName: string;
+    Cities: Array<City>;
+}
+```
+
+In this scenario, without a custom action or an additional query parameter - which is then handled specifically by developers - at best, clients require a minimum of two requests and pay the penalty of postprocessing on the client.
+
+```typescript
+const httpClient;
+const cities = await httpClient.get("Cities?CityName=SpringField");
+const states = await httpClient.get("States");
+const stateIDsThatHaveSpringField = cities.map(s => s.StateID);
+const statesThatHaveSpringfield = states.filter(r => stateIDsThatHaveSpringField.indexOf(r.StateID) > -1);
+```
+
+At worst, the client must loop through the results and individually `GET` each state.
+
+```typescript
+const httpClient;
+const cities = await httpClient.get("Cities?CityName=SpringField");
+const stateIDs = new Set<number>(cities.map(r => r.StateID));
+const states = new Array<State>();
+
+for(let stateID of stateIDs)
+{
+    const state = await httpClient.get(`State/${stateID}`);
+    states.push(state);
+}
+```
+### 7. Max Parllel Connections Bottleneck 
+
+Browsers have a [max parallel connections limit](https://stackoverflow.com/questions/985431/max-parallel-http-connections-in-a-browser), pausing requests when this limit it hit, that modern applications quickly saturate.  This is due, in part, to "one more request" traditions, but has been exacerbated by `event driven` archtecture on the frontend. 
+
+In modern frontends
