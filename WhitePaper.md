@@ -24,7 +24,7 @@ In the early 2000s, representational state transfer (`REST`) was introduced in a
 
 Without an explicitly stated implementation, `REST` architectures evolved to mirror `HTTP` resource requests, with `data access` exclusively being performed through `HTTP GET` with user defined `filters` in the `query string`.
 
-Despite `REST`'s efforts to reduce complexity and create a generic multipurpose interface, the complexity of modern web capabilities elucidate foundational issues with it's design. 
+Despite `REST`'s efforts to reduce complexity and create a generic multipurpose interface, the complexity of modern web capabilities elucidate foundational issues with it's design principals. 
 
 ### 1. Primary Key Filtering 
 
@@ -214,6 +214,4 @@ for(let stateID of stateIDs)
 ```
 ### 7. Max Parllel Connections Bottleneck 
 
-Browsers have a [max parallel connections limit](https://stackoverflow.com/questions/985431/max-parallel-http-connections-in-a-browser), pausing requests when this limit it hit, that modern applications quickly saturate.  This is due, in part, to "one more request" traditions, but has been exacerbated by `event driven` archtecture on the frontend. 
-
-In modern frontends
+Browsers have a [max parallel connections limit](https://stackoverflow.com/questions/985431/max-parallel-http-connections-in-a-browser) that modern applications quickly saturate, causing browsers to halt network activity.  While always having been a problem, the emergence of `event driven` archtecture in combination with the increasing complexity on the frontend has exacerbated network halting.  
