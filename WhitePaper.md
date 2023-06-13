@@ -214,4 +214,18 @@ for(let stateID of stateIDs)
 ```
 ### 7. Max Parllel Connections Bottleneck 
 
-Browsers have a [max parallel connections limit](https://stackoverflow.com/questions/985431/max-parallel-http-connections-in-a-browser) that modern applications quickly saturate, causing browsers to halt network activity.  While always having been a problem, the emergence of `event driven` archtecture in combination with the increasing complexity on the frontend has exacerbated network halting.  
+Browsers have a [max parallel connections limit](https://stackoverflow.com/questions/985431/max-parallel-http-connections-in-a-browser) that modern applications quickly saturate, causing browsers to halt network activity.  While always having been a problem, the emergence of `event driven` archtecture in combination with the increasing complexity on the frontend has exacerbated network bottleneks.  
+
+## The Birth of More Specifications
+
+### OData
+
+https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=odata
+
+### Json-Api
+
+https://jsonapi.org/
+
+## Correct Paradigm, Bad Choices
+
+### GraphQL
