@@ -43,7 +43,7 @@ const statesICareAbout: Array<State> = search
 #### **`Python`**
 ```python
 statesICareAbout = seq("al", "ma")
-search.Where(lambda r => statesICareAbout.map(lambda t => t.upper().exists(r))).to_list();
+search.where(lambda r => statesICareAbout.map(lambda t => t.upper()).exists(r)).to_list();
 ```
 
 #### **`Java`**
