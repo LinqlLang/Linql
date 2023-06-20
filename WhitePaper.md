@@ -139,9 +139,9 @@ Filtering TestObjects by `NestedObject` and/or `ArrayObject` is many times impos
 
 ### 5. One-to-One Development
 
-Due to insufficient capabailities, `services` have generally been developed to contain many endpoints, each designed to satisify custom searching.
+Due to insufficient capabailities, `services` have generally been developed to contain many endpoints, each designed to satisify custom data retrieval.
 
-For one, development teams generally create a controller that at minimum, contains surrogates for the HTTP methods.  Additional methods are then added on to support common usecases that `REST` cannot inherently support.  
+For one, development teams generally create a controller that at minimum, contains surrogates for the HTTP methods.  Additional methods are then added to support common usecases that `REST` cannot inherently support.  
 
 
 #### **`Typical Controller`**
@@ -157,9 +157,9 @@ public class TestObjectController : Controller
     public TestObject Post(TestObject Object) {};
 
     public TestObject GetObjectByNestedObjectID(int NestedObjectID) {};
-
+    ...
     public TestObject GetObjectByNestedObjectName(string NestedObjectName) {};
-
+   
 }
 ```
 
@@ -168,7 +168,7 @@ An example of this architecture can be seen in the [Azure Dev Ops Repositories e
 As developers couple controllers, types, and actions in a one-to-one configuration, systems grow to unprecedented sizes and quickly become unmaintainable, clunky, and confusing.    
 ### 6. One More Request
 
-Because each resource is segregated behind its own controller, `REST` clients typically contain many requests, run sequentially. 
+Because each resource is segregated behind its own controller, `REST` clients typically send many sequential requests. 
 
 Imagine I have the following model, and wish to find all `states` that have a Springfield `city`.
 
