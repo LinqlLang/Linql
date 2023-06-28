@@ -1,5 +1,5 @@
 import unittest
-from run import MyTestCase1
+from LinqlType import LinqlTypeTests
 
 if __name__ == '__main__':
     unittest.main()
