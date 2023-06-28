@@ -1,5 +1,5 @@
 from typing_extensions import Self
-from LinqlExpression import LinqlExpression
+from .LinqlExpression import LinqlExpression
 from typing import Any
 
 class LinqlType():
@@ -9,4 +9,4 @@ class LinqlType():
     GenericParameters: list[Self]  | None
 
     def IsList(self) -> bool:
-        return self.TypeName == Self.ListType
+        return self.TypeName == LinqlType.ListType
