@@ -22,3 +22,5 @@ dev stuff:
 [testing docs](https://docs.python.org/3/library/test.html)
 
 Many thanks to [aprimc](https://github.com/aprimc) for showing me how to parse the bytecode with his project [from_lambda](https://github.com/aprimc/from_lambda/blob/master/README.md)
+
+hatch has no mono repo support.  Really? 
