@@ -13,4 +13,4 @@ class LinqlExpression(abc.ABC):
 
     @abc.abstractmethod
     def Clone(self) -> Self:
-        return self
+        pass
