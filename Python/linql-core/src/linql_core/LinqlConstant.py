@@ -14,6 +14,8 @@ class LinqlConstant(LinqlExpression):
         self.Value = Value
     
     def Clone(self) -> Self:
-        constant = Self(self.ConstantType, self.Value)
-        constant.Next = self.Next.Clone()
+        constant = LinqlConstant(self.ConstantType, self.Value)
+
+        if self.Next != None:
+            constant.Next = self.Next.Clone()
         return constant
