@@ -18,6 +18,6 @@ class LinqlObject(LinqlExpression, Generic[T]):
     def Clone(self) -> Self:
         obj = LinqlObject(self.Value, self.Type)
         if self.Next != None:
-            obj.Next = obj.Next.Clone()
+            obj.Next = self.Next.Clone()
 
         return obj
