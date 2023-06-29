@@ -26,3 +26,5 @@ Batch needs to infer its types.  Take a look at flow example:
 https://medium.com/ackee/typescript-function-composition-and-recurrent-types-a9efbc8e7736
 
 angular version might want to have observable methods as well
+
+linql as f(lambda) => language.  Reduced instruction set for manageability and security.  
