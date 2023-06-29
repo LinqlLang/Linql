@@ -14,7 +14,7 @@ class LinqlUnary(LinqlExpression):
         self.Arguments = Arguments
     
     def Clone(self) -> Self:
-        fun = LinqlUnary(self.FunctionName, list(map(lambda x: x.Clone(), self.Arguments)))
+        fun = LinqlUnary(self.UnaryName, list(map(lambda x: x.Clone(), self.Arguments)))
         if self.Next != None:
             fun.Next = self.Next.Clone()
 
