@@ -1,14 +1,15 @@
 from typing_extensions import Self
-from LinqlExpression import LinqlExpression
+from .LinqlExpression import LinqlExpression
+from .LinqlType import LinqlType
 from typing import Any
 
 class LinqlConstant(LinqlExpression):
     
     type: str = "LinqlConstant"
-    ConstantType: Any
+    ConstantType: LinqlType
     Value: Any
 
-    def __init__(self, ConstantType, Value: Any):
+    def __init__(self, ConstantType: LinqlType, Value: Any):
         self.ConstantType = ConstantType
         self.Value = Value
     

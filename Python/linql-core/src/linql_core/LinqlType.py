@@ -2,6 +2,7 @@ from typing_extensions import Self
 from .LinqlExpression import LinqlExpression
 from .ITypeNameProvider import ITypeNameProvider
 from typing import Any
+import inspect
 
 class LinqlType():
     
@@ -13,8 +14,8 @@ class LinqlType():
         return self.TypeName == LinqlType.ListType
     
     def GetLinqlType(Value: Any, TypeNameProvider: ITypeNameProvider) -> Self:
-        type = LinqlType()
-
+        linqlType = LinqlType()
+        pythonType = type(Value)
         switchDict = { 
             str: "String", 
             int: LinqlType.GetNumberType, 
@@ -22,10 +23,22 @@ class LinqlType():
             complex: LinqlType.InvalidType, 
             list: LinqlType.GetListType,
             bool: "Boolean",
-            None: "undefined"
             }
+        
+        if Value == None:
+            switchResult = "undefined"
+        else:
+            switchResult = switchDict.get(pythonType)
 
-        return type
+        if switchResult != None:
+            if callable(switchResult):
+                linqlType = switchResult(Value, linqlType, TypeNameProvider)
+            else:
+                linqlType.TypeName = switchResult
+        else:
+           linqlType.TypeName = TypeNameProvider.GetTypeName(Value)
+        
+        return linqlType
 
     def InvalidType(Value: Any, Type: Self, TypeNameProvider: ITypeNameProvider):
         raise Exception(f'Value {Value} is not supported at this time.')
