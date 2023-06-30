@@ -42,3 +42,6 @@ class TestLinqlTypeName:
         type = LinqlType.GetLinqlType(testClass, self.typeNameProvider)
         assert type.TypeName == "TestClass"
 
+    def test_ClassDefinition(self):
+        type = LinqlType.GetLinqlType(TestClass, self.typeNameProvider)
+        assert type.TypeName == "TestClass"
