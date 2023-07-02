@@ -1,7 +1,7 @@
-# linql_client
+# linql_core
 
-[![PyPI - Version](https://img.shields.io/pypi/v/linql-client.svg)](https://pypi.org/project/linql-client)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/linql-client.svg)](https://pypi.org/project/linql-client)
+[![PyPI - Version](https://img.shields.io/pypi/v/linql-core.svg)](https://pypi.org/project/linql-core)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/linql-core.svg)](https://pypi.org/project/linql-core)
 
 -----
 
@@ -13,9 +13,9 @@
 ## Installation
 
 ```console
-pip install linql-client
+pip install linql-core
 ```
 
 ## License
 
-`linql-client` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+`linql-core` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.

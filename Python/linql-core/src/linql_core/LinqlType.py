@@ -1,6 +1,6 @@
 from typing_extensions import Self
 from .LinqlExpression import LinqlExpression
-from .ITypeNameProvider import ITypeNameProvider
+from .ITypeNameProvider import ITypeNameProvider, DefaultTypeNameProvider
 from typing import Any
 import inspect
 
@@ -10,13 +10,15 @@ class LinqlType():
     TypeName: str | None
     GenericParameters: list[Self]  | None
 
+
     def IsList(self) -> bool:
         return self.TypeName == LinqlType.ListType
     
-    def GetLinqlType(Value: Any, TypeNameProvider: ITypeNameProvider) -> Self:
+    def GetLinqlType(Value: Any, TypeNameProvider: ITypeNameProvider = DefaultTypeNameProvider()) -> Self:
         linqlType = LinqlType()
         pythonType = type(Value)
-        switchDict = { 
+        
+        _typeSwitch = { 
             str: "String", 
             int: LinqlType.GetNumberType, 
             float: LinqlType.GetNumberType, 
@@ -24,11 +26,11 @@ class LinqlType():
             list: LinqlType.GetListType,
             bool: "Boolean",
             }
-        
+
         if Value == None:
             switchResult = "undefined"
         else:
-            switchResult = switchDict.get(pythonType)
+            switchResult = _typeSwitch.get(pythonType)
 
         if switchResult != None:
             if callable(switchResult):

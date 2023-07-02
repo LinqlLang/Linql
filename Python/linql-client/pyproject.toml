@@ -32,7 +32,7 @@ Issues = "https://github.com/unknown/linql-client/issues"
 Source = "https://github.com/unknown/linql-client"
 
 [tool.hatch.version]
-path = "src/linql_client/__about__.py"
+path = "src/linql_core/__about__.py"
 
 [tool.hatch.envs.default]
 dependencies = [
@@ -62,7 +62,7 @@ dependencies = [
   "ruff>=0.0.243",
 ]
 [tool.hatch.envs.lint.scripts]
-typing = "mypy --install-types --non-interactive {args:src/linql_client tests}"
+typing = "mypy --install-types --non-interactive {args:src/linql_core tests}"
 style = [
   "ruff {args:.}",
   "black --check --diff {args:.}",
@@ -128,7 +128,7 @@ unfixable = [
 ]
 
 [tool.ruff.isort]
-known-first-party = ["linql_client"]
+known-first-party = ["linql_core"]
 
 [tool.ruff.flake8-tidy-imports]
 ban-relative-imports = "all"
@@ -138,15 +138,15 @@ ban-relative-imports = "all"
 "tests/**/*" = ["PLR2004", "S101", "TID252"]
 
 [tool.coverage.run]
-source_pkgs = ["linql_client", "tests"]
+source_pkgs = ["linql_core", "tests"]
 branch = true
 parallel = true
 omit = [
-  "src/linql_client/__about__.py",
+  "src/linql_core/__about__.py",
 ]
 
 [tool.coverage.paths]
-linql_client = ["src/linql_client", "*/linql-client/src/linql_client"]
+linql_core = ["src/linql_core", "*/linql-client/src/linql_core"]
 tests = ["tests", "*/linql-client/tests"]
 
 [tool.coverage.report]
