@@ -11,11 +11,14 @@ T = TypeVar("T")
 class ALinqlSearch(abc.ABC, Generic[T]):
 
     ModelType: type
-    Expressions: list[LinqlExpression] | None = []
+    Expressions: list[LinqlExpression] | None
 
     def __init__(self, ModelType: type) -> None:
         super().__init__()
         self.ModelType = ModelType
+        self.Expressions = []
+        searchExpression = self.BuildLinqlSeachExpression()
+        self.Expressions.append(searchExpression)
 
     def BuildLinqlSeachExpression(self) -> LinqlConstant:
         searchType = LinqlType()

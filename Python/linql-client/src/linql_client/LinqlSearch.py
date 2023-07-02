@@ -22,7 +22,7 @@ class LinqlSearch(ALinqlSearch, Generic[T]):
         search = LinqlSearch(self.ModelType, self.Context)
 
         if self.Expressions != None and len(self.Expressions) > 0:
-            search.Expressions = map(lambda r: r.Clone(), self.Expressions)
+            search.Expressions = list(map(lambda r: r.Clone(), self.Expressions))
 
         return search
     
