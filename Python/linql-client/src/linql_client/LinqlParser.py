@@ -3,6 +3,7 @@ from linql_core.LinqlLambda import LinqlLambda
 from linql_core.LinqlConstant import LinqlConstant
 from linql_core.LinqlType import LinqlType
 from linql_core.LinqlParameter import LinqlParameter
+from linql_core.LinqlProperty import LinqlProperty
 from typing import Any
 from collections import namedtuple
 import inspect
@@ -223,15 +224,19 @@ class LinqlParser:
                 stack.append(linqlConstant)
                 continue
             if opname == 'LOAD_FAST':
-                stack.append(Arg(op.argval))
+                parameter = LinqlParameter(op.argval)
+                stack.append(parameter)
                 continue
             #if opname == 'LOAD_GLOBAL':
             if opname in ('LOAD_GLOBAL', 'LOAD_CLOSURE', 'LOAD_DEREF'):
                 stack.append(Global(op.argval))
                 continue
             if opname == 'LOAD_ATTR':
-                x = stack.pop()
-                stack.append(Attr(op.argval, x))
+                x: LinqlExpression = stack.pop()
+                last = x.GetLastExpressionInNextChain()
+                property = LinqlProperty(op.argval)
+                last.Next = property
+                stack.append(x)
                 continue
             tag = self.__unary_lookup.get(opname, None)
             if tag:

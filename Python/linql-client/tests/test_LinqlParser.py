@@ -5,15 +5,24 @@ from src.linql_client.LinqlContext import LinqlContext
 from src.linql_client.LinqlSearch import LinqlSearch
 from .FileLoader import FileLoader
 
-class DataModel: 
-   pass
+class DataModel:
+   Boolean: bool 
 
 context = LinqlContext(LinqlSearch, "")
 testLoader = FileLoader("../C#/Test/Linql.Test.Files/TestFiles/Smoke")
 
 class TestLinqlParser:
 
+   def test_EmptySearch(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      testLoader.ExecuteTest(search)
+
    def test_SimpleConstant(self):
-      search: ALinqlSearch[DataModel] = context.Set(DataModel)
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
       newSearch = search.Where(lambda r: True)
+      testLoader.ExecuteTest(newSearch)
+
+   def test_SimpleBooleanProperty(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Where(lambda r: r.Boolean)
       testLoader.ExecuteTest(newSearch)
