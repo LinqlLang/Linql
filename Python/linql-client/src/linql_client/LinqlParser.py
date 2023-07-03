@@ -311,7 +311,11 @@ class LinqlParser:
             if opname == 'COMPARE_OP':
                 y = stack.pop()
                 x = stack.pop()
-                bin = LinqlBinary("Equal", x, y)
+
+                if op.argval == "!=":
+                   bin = LinqlBinary("NotEqual", x, y)
+                else:
+                    bin = LinqlBinary("Equal", x, y)
 
                 nullCheck = self.NullableCheck(bin.Left, bin.Right)
 
@@ -337,7 +341,11 @@ class LinqlParser:
                 jj = self._find_offset(ops, op.argval)
                 a = stack.pop()
                 b = self._parse_expr(ops[:jj], j + 1, stack[:], stackModifier + 1)
-                bin = LinqlBinary("AndAlso", b, a)
+                bin = LinqlBinary("AndAlso", a, b)
+                # if isinstance(b, LinqlBinary):
+                #     bin = LinqlBinary("AndAlso", b, a)
+                # else:
+                #     bin = LinqlBinary("AndAlso", a, b)
                 stack.append(bin)
                 return self._parse_expr(ops, jj, stack, stackModifier + 1)
             if opname == 'JUMP_IF_TRUE_OR_POP':

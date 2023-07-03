@@ -93,3 +93,8 @@ class TestLinqlParser:
       search: LinqlSearch[DataModel] = context.Set(DataModel)
       newSearch = search.Where(lambda r: None != r.OneToOneNullable.Integer)
       testLoader.ExecuteTest(newSearch, "test_NullableHasValue")
+
+   def test_NullableValue(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Where(lambda r: r.OneToOneNullable.Integer != None and r.OneToOneNullable.Integer.Value == 1)
+      testLoader.ExecuteTest(newSearch)
