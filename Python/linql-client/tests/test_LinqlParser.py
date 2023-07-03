@@ -17,4 +17,3 @@ class TestLinqlParser:
       search: ALinqlSearch[DataModel] = context.Set(DataModel)
       newSearch = search.Where(lambda r: True)
       testLoader.ExecuteTest(newSearch)
-      assert True

@@ -18,7 +18,9 @@ class FileLoader:
         compare = self.GetFile(TestName)
 
         if self.DebugMode == True:
+            print("------------------------")
             print(json)
+            print("------------------------")
             print(compare)
 
         assert json == compare
