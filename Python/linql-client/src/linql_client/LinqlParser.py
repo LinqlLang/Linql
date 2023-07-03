@@ -4,6 +4,7 @@ from linql_core.LinqlConstant import LinqlConstant
 from linql_core.LinqlType import LinqlType
 from linql_core.LinqlUnary import LinqlUnary
 from linql_core.LinqlParameter import LinqlParameter
+from linql_core.LinqlBinary import LinqlBinary
 from linql_core.LinqlProperty import LinqlProperty
 from typing import Any
 from collections import namedtuple
@@ -229,14 +230,29 @@ class LinqlParser:
                 stack.append(parameter)
                 continue
             #if opname == 'LOAD_GLOBAL':
-            if opname in ('LOAD_GLOBAL', 'LOAD_CLOSURE', 'LOAD_DEREF'):
-                stack.append(Global(op.argval))
+            if opname in ('LOAD_DEREF'):
+                value = inspect.stack()[7][0].f_locals[op.argval]
+                type = LinqlType.GetLinqlType(value)
+                linqlConstant = LinqlConstant(type, value)
+                stack.append(linqlConstant)
+                continue
+            if opname in ('LOAD_GLOBAL', 'LOAD_CLOSURE'):
+                value = inspect.stack()[7][0].f_globals[op.argval]
+                type = LinqlType.GetLinqlType(value)
+                linqlConstant = LinqlConstant(type, value)
+                stack.append(linqlConstant)
                 continue
             if opname == 'LOAD_ATTR':
                 x: LinqlExpression = stack.pop()
                 last = x.GetLastExpressionInNextChain()
-                property = LinqlProperty(op.argval)
-                last.Next = property
+
+                if isinstance(last, LinqlConstant):
+                    value = getattr(last.Value, op.argval)
+                    type = LinqlType.GetLinqlType(value)
+                    x = LinqlConstant(type, value)
+                else:
+                    property = LinqlProperty(op.argval)
+                    last.Next = property
                 stack.append(x)
                 continue
             tag = self.__unary_lookup.get(opname, None)
@@ -255,7 +271,8 @@ class LinqlParser:
             if opname == 'COMPARE_OP':
                 y = stack.pop()
                 x = stack.pop()
-                stack.append(BinOp(op.argval, x, y))
+                bin = LinqlBinary("Equal", x, y)
+                stack.append(bin)
                 continue
             if opname == 'JUMP_IF_FALSE_OR_POP':
                 jj = self._find_offset(ops, op.argval)
@@ -345,7 +362,7 @@ class LinqlParser:
                 stack.append(Lambda(args, expr))
                 continue
             # TODO maybe do comprehension
-            if opname in ['RESUME', 'NOP']:
+            if opname in ['RESUME', 'NOP', "COPY_FREE_VARS"]:
                 continue
             if opname == 'POP_TOP':
                 stack.pop()

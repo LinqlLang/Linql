@@ -7,11 +7,12 @@ from .FileLoader import FileLoader
 from typing import Self
 
 class DataModel:
-   Boolean: bool
+   Boolean: bool = False
    OneToOne: Self 
 
 context = LinqlContext(LinqlSearch, "")
 testLoader = FileLoader("../C#/Test/Linql.Test.Files/TestFiles/Smoke")
+complex = DataModel()
 
 class TestLinqlParser:
 
@@ -37,4 +38,20 @@ class TestLinqlParser:
    def test_SimpleBooleanPropertyChaining(self):
       search: LinqlSearch[DataModel] = context.Set(DataModel)
       newSearch = search.Where(lambda r: r.OneToOne.Boolean)
+      testLoader.ExecuteTest(newSearch)
+
+   def test_SimpleBooleanPropertyEqualsSwap(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Where(lambda r: False == r.Boolean)
+      testLoader.ExecuteTest(newSearch)
+
+   def test_BooleanVar(self):
+      test = False
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Where(lambda r: False == test)
+      testLoader.ExecuteTest(newSearch)
+
+   def test_ComplexBoolean(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Where(lambda r: complex.Boolean)
       testLoader.ExecuteTest(newSearch)
