@@ -25,7 +25,7 @@ class LinqlUnary(LinqlExpression):
         
         jsonObject["UnaryName"] = self.UnaryName
 
-        if hasattr(self, "Arguments") and len(self.Arguments) > 0:
+        if hasattr(self, "Arguments") and self.Arguments != None and len(self.Arguments) > 0:
             jsonObject["Arguments"] = list(map(lambda x: x.toSerializable(), self.Arguments))
 
         self._SerializeNext(jsonObject)

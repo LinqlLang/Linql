@@ -2,6 +2,7 @@ from linql_core.LinqlExpression import LinqlExpression
 from linql_core.LinqlLambda import LinqlLambda
 from linql_core.LinqlConstant import LinqlConstant
 from linql_core.LinqlType import LinqlType
+from linql_core.LinqlUnary import LinqlUnary
 from linql_core.LinqlParameter import LinqlParameter
 from linql_core.LinqlProperty import LinqlProperty
 from typing import Any
@@ -147,7 +148,7 @@ class LinqlParser:
     __unary_lookup = {
         'UNARY_POSITIVE': '+',
         'UNARY_NEGATIVE': '-',
-        'UNARY_NOT': 'not',
+        'UNARY_NOT': 'Not',
         'UNARY_INVERT': '~',
         #'GET_ITER': 'GET_ITER',
         #'GET_YIELD_FROM_ITER': 'GET_YIELD_FROM_ITER',
@@ -240,8 +241,10 @@ class LinqlParser:
                 continue
             tag = self.__unary_lookup.get(opname, None)
             if tag:
-                x = stack.pop()
-                stack.append(UnOp(tag, x))
+                x: LinqlExpression = stack.pop()
+                unary = LinqlUnary(tag, None)
+                unary.Next = x     
+                stack.append(unary)
                 continue
             tag = self._binary_lookup.get(opname, None)
             if tag:

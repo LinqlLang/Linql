@@ -26,3 +26,8 @@ class TestLinqlParser:
       search: LinqlSearch[DataModel] = context.Set(DataModel)
       newSearch = search.Where(lambda r: r.Boolean)
       testLoader.ExecuteTest(newSearch)
+
+   def test_BooleanNegate(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Where(lambda r: not r.Boolean)
+      testLoader.ExecuteTest(newSearch)

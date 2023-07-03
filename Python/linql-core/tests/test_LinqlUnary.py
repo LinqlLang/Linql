@@ -23,3 +23,9 @@ class TestLinqlUnary:
       assert "UnaryName" in serial
       assert "Arguments" in serial
       assert "Next" not in serial
+
+   def test_Serialization2(self):
+      unary = LinqlUnary("Test", None)
+      serial = unary.toSerializable()
+      assert "UnaryName" in serial
+      assert "Arguments" not in serial
