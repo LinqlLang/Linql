@@ -19,3 +19,11 @@ class TestLinqlObject:
       obj = self.createObject(4)
       clone = obj.Clone()
       assert obj.Value == clone.Value
+
+   def test_Serialization(self):
+      obj: LinqlObject[int] = self.createObject(5)
+      serial = obj.toSerializable()
+      assert "$type" in serial
+      assert "Type" in serial
+      assert "Value" in serial 
+      assert "Next" not in serial

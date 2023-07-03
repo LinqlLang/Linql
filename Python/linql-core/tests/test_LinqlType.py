@@ -45,3 +45,10 @@ class TestLinqlTypeName:
     def test_ClassDefinition(self):
         type = LinqlType.GetLinqlType(TestClass, self.typeNameProvider)
         assert type.TypeName == "TestClass"
+
+    def test_Serialization(self):
+        testClass = TestClass()
+        type = LinqlType.GetLinqlType(testClass, self.typeNameProvider)
+        serial = type.toSerializable()
+        assert "TypeName" in serial
+        assert "GenericParameters" not in serial

@@ -21,3 +21,14 @@ class LinqlObject(LinqlExpression, Generic[T]):
             obj.Next = self.Next.Clone()
 
         return obj
+    
+    def toSerializable(self) -> dict:
+        jsonObject = self._CreateSerializableType()
+        
+        jsonObject["Type"] = self.Type.toSerializable()
+
+        if hasattr(self, "Value"):
+            jsonObject["Value"] = self.Value
+
+        self._SerializeNext(jsonObject)
+        return jsonObject

@@ -19,3 +19,13 @@ class TestLinqlConstant:
       constant = LinqlConstant(type, value)
       clone = constant.Clone()
       assert clone.ConstantType.TypeName == constant.ConstantType.TypeName and clone.Value == constant.Value
+
+   def test_Serialization(self):
+      value = 'test'
+      type = LinqlType.GetLinqlType(value, self.typeNameProvider)
+      constant = LinqlConstant(type, value)      
+      serial = constant.toSerializable()
+      assert "$type" in serial
+      assert "ConstantType" in serial
+      assert "Value" in serial 
+      assert "Next" not in serial

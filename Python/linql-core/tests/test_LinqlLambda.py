@@ -21,3 +21,13 @@ class TestLinqlLambda:
       lam.Parameters = [LinqlParameter("r")]      
       clone = lam.Clone()
       assert lam.Body.Value == clone.Body.Value and len(lam.Parameters) == len(clone.Parameters)
+
+   def test_Serialization(self):
+      lam = LinqlLambda()
+      lam.Body = LinqlConstant(LinqlType.GetLinqlType(False, self.typeNameProvider), False)
+      lam.Parameters = [LinqlParameter("r")]      
+      serial = lam.toSerializable()
+      assert "$type" in serial
+      assert "Body" in serial
+      assert "Parameters" in serial 
+      assert "Next" not in serial

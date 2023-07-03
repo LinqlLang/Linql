@@ -14,3 +14,16 @@ class LinqlExpression(abc.ABC):
     @abc.abstractmethod
     def Clone(self) -> Self:
         pass
+    
+    @abc.abstractmethod
+    def toSerializable(self) -> object:
+        pass
+
+    def _CreateSerializableType(self) -> dict:
+        serializeable = { "$type": self.type }
+        return serializeable
+    
+    def _SerializeNext(self, existingObject: dict) -> dict:
+        if hasattr(self, "Next") and self.Next != None:
+            existingObject["Next"] = self.Next.toSerializable()
+        return existingObject

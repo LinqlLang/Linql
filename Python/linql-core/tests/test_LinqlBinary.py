@@ -23,3 +23,11 @@ class TestLinqlBinary:
       binary = self.createBinary("Equals", 4, 5)
       clone = binary.Clone()
       assert binary.BinaryName == clone.BinaryName and binary.Left.Value == clone.Left.Value
+
+   def test_Serialization(self):
+      binary = self.createBinary("Equals", 4, 5)
+      serial = binary.toSerializable()
+      assert "$type" in serial
+      assert "Left" in serial
+      assert "Right" in serial 
+      assert "Next" not in serial

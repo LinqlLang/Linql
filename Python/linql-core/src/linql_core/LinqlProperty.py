@@ -17,3 +17,11 @@ class LinqlProperty(LinqlExpression):
         if self.Next != None:
             prop.Next = self.Next.Clone()
         return prop
+    
+    def toSerializable(self) -> dict:
+        jsonObject = self._CreateSerializableType()
+        
+        jsonObject["PropertyName"] = self.PropertyName
+
+        self._SerializeNext(jsonObject)
+        return jsonObject

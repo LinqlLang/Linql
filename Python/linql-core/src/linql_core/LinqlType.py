@@ -64,3 +64,12 @@ class LinqlType():
             Type.GenericParameters = []
             Type.GenericParameters.append(objectType)
         return Type
+    
+    def toSerializable(self) -> dict:
+        jsonObject = {}
+        
+        jsonObject = { "TypeName": self.TypeName }
+        if hasattr(self, "GenericParameters") and len(self.GenericParameters) > 0:
+            jsonObject["GenericParameters"] = list(map(lambda x: x.toSerializable(), self.GenericParameters))
+
+        return jsonObject

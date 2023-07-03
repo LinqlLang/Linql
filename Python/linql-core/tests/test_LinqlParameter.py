@@ -13,3 +13,10 @@ class TestLinqlParameter:
       param = LinqlParameter("r")
       clone = param.Clone()
       assert param.ParameterName == clone.ParameterName
+
+   def test_Serialization(self):
+      param = LinqlParameter("r")
+      serial = param.toSerializable()
+      assert "$type" in serial
+      assert "ParameterName" in serial
+      assert "Next" not in serial

@@ -42,3 +42,4 @@ class ALinqlSearch(abc.ABC, CoreLinqlSearch, Generic[T]):
         elif customFunction != None:
             search.Expressions.append(customFunction)
 
+

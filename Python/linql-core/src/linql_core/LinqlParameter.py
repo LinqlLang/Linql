@@ -17,3 +17,11 @@ class LinqlParameter(LinqlExpression):
         if self.Next != None:
             param.Next = self.Next.Clone()
         return param
+    
+    def toSerializable(self) -> dict:
+        jsonObject = self._CreateSerializableType()
+        
+        jsonObject["ParameterName"] = self.ParameterName
+
+        self._SerializeNext(jsonObject)
+        return jsonObject

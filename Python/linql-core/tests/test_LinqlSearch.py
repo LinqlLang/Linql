@@ -11,3 +11,9 @@ class TestLinqlProperty:
       testClass = TestClass()
       search = LinqlSearch(LinqlType.GetLinqlType(testClass, self.typeNameProvider))
       assert search.Type.TypeName == "TestClass"
+
+   def test_Serialization(self):
+      testClass = TestClass()
+      search = LinqlSearch(LinqlType.GetLinqlType(testClass, self.typeNameProvider))
+      serial = search.toSerializable()
+      assert "Type" in serial

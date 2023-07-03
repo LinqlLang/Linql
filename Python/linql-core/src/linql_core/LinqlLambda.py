@@ -20,3 +20,14 @@ class LinqlLambda(LinqlExpression):
             clone.Body = self.Body.Clone()
 
         return clone
+    
+    def toSerializable(self) -> dict:
+        jsonObject = self._CreateSerializableType()
+        
+        jsonObject["Body"] = self.Body.toSerializable()
+
+        if hasattr(self, "Parameters") and len(self.Parameters) > 0:
+            jsonObject["Parameters"] = list(map(lambda x: x.toSerializable(), self.Parameters))
+
+        self._SerializeNext(jsonObject)
+        return jsonObject

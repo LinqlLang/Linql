@@ -27,3 +27,13 @@ class LinqlBinary(LinqlExpression):
             clone.Next = self.Next.Clone()
 
         return clone
+    
+    def toSerializable(self) -> dict:
+        jsonObject = self._CreateSerializableType()
+        
+        jsonObject["BinaryName"] = self.BinaryName
+        jsonObject["Left"] = self.Left.toSerializable()
+        jsonObject["Right"] = self.Right.toSerializable()
+
+        self._SerializeNext(jsonObject)
+        return jsonObject

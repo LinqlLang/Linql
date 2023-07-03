@@ -19,3 +19,14 @@ class LinqlFunction(LinqlExpression):
             fun.Next = self.Next.Clone()
 
         return fun
+    
+    def toSerializable(self) -> dict:
+        jsonObject = self._CreateSerializableType()
+        
+        jsonObject["FunctionName"] = self.FunctionName
+
+        if hasattr(self, "Arguments") and len(self.Arguments) > 0:
+            jsonObject["Arguments"] = list(map(lambda x: x.toSerializable(), self.Arguments))
+
+        self._SerializeNext(jsonObject)
+        return jsonObject

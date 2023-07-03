@@ -13,3 +13,10 @@ class TestLinqlProperty:
       prop = LinqlProperty("r")
       clone = prop.Clone()
       assert prop.PropertyName == clone.PropertyName
+
+   def test_Serialization(self):
+      prop = LinqlProperty("r")
+      serial = prop.toSerializable()
+      assert "$type" in serial
+      assert "PropertyName" in serial
+      assert "Next" not in serial

@@ -19,3 +19,14 @@ class LinqlConstant(LinqlExpression):
         if self.Next != None:
             constant.Next = self.Next.Clone()
         return constant
+    
+    def toSerializable(self) -> dict:
+        jsonObject = self._CreateSerializableType()
+        
+        jsonObject["ConstantType"] = self.ConstantType.toSerializable()
+
+        if hasattr(self, "Value"):
+            jsonObject["Value"] = self.Value
+
+        self._SerializeNext(jsonObject)
+        return jsonObject

@@ -37,21 +37,9 @@ class ALinqlContext(ITypeNameProvider, abc.ABC):
         return parser.Root
     
     def ToJson(self, Search: ALinqlSearch[T]) -> str:
-
-        jsonDict = { "Type": self._ToJson(Search.Type) }
-
-        jsonValue = json.dumps(jsonDict)
+        serialized = Search.toSerializable()
+        jsonValue = json.dumps(serialized)
         return jsonValue
-    
-    def _ToJson(self, Expression: LinqlExpression | LinqlType):
-        
-        jsonObject = {}
-        
-        if isinstance(Expression, LinqlType):
-            jsonObject = { "TypeName": Expression.TypeName }
-            if hasattr(Expression, "GenericParameters") and len(Expression.GenericParameters) > 0:
-                jsonObject["GenericParameters"] = map(lambda x: self._ToJson(x), Expression.GenericParameters)
-        return jsonObject
     
     def GetTypeName(self, Type: Any) -> str:
         typeName = Type.__class__.__name__
