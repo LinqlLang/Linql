@@ -25,7 +25,7 @@ class LinqlConstant(LinqlExpression):
         
         jsonObject["ConstantType"] = self.ConstantType.toSerializable()
 
-        if hasattr(self, "Value"):
+        if hasattr(self, "Value") and self.Value != None:
             jsonObject["Value"] = self.Value
 
         self._SerializeNext(jsonObject)

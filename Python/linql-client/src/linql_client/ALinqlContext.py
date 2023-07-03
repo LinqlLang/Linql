@@ -38,7 +38,7 @@ class ALinqlContext(ITypeNameProvider, abc.ABC):
     
     def ToJson(self, Search: ALinqlSearch[T]) -> str:
         serialized = Search.toSerializable()
-        jsonValue = json.dumps(serialized)
+        jsonValue = json.dumps(serialized, separators=(',', ':'))
         return jsonValue
     
     def GetTypeName(self, Type: Any) -> str:

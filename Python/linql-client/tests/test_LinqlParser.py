@@ -9,7 +9,7 @@ class DataModel:
    pass
 
 context = LinqlContext(LinqlSearch, "")
-testLoader = FileLoader("../../../C#/Test/Linql.Test.Files/TestFiles")
+testLoader = FileLoader("../C#/Test/Linql.Test.Files/TestFiles/Smoke")
 
 class TestLinqlParser:
 

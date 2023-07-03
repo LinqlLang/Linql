@@ -3,7 +3,7 @@ from src.linql_core.LinqlSearch import LinqlSearch
 from .TestClass import TestClass
 from .CustomTypeNameProvider import CustomTypeNameProvider
 
-class TestLinqlProperty:
+class TestLinqlSearch:
 
    typeNameProvider = CustomTypeNameProvider()
 
@@ -17,3 +17,4 @@ class TestLinqlProperty:
       search = LinqlSearch(LinqlType.GetLinqlType(testClass, self.typeNameProvider))
       serial = search.toSerializable()
       assert "Type" in serial
+      assert "Value" not in serial
