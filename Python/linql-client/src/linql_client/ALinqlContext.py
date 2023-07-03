@@ -33,8 +33,8 @@ class ALinqlContext(ITypeNameProvider, abc.ABC):
         parser = LinqlParser(Expression)
         return parser.Root
     
-    def ToJson(Search: ALinqlSearch[T]) -> str:
-        json.dumps(Search)
+    def ToJson(self, Search: ALinqlSearch[T]) -> str:
+        json.dumps(Search.__dict__, skipkeys=True)
     
     def GetTypeName(self, Type: Any) -> str:
         typeName = Type.__class__.__name__

@@ -38,5 +38,8 @@ class LinqlSearch(ALinqlSearch, Generic[T]):
         self.AttachTopLevelFunction(customFunction, newSearch)
         return newSearch
     
+    def toJson(self) -> str:
+        return self.Context.ToJson(self)
+    
     def Where(self, Expression: Callable[[T], bool]) -> Self:
         return self.CustomLinqlFunction("Where", Expression)

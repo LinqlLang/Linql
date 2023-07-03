@@ -4,27 +4,29 @@ from linql_core.LinqlExpression import LinqlExpression
 from linql_core.LinqlConstant import LinqlConstant
 from linql_core.LinqlType import LinqlType
 from linql_core.LinqlFunction import LinqlFunction
+from linql_core.LinqlSearch import LinqlSearch as CoreLinqlSearch
 import abc
 
 T = TypeVar("T")
 
-class ALinqlSearch(abc.ABC, Generic[T]):
+class ALinqlSearch(abc.ABC, CoreLinqlSearch, Generic[T]):
 
     ModelType: type
     Expressions: list[LinqlExpression] | None
 
     def __init__(self, ModelType: type) -> None:
-        super().__init__()
+        super().__init__(LinqlType.GetLinqlType(ModelType))
         self.ModelType = ModelType
         self.Expressions = []
         searchExpression = self.BuildLinqlSeachExpression()
         self.Expressions.append(searchExpression)
 
     def BuildLinqlSeachExpression(self) -> LinqlConstant:
+        linqlType = LinqlType.GetLinqlType(self.ModelType)
         searchType = LinqlType()
         searchType.TypeName = "LinqlSearch"
         searchType.GenericParameters = []
-        searchType.GenericParameters.append(LinqlType.GetLinqlType(self.ModelType))
+        searchType.GenericParameters.append(linqlType)
         searchExpression = LinqlConstant(searchType, None)
         return searchExpression
 
