@@ -11,8 +11,10 @@ class FileLoader:
         self.BasePath = BasePath
         self.DebugMode = DebugMode
 
-    def ExecuteTest(self, newSearch: LinqlSearch):
-        TestName = inspect.stack()[1][3]
+    def ExecuteTest(self, newSearch: LinqlSearch, TestName: str | None = None):
+        
+        if TestName == None:
+            TestName = inspect.stack()[1][3]
         TestName = TestName.replace("test_", "")
         json = newSearch.toJson()
         compare = self.GetFile(TestName)

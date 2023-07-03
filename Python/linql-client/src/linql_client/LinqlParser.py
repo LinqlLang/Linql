@@ -219,6 +219,23 @@ class LinqlParser:
 
     opTable = []
 
+    def NullableCheck(self, left: LinqlExpression, right: LinqlExpression):
+        
+        leftConstant = isinstance(left, LinqlConstant)
+        rightConstant = isinstance(right, LinqlConstant) 
+        nullableCheck: LinqlExpression | None = None
+        if leftConstant and left.Value == None and rightConstant == False:
+            nullableCheck = right
+        elif rightConstant and right.Value == None and leftConstant == False:
+            nullableCheck = left
+
+        if nullableCheck != None:
+            lastExp = nullableCheck.GetLastExpressionInNextChain()
+            prop = LinqlProperty("HasValue")
+            lastExp.Next = prop
+
+        return nullableCheck
+
     def _parse_expr(self, ops, i, stack, stackModifier: int = 0):
         for j in range(i, len(ops)):
             op = ops[j]
@@ -288,12 +305,19 @@ class LinqlParser:
             if tag:
                 y = stack.pop()
                 x = stack.pop()
-                stack.append(BinOp(tag, x, y))
+                bin = LinqlBinary(tag, x, y)
+                stack.append(bin)
                 continue
             if opname == 'COMPARE_OP':
                 y = stack.pop()
                 x = stack.pop()
                 bin = LinqlBinary("Equal", x, y)
+
+                nullCheck = self.NullableCheck(bin.Left, bin.Right)
+
+                if nullCheck != None:
+                    bin = nullCheck
+
                 stack.append(bin)
                 continue
             if opname == 'CONTAINS_OP':

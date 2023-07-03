@@ -6,11 +6,16 @@ from src.linql_client.LinqlSearch import LinqlSearch
 from .FileLoader import FileLoader
 from typing import Self
 
+class NullableModel:
+   Integer: int | None
+
 class DataModel:
    Boolean: bool = False
    OneToOne: Self
    Integer: int 
    ListInteger: list[int]
+   OneToOneNullable: NullableModel
+
 
 context = LinqlContext(LinqlSearch, "")
 testLoader = FileLoader("../C#/Test/Linql.Test.Files/TestFiles/Smoke")
@@ -78,3 +83,13 @@ class TestLinqlParser:
       search: LinqlSearch[DataModel] = context.Set(DataModel)
       newSearch = search.Where(lambda r: any(lambda s: s == 1, r.ListInteger))
       testLoader.ExecuteTest(newSearch)
+
+   def test_NullableHasValue(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Where(lambda r: r.OneToOneNullable.Integer != None)
+      testLoader.ExecuteTest(newSearch)
+
+   def test_NullableHasValueReversed(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Where(lambda r: None != r.OneToOneNullable.Integer)
+      testLoader.ExecuteTest(newSearch, "test_NullableHasValue")
