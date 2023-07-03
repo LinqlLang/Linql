@@ -1,11 +1,14 @@
 
 from typing import TypeVar, Generic, Self, Any
 from linql_core.LinqlExpression import LinqlExpression
+from linql_core.LinqlType import LinqlType
 from .ALinqlSearch import ALinqlSearch
 from .LinqlParser import LinqlParser
 from linql_core.ITypeNameProvider import ITypeNameProvider
+from .LinqlJsonEncoder import LinqlJsonEncoder
 import abc
 import json
+import jsonpickle
 
 T = TypeVar("T")
 TResult = TypeVar("TResult")
@@ -34,7 +37,21 @@ class ALinqlContext(ITypeNameProvider, abc.ABC):
         return parser.Root
     
     def ToJson(self, Search: ALinqlSearch[T]) -> str:
-        json.dumps(Search.__dict__, skipkeys=True)
+
+        jsonDict = { "Type": self._ToJson(Search.Type) }
+
+        jsonValue = json.dumps(jsonDict)
+        return jsonValue
+    
+    def _ToJson(self, Expression: LinqlExpression | LinqlType):
+        
+        jsonObject = {}
+        
+        if isinstance(Expression, LinqlType):
+            jsonObject = { "TypeName": Expression.TypeName }
+            if hasattr(Expression, "GenericParameters") and len(Expression.GenericParameters) > 0:
+                jsonObject["GenericParameters"] = map(lambda x: self._ToJson(x), Expression.GenericParameters)
+        return jsonObject
     
     def GetTypeName(self, Type: Any) -> str:
         typeName = Type.__class__.__name__
