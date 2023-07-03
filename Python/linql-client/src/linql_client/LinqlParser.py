@@ -1,3 +1,4 @@
+from types import CodeType
 from linql_core.LinqlExpression import LinqlExpression
 from linql_core.LinqlLambda import LinqlLambda
 from linql_core.LinqlConstant import LinqlConstant
@@ -173,6 +174,10 @@ class LinqlParser:
         'BINARY_OR': '|',
     }
 
+    _builtInLookup = {
+        "any": "Any"
+    }
+
     def _find_offset(self, ops, offset):
         i, k = 0, len(ops)
         while i < k:
@@ -214,7 +219,7 @@ class LinqlParser:
 
     opTable = []
 
-    def _parse_expr(self, ops, i, stack):
+    def _parse_expr(self, ops, i, stack, stackModifier: int = 0):
         for j in range(i, len(ops)):
             op = ops[j]
             opname = op.opname
@@ -222,9 +227,13 @@ class LinqlParser:
                 return stack[-1]
             if opname == 'LOAD_CONST':
                 value = op.argval
-                type = LinqlType.GetLinqlType(value)
-                linqlConstant = LinqlConstant(type, value)
-                stack.append(linqlConstant)
+                
+                if isinstance(value, CodeType):
+                    stack.append(value)
+                else:
+                    linqlType = LinqlType.GetLinqlType(value)
+                    linqlConstant = LinqlConstant(linqlType, value)
+                    stack.append(linqlConstant)
                 continue
             if opname == 'LOAD_FAST':
                 parameter = LinqlParameter(op.argval)
@@ -233,15 +242,27 @@ class LinqlParser:
             #if opname == 'LOAD_GLOBAL':
             if opname in ('LOAD_DEREF'):
                 value = inspect.stack()[7][0].f_locals[op.argval]
-                type = LinqlType.GetLinqlType(value)
-                linqlConstant = LinqlConstant(type, value)
+                linqlType = LinqlType.GetLinqlType(value)
+                linqlConstant = LinqlConstant(linqlType, value)
                 stack.append(linqlConstant)
                 continue
             if opname in ('LOAD_GLOBAL', 'LOAD_CLOSURE'):
-                value = inspect.stack()[7][0].f_globals[op.argval]
-                type = LinqlType.GetLinqlType(value)
-                linqlConstant = LinqlConstant(type, value)
-                stack.append(linqlConstant)
+                globalVars = inspect.stack()[7 + stackModifier][0].f_globals
+                builtIns = __builtins__
+
+                if op.argval in globalVars:
+                    value = globalVars[op.argval]
+                    linqlType = LinqlType.GetLinqlType(value)
+                    linqlConstant = LinqlConstant(linqlType, value)
+                    stack.append(linqlConstant)
+                elif op.argval in builtIns:
+                    value = builtIns[op.argval]
+                    funName = value.__name__
+                    if funName in self._builtInLookup:
+                        funName = self._builtInLookup[funName]
+                    fun = LinqlFunction(funName, [])
+                    stack.append(fun)
+
                 continue
             if opname == 'LOAD_ATTR':
                 x: LinqlExpression = stack.pop()
@@ -249,8 +270,8 @@ class LinqlParser:
 
                 if isinstance(last, LinqlConstant):
                     value = getattr(last.Value, op.argval)
-                    type = LinqlType.GetLinqlType(value)
-                    x = LinqlConstant(type, value)
+                    linqlType = LinqlType.GetLinqlType(value)
+                    x = LinqlConstant(linqlType, value)
                 else:
                     property = LinqlProperty(op.argval)
                     last.Next = property
@@ -291,17 +312,17 @@ class LinqlParser:
             if opname == 'JUMP_IF_FALSE_OR_POP':
                 jj = self._find_offset(ops, op.argval)
                 a = stack.pop()
-                b = self._parse_expr(ops[:jj], j + 1, stack[:])
+                b = self._parse_expr(ops[:jj], j + 1, stack[:], stackModifier + 1)
                 bin = LinqlBinary("AndAlso", b, a)
                 stack.append(bin)
-                return self._parse_expr(ops, jj, stack)
+                return self._parse_expr(ops, jj, stack, stackModifier + 1)
             if opname == 'JUMP_IF_TRUE_OR_POP':
                 jj = self._find_offset(ops, op.argval)
                 a = stack.pop()
-                b = self._parse_expr(ops[:jj], j + 1, stack[:])
+                b = self._parse_expr(ops[:jj], j + 1, stack[:], stackModifier + 1)
                 bin = LinqlBinary("Or", a, b)
                 stack.append(bin)
-                return self._parse_expr(ops, jj, stack)
+                return self._parse_expr(ops, jj, stack, stackModifier + 1)
             if opname == 'POP_JUMP_IF_FALSE':
                 jj = self._find_offset(ops, op.argval)
                 k = None
@@ -310,12 +331,12 @@ class LinqlParser:
                 c = stack.pop()
                 if k is None:
                     ##t = self._parse_expr(ops[:jj], j + 1, stack[:])
-                    t = self._parse_expr(ops, j + 1, stack[:])
-                    f = self._parse_expr(ops, jj, stack)
+                    t = self._parse_expr(ops, j + 1, stack[:], stackModifier + 1)
+                    f = self._parse_expr(ops, jj, stack, stackModifier + 1)
                     return self._normalize(IfElse(c, t, f))
                 else:
-                    t = self._parse_expr(ops[:jj - 1], j + 1, stack[:])
-                    f = self._parse_expr(ops[:k], jj, stack[:])
+                    t = self._parse_expr(ops[:jj - 1], j + 1, stack[:], stackModifier + 1)
+                    f = self._parse_expr(ops[:k], jj, stack[:], stackModifier + 1)
                     stack.append(self._normalize(IfElse(c, t, f)))
                     return self._parse_expr(ops[k:], 0, stack)
             if opname == 'POP_JUMP_IF_TRUE':
@@ -326,17 +347,17 @@ class LinqlParser:
                 c = stack.pop()
                 if k is None:
                     ##t = self._parse_expr(ops[:jj], j + 1, stack[:])
-                    t = self._parse_expr(ops, j + 1, stack[:])
-                    f = self._parse_expr(ops, jj, stack)
+                    t = self._parse_expr(ops, j + 1, stack[:], stackModifier + 1)
+                    f = self._parse_expr(ops, jj, stack, stackModifier + 1)
                     return self._normalize(IfElse(UnOp('not', c), t, f))
                 else:
-                    t = self._parse_expr(ops[:jj - 1], j + 1, stack[:])
-                    f = self._parse_expr(ops[:k], jj, stack[:])
+                    t = self._parse_expr(ops[:jj - 1], j + 1, stack[:], stackModifier + 1)
+                    f = self._parse_expr(ops[:k], jj, stack[:], stackModifier + 1)
                     stack.append(self._normalize(IfElse(UnOp('not', c), t, f)))
-                    return self._parse_expr(ops[k:], 0, stack)
+                    return self._parse_expr(ops[k:], 0, stack, stackModifier + 1)
             if opname == 'JUMP_FORWARD':
                 jj = self._find_offset(ops, op.argval)
-                return self._parse_expr(ops, jj, stack)
+                return self._parse_expr(ops, jj, stack, stackModifier + 1)
             if opname == 'BUILD_LIST':
                 vs = tuple(self._popn(stack, op.argval))
                 stack.append(List(vs))
@@ -369,16 +390,32 @@ class LinqlParser:
             # TODO CALL_FUNCTION_EX, BUILD_TUPLE_UNPACK_WITH_CALL
             if opname == 'MAKE_FUNCTION':
                 assert op.argval in (0, 8)
-                stack.pop()  # discard name
                 co = stack.pop()
                 if op.argval & 8:
                     stack.pop()  # discard closed over variables
-                args = co.v.co_varnames
-                expr = self._parse_expr(list(dis.get_instructions(co.v)), 0, [])
-                stack.append(Lambda(args, expr))
+                args = co.co_varnames
+                expr = self._parse_expr(list(dis.get_instructions(co)), 0, [], stackModifier + 1)
+                lambdaFun = LinqlLambda()
+                lambdaFun.Body = expr
+                lambdaFun.Parameters = list(map(lambda param: LinqlParameter(param), args))
+                stack.append(lambdaFun)
+                continue
+            if opname == "CALL":
+                argCount = op.arg
+                argList = []
+                while argCount > 0:
+                    argList.append(stack.pop())
+                    argCount -= 1
+                
+                fun: LinqlFunction = stack.pop()
+                funArg = argList.pop()
+                iterator: LinqlExpression = argList.pop()
+                iterator.GetLastExpressionInNextChain().Next = fun
+                fun.Arguments = [funArg]
+                stack.append(iterator)
                 continue
             # TODO maybe do comprehension
-            if opname in ['RESUME', 'NOP', "COPY_FREE_VARS"]:
+            if opname in ['RESUME', 'NOP', "COPY_FREE_VARS", "PRECALL"]:
                 continue
             if opname == 'POP_TOP':
                 stack.pop()

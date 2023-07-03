@@ -10,6 +10,7 @@ class DataModel:
    Boolean: bool = False
    OneToOne: Self
    Integer: int 
+   ListInteger: list[int]
 
 context = LinqlContext(LinqlSearch, "")
 testLoader = FileLoader("../C#/Test/Linql.Test.Files/TestFiles/Smoke")
@@ -66,4 +67,14 @@ class TestLinqlParser:
       integers = [1, 2, 3]
       search: LinqlSearch[DataModel] = context.Set(DataModel)
       newSearch = search.Where(lambda r: r.Integer in integers)
+      testLoader.ExecuteTest(newSearch)
+
+   def test_ListIntFromProperty(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Where(lambda r: 1 in r.ListInteger)
+      testLoader.ExecuteTest(newSearch)
+
+   def test_InnerLambda(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Where(lambda r: any(lambda s: s == 1, r.ListInteger))
       testLoader.ExecuteTest(newSearch)
