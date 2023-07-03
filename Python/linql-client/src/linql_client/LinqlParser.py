@@ -3,6 +3,7 @@ from linql_core.LinqlLambda import LinqlLambda
 from linql_core.LinqlConstant import LinqlConstant
 from linql_core.LinqlType import LinqlType
 from linql_core.LinqlUnary import LinqlUnary
+from linql_core.LinqlFunction import LinqlFunction
 from linql_core.LinqlParameter import LinqlParameter
 from linql_core.LinqlBinary import LinqlBinary
 from linql_core.LinqlProperty import LinqlProperty
@@ -273,6 +274,19 @@ class LinqlParser:
                 x = stack.pop()
                 bin = LinqlBinary("Equal", x, y)
                 stack.append(bin)
+                continue
+            if opname == 'CONTAINS_OP':
+                x = stack.pop()
+                y = stack.pop()
+                last = x.GetLastExpressionInNextChain()
+                fun = LinqlFunction("Contains", [y])
+                last.Next = fun
+
+                if op.arg == 1:
+                    notUnary = LinqlUnary("Not", [x])
+                    x = notUnary
+
+                stack.append(x)
                 continue
             if opname == 'JUMP_IF_FALSE_OR_POP':
                 jj = self._find_offset(ops, op.argval)

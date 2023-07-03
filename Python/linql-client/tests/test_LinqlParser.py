@@ -8,7 +8,8 @@ from typing import Self
 
 class DataModel:
    Boolean: bool = False
-   OneToOne: Self 
+   OneToOne: Self
+   Integer: int 
 
 context = LinqlContext(LinqlSearch, "")
 testLoader = FileLoader("../C#/Test/Linql.Test.Files/TestFiles/Smoke")
@@ -59,4 +60,10 @@ class TestLinqlParser:
    def test_ThreeBooleans(self):
       search: LinqlSearch[DataModel] = context.Set(DataModel)
       newSearch = search.Where(lambda r: r.Boolean and r.Boolean and r.Boolean)
+      testLoader.ExecuteTest(newSearch)
+
+   def test_ListInt(self):
+      integers = [1, 2, 3]
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Where(lambda r: r.Integer in integers)
       testLoader.ExecuteTest(newSearch)
