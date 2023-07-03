@@ -278,13 +278,15 @@ class LinqlParser:
                 jj = self._find_offset(ops, op.argval)
                 a = stack.pop()
                 b = self._parse_expr(ops[:jj], j + 1, stack[:])
-                stack.append(BinOp('and', a, b))
+                bin = LinqlBinary("AndAlso", b, a)
+                stack.append(bin)
                 return self._parse_expr(ops, jj, stack)
             if opname == 'JUMP_IF_TRUE_OR_POP':
                 jj = self._find_offset(ops, op.argval)
                 a = stack.pop()
                 b = self._parse_expr(ops[:jj], j + 1, stack[:])
-                stack.append(BinOp('or', a, b))
+                bin = LinqlBinary("Or", a, b)
+                stack.append(bin)
                 return self._parse_expr(ops, jj, stack)
             if opname == 'POP_JUMP_IF_FALSE':
                 jj = self._find_offset(ops, op.argval)

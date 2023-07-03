@@ -55,3 +55,8 @@ class TestLinqlParser:
       search: LinqlSearch[DataModel] = context.Set(DataModel)
       newSearch = search.Where(lambda r: complex.Boolean)
       testLoader.ExecuteTest(newSearch)
+
+   def test_ThreeBooleans(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Where(lambda r: r.Boolean and r.Boolean and r.Boolean)
+      testLoader.ExecuteTest(newSearch)
