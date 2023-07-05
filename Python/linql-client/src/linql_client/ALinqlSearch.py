@@ -5,6 +5,7 @@ from linql_core.LinqlConstant import LinqlConstant
 from linql_core.LinqlType import LinqlType
 from linql_core.LinqlFunction import LinqlFunction
 from linql_core.LinqlSearch import LinqlSearch as CoreLinqlSearch
+from linql_core.ITypeNameProvider import ITypeNameProvider
 from .IGrouping import IGrouping
 import abc
 
@@ -15,16 +16,18 @@ class ALinqlSearch(abc.ABC, CoreLinqlSearch, Generic[T]):
 
     ModelType: type
     Expressions: list[LinqlExpression] | None
+    TypeNameProvider: ITypeNameProvider
 
-    def __init__(self, ModelType: type) -> None:
-        super().__init__(LinqlType.GetLinqlType(ModelType))
+    def __init__(self, ModelType: type, ITypeNameProvider: ITypeNameProvider) -> None:
+        super().__init__(LinqlType.GetLinqlType(ModelType, ITypeNameProvider))
+        self.TypeNameProvider = ITypeNameProvider
         self.ModelType = ModelType
         self.Expressions = []
         searchExpression = self.BuildLinqlSeachExpression()
         self.Expressions.append(searchExpression)
 
     def BuildLinqlSeachExpression(self) -> LinqlConstant:
-        linqlType = LinqlType.GetLinqlType(self.ModelType)
+        linqlType = LinqlType.GetLinqlType(self.ModelType, self.TypeNameProvider)
         searchType = LinqlType()
         searchType.TypeName = "LinqlSearch"
         searchType.GenericParameters = []
@@ -80,7 +83,7 @@ class ALinqlSearch(abc.ABC, CoreLinqlSearch, Generic[T]):
         return result    
     
     def Skip(self, Skip: int):
-        linqlType = LinqlType.GetLinqlType(Skip)
+        linqlType = LinqlType.GetLinqlType(Skip, self.TypeNameProvider)
         constant = LinqlConstant(linqlType, Skip)
         fun = LinqlFunction("Skip", [constant])
         newSearch = self.Copy()
@@ -88,7 +91,7 @@ class ALinqlSearch(abc.ABC, CoreLinqlSearch, Generic[T]):
         return newSearch
     
     def Take(self, Take: int):
-        linqlType = LinqlType.GetLinqlType(Take)
+        linqlType = LinqlType.GetLinqlType(Take, self.TypeNameProvider)
         constant = LinqlConstant(linqlType, Take)
         fun = LinqlFunction("Take", [constant])
         newSearch = self.Copy()

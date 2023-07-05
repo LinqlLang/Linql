@@ -18,7 +18,7 @@ class LinqlSearch(ALinqlSearch, Generic[T]):
     Context: ALinqlContext
 
     def __init__(self, ModelType: type, Context: ALinqlContext) -> None:
-        super().__init__(ModelType)
+        super().__init__(ModelType, Context)
         self.Context = Context
 
     def Copy(self) -> Self:

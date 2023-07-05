@@ -33,7 +33,7 @@ class ALinqlContext(ITypeNameProvider, abc.ABC):
         pass
 
     def Parse(self, Expression: str | None) -> LinqlExpression | None:
-        parser = LinqlParser(Expression)
+        parser = LinqlParser(Expression, self)
         return parser.Root
     
     def ToJson(self, Search: ALinqlSearch[T]) -> str:

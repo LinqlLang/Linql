@@ -9,6 +9,7 @@ from linql_core.LinqlFunction import LinqlFunction
 from linql_core.LinqlParameter import LinqlParameter
 from linql_core.LinqlBinary import LinqlBinary
 from linql_core.LinqlProperty import LinqlProperty
+from linql_core.ITypeNameProvider import ITypeNameProvider
 from typing import Any
 from collections import namedtuple
 import inspect
@@ -36,9 +37,11 @@ class LinqlParser:
     ExpressionStack: list[Any]
     Root: LinqlExpression | None
     RootExpression: Any | None
+    TypeNameProvider: ITypeNameProvider
 
-    def __init__(self, Expression: Any) -> None:
+    def __init__(self, Expression: Any, TypeNameProvider: ITypeNameProvider) -> None:
         self.RootExpression = Expression
+        self.TypeNameProvider = TypeNameProvider
         self.Root = self.Visit(self.RootExpression)
             
 
@@ -252,7 +255,7 @@ class LinqlParser:
                 if isinstance(value, CodeType):
                     stack.append(value)
                 else:
-                    linqlType = LinqlType.GetLinqlType(value)
+                    linqlType = LinqlType.GetLinqlType(value, self.TypeNameProvider)
                     linqlConstant = LinqlConstant(linqlType, value)
                     stack.append(linqlConstant)
                 continue
@@ -268,7 +271,7 @@ class LinqlParser:
                     linqlExpression = value
                     pass
                 else:
-                    linqlType = LinqlType.GetLinqlType(value)
+                    linqlType = LinqlType.GetLinqlType(value, self.TypeNameProvider)
                     linqlExpression = LinqlConstant(linqlType, value)
                 stack.append(linqlExpression)
                 continue
@@ -289,7 +292,7 @@ class LinqlParser:
                     fun = LinqlFunction(funName, [])
                     stack.append(fun)
                 else:
-                    linqlType = LinqlType.GetLinqlType(value)
+                    linqlType = LinqlType.GetLinqlType(value, self.TypeNameProvider)
                     linqlConstant = LinqlConstant(linqlType, value)
                     stack.append(linqlConstant)
                 continue
@@ -299,7 +302,7 @@ class LinqlParser:
 
                 if isinstance(last, LinqlConstant):
                     value = getattr(last.Value, op.argval)
-                    linqlType = LinqlType.GetLinqlType(value)
+                    linqlType = LinqlType.GetLinqlType(value, self.TypeNameProvider)
                     x = LinqlConstant(linqlType, value)
                 elif isinstance(last, LinqlObject) and op.argval == "Value":
                     pass
