@@ -2,11 +2,11 @@
 #
 # SPDX-License-Identifier: MIT
 
-# import builtins
-# from typing import Callable, Generic, Type
+import builtins
+from typing import Callable, Generic, TypeVar
 
-# Input = Type("Input")
-# Output = Type("Output")
+Input = TypeVar("Input")
+Output = TypeVar("Output")
 
-# def selectMany(Expression: Callable[[Input], list[Output]], Input: list[Input]) -> list[Output]:
-#     pass
+def selectMany(Expression: Callable[[Input], list[Output]], Input: list[Input]) -> list[Output]:
+    pass

@@ -278,17 +278,20 @@ class LinqlParser:
 
                 if op.argval in globalVars:
                     value = globalVars[op.argval]
-                    linqlType = LinqlType.GetLinqlType(value)
-                    linqlConstant = LinqlConstant(linqlType, value)
-                    stack.append(linqlConstant)
+                  
                 elif op.argval in builtIns:
                     value = builtIns[op.argval]
+
+                if callable(value):
                     funName = value.__name__
                     if funName in self._builtInLookup:
                         funName = self._builtInLookup[funName]
                     fun = LinqlFunction(funName, [])
                     stack.append(fun)
-
+                else:
+                    linqlType = LinqlType.GetLinqlType(value)
+                    linqlConstant = LinqlConstant(linqlType, value)
+                    stack.append(linqlConstant)
                 continue
             if opname == 'LOAD_ATTR':
                 x: LinqlExpression = stack.pop()

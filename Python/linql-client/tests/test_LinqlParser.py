@@ -6,6 +6,7 @@ from src.linql_client.LinqlContext import LinqlContext
 from src.linql_client.LinqlSearch import LinqlSearch
 from .FileLoader import FileLoader
 from typing import Self
+from src.linql_client import selectMany
 
 class NullableModel:
    Integer: int | None
@@ -159,7 +160,42 @@ class TestLinqlParser:
       newSearch = search.Where(lambda r: any(lambda s: 1 in s.ListInteger, r.ListRecusrive))
       testLoader.ExecuteTest(newSearch)
 
-   # def test_Inner_Lambda(self):
-   #    search: LinqlSearch[DataModel] = context.Set(DataModel)
-   #    newSearch = search.SelectMany(lambda r: r.ListInteger)
-   #    testLoader.ExecuteTest(newSearch)
+   def test_Select_Test(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Select(lambda r: r.Integer)
+      testLoader.ExecuteTest(newSearch)
+
+   def test_SelectMany(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.SelectMany(lambda r: r.ListInteger)
+      testLoader.ExecuteTest(newSearch)
+
+   def test_SelectManyDouble(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.SelectMany(lambda r: selectMany(lambda s: s.ListInteger, r.ListRecusrive))
+      testLoader.ExecuteTest(newSearch)
+
+   def test_SkipTake(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Skip(1).Take(2).ToListAsyncSearch()
+      testLoader.ExecuteTest(newSearch)
+   
+   def test_FirstOrDefault(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.FirstOrDefaultSearch()
+      testLoader.ExecuteTest(newSearch)
+
+   def test_FirstOrDefaultWithPredicate(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.FirstOrDefaultSearch(lambda r: r.Integer == 1)
+      testLoader.ExecuteTest(newSearch)
+
+   def test_LastOrDefault(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.LastOrDefaultSearch()
+      testLoader.ExecuteTest(newSearch)
+
+   def test_LastOrDefaultWithPredicate(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.LastOrDefaultSearch(lambda r: r.Integer == 1)
+      testLoader.ExecuteTest(newSearch)
