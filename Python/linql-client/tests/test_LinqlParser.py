@@ -134,3 +134,11 @@ class TestLinqlParser:
       search: LinqlSearch[DataModel] = context.Set(DataModel)
       newSearch = search.Where(lambda r: objectTest.Value.Integer == r.Integer)
       testLoader.ExecuteTest(newSearch)
+
+   def test_LinqlObject_NonZero(self):
+      value = _CreateDataModel(1)
+      type = LinqlType.GetLinqlType(value, context)
+      objectTest = LinqlObject(value, type)
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Where(lambda r: objectTest.Value.Integer == r.Integer)
+      testLoader.ExecuteTest(newSearch)
