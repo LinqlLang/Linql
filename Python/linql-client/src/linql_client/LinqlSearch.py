@@ -87,3 +87,50 @@ class LinqlSearch(ALinqlSearch, Generic[T]):
         newSearch = self.CustomLinqlFunction("LastOrDefaultAsync", Predicate)
         return newSearch
     
+    async def _executeCustomLinqlFunction(self, FunctionName: str, Predicate: Any | None):
+        search = self.CustomLinqlFunction(FunctionName, Predicate)
+        return await self.Context.GetResult(search)
+
+    async def ToListAsync(self) -> list[T]:
+        result: list[T] = await self._executeCustomLinqlFunction("ToListAsync")
+        return result
+    
+    async def FirstOrDefaultAsync(self, Predicate: Callable[[T], bool] | None = None) -> T | None:
+        result: T = await self._executeCustomLinqlFunction("FirstOrDefaultAsync", Predicate)
+        return result
+
+    async def LastOrDefaultAsync(self, Predicate: Callable[[T], bool] | None = None) -> T | None:
+        result: T = await self._executeCustomLinqlFunction("LastOrDefaultAsync", Predicate)
+        return result
+
+    async def AnyAsync(self, Predicate: Callable[[T], bool] | None = None) -> bool:
+        result: bool = await self._executeCustomLinqlFunction("AnyAsync", Predicate)
+        return result
+
+    async def AllAsync(self, Predicate: Callable[[T], bool] | None = None) -> bool:
+        result: bool = await self._executeCustomLinqlFunction("AllAsync", Predicate)
+        return result
+
+    async def MinAsync(self, Predicate: Callable[[T], Output] | None = None) -> Output:
+        result: Output = await self._executeCustomLinqlFunction("MinAsync", Predicate)
+        return result
+
+    async def MaxAsync(self, Predicate: Callable[[T], Output] | None = None) -> Output:
+        result: Output = await self._executeCustomLinqlFunction("MaxAsync", Predicate)
+        return result
+    
+    async def MinByAsync(self, Predicate: Callable[[T], Output] | None = None) -> T:
+        result: T = await self._executeCustomLinqlFunction("MinByAsync", Predicate)
+        return result
+    
+    async def MaxByAsync(self, Predicate: Callable[[T], Output] | None = None) -> T:
+        result: T = await self._executeCustomLinqlFunction("MaxByAsync", Predicate)
+        return result
+
+    async def SumAsync(self, Predicate: Callable[[T], Output] | None = None) -> int:
+        result: T = await self._executeCustomLinqlFunction("SumAsync", Predicate)
+        return result
+
+    async def AverageAsync(self, Predicate: Callable[[T], Output] | None = None) -> int:
+        result: T = await self._executeCustomLinqlFunction("AverageAsync", Predicate)
+        return result
