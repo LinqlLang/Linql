@@ -1,25 +1,53 @@
-from linql_core.LinqlParameter import LinqlParameter
+from linql_core.LinqlType import LinqlType
+from linql_core.LinqlObject import LinqlObject
 from src.linql_client.ALinqlSearch import ALinqlSearch
 from src.linql_client.LinqlParser import LinqlParser
 from src.linql_client.LinqlContext import LinqlContext
 from src.linql_client.LinqlSearch import LinqlSearch
 from .FileLoader import FileLoader
+import inspect
 from typing import Self
 
 class NullableModel:
    Integer: int | None
 
+   def toSerializable(self) -> dict:
+      pass
+
+
 class DataModel:
-   Boolean: bool = False
+   Boolean: bool
+   String: str
    OneToOne: Self
    Integer: int 
    ListInteger: list[int]
+   ListString: list[str]
+   ListRecusrive: list[Self]
+   ListNullableModel: list[NullableModel]
    OneToOneNullable: NullableModel
+
+   def toSerializable(self) -> dict:
+      return self.__dict__
+
 
 
 context = LinqlContext(LinqlSearch, "")
 testLoader = FileLoader("../C#/Test/Linql.Test.Files/TestFiles/Smoke")
 complex = DataModel()
+complex.Boolean = False
+
+def _CreateDataModel(Integer: int | None = None):
+   testData = DataModel()
+
+   if Integer != None:
+      testData.Integer = Integer
+
+   testData.String = ""
+   testData.ListInteger = []
+   testData.ListString = []
+   testData.ListRecusrive = []
+   testData.ListNullableModel = []
+   return testData
 
 class TestLinqlParser:
 
@@ -97,4 +125,12 @@ class TestLinqlParser:
    def test_NullableValue(self):
       search: LinqlSearch[DataModel] = context.Set(DataModel)
       newSearch = search.Where(lambda r: r.OneToOneNullable.Integer != None and r.OneToOneNullable.Integer.Value == 1)
+      testLoader.ExecuteTest(newSearch)
+
+   def test_LinqlObject(self):
+      value = _CreateDataModel()
+      type = LinqlType.GetLinqlType(value, context)
+      objectTest = LinqlObject(value, type)
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Where(lambda r: objectTest.Value.Integer == r.Integer)
       testLoader.ExecuteTest(newSearch)

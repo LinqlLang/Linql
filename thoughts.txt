@@ -11,7 +11,7 @@ Is a dialect a better approach?  Why/Why not?
 
 Issue with LinqlObjects not being copied.  Not idempotent
 
-Tests can just be drop in somehow.  The way it works in linql.client is pretty slick.  Could have some structure around it. 
+**Tests can just be drop in somehow.  The way it works in linql.client is pretty slick.  Could have some structure around it. 
 
 Need to test all the data types
 

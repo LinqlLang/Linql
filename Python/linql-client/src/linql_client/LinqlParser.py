@@ -3,6 +3,7 @@ from linql_core.LinqlExpression import LinqlExpression
 from linql_core.LinqlLambda import LinqlLambda
 from linql_core.LinqlConstant import LinqlConstant
 from linql_core.LinqlType import LinqlType
+from linql_core.LinqlObject import LinqlObject
 from linql_core.LinqlUnary import LinqlUnary
 from linql_core.LinqlFunction import LinqlFunction
 from linql_core.LinqlParameter import LinqlParameter
@@ -259,9 +260,14 @@ class LinqlParser:
             #if opname == 'LOAD_GLOBAL':
             if opname in ('LOAD_DEREF'):
                 value = inspect.stack()[7][0].f_locals[op.argval]
-                linqlType = LinqlType.GetLinqlType(value)
-                linqlConstant = LinqlConstant(linqlType, value)
-                stack.append(linqlConstant)
+                
+                if isinstance(value, LinqlObject):
+                    linqlExpression = value
+                    pass
+                else:
+                    linqlType = LinqlType.GetLinqlType(value)
+                    linqlExpression = LinqlConstant(linqlType, value)
+                stack.append(linqlExpression)
                 continue
             if opname in ('LOAD_GLOBAL', 'LOAD_CLOSURE'):
                 globalVars = inspect.stack()[7 + stackModifier][0].f_globals
@@ -289,6 +295,8 @@ class LinqlParser:
                     value = getattr(last.Value, op.argval)
                     linqlType = LinqlType.GetLinqlType(value)
                     x = LinqlConstant(linqlType, value)
+                elif isinstance(last, LinqlObject) and op.argval == "Value":
+                    pass
                 else:
                     property = LinqlProperty(op.argval)
                     last.Next = property
@@ -339,13 +347,16 @@ class LinqlParser:
                 continue
             if opname == 'JUMP_IF_FALSE_OR_POP':
                 jj = self._find_offset(ops, op.argval)
-                a = stack.pop()
+                a: LinqlExpression = stack.pop()
                 b = self._parse_expr(ops[:jj], j + 1, stack[:], stackModifier + 1)
-                bin = LinqlBinary("AndAlso", a, b)
-                # if isinstance(b, LinqlBinary):
-                #     bin = LinqlBinary("AndAlso", b, a)
-                # else:
-                #     bin = LinqlBinary("AndAlso", a, b)
+
+                lastA = a.GetLastExpressionInNextChain()
+
+                if isinstance(lastA, LinqlProperty) and lastA.PropertyName == "HasValue":
+                    bin = LinqlBinary("AndAlso", a, b)
+                else:
+                    bin = LinqlBinary("AndAlso", b, a)
+
                 stack.append(bin)
                 return self._parse_expr(ops, jj, stack, stackModifier + 1)
             if opname == 'JUMP_IF_TRUE_OR_POP':

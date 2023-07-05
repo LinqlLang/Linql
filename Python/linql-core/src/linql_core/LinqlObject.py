@@ -28,6 +28,9 @@ class LinqlObject(LinqlExpression, Generic[T]):
         jsonObject["Type"] = self.Type.toSerializable()
 
         if hasattr(self, "Value"):
+            if hasattr(self.Value, "toSerializable"):
+                jsonObject["Value"] = self.Value.toSerializable()
+        else:
             jsonObject["Value"] = self.Value
 
         self._SerializeNext(jsonObject)
