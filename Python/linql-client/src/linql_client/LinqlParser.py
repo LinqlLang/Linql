@@ -176,7 +176,10 @@ class LinqlParser:
     }
 
     _builtInLookup = {
-        "any": "Any"
+        "any": "Any",
+        "filter": "Where",
+        "map": "Select",
+        "selectMany": "SelectMany"
     }
 
     def _find_offset(self, ops, offset):

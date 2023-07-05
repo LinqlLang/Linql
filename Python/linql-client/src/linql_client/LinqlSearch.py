@@ -9,6 +9,7 @@ from .ALinqlSearch import ALinqlSearch
 import abc
 
 T = TypeVar("T")
+Output = TypeVar("Output")
 
 class LinqlSearch(ALinqlSearch, Generic[T]):
     
@@ -43,3 +44,23 @@ class LinqlSearch(ALinqlSearch, Generic[T]):
     
     def Where(self, Expression: Callable[[T], bool]) -> Self:
         return self.CustomLinqlFunction("Where", Expression)
+    
+    def SelectMany(self, Expression: Callable[[T], list[Output]]):
+        result: LinqlSearch[Output] = self.CustomLinqlFunction("SelectMany", Expression)
+        return result
+    
+    def Select(self, Expression: Callable[[T], Output]):
+        result: LinqlSearch[Output] = self.CustomLinqlFunction("Select", Expression)
+        return result
+    
+    def Distinct(self, Expression: Callable[[T], Output]):
+        result: LinqlSearch[Output] = self.CustomLinqlFunction("Distinct", Expression)
+        return result    
+    
+    def Include(self, Expression: Callable[[T], Output] | str):
+        result: Self = self.CustomLinqlFunction("Include", Expression)
+        return result    
+    
+    def GroupBy(self, Expression: Callable[[T], Output] | str):
+        result: Self = self.CustomLinqlFunction("GroupBy", Expression)
+        return result    

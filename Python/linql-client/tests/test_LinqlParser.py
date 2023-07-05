@@ -5,7 +5,6 @@ from src.linql_client.LinqlParser import LinqlParser
 from src.linql_client.LinqlContext import LinqlContext
 from src.linql_client.LinqlSearch import LinqlSearch
 from .FileLoader import FileLoader
-import inspect
 from typing import Self
 
 class NullableModel:
@@ -41,7 +40,6 @@ def _CreateDataModel(Integer: int | None = None):
 
    if Integer != None:
       testData.Integer = Integer
-
    testData.String = ""
    testData.ListInteger = []
    testData.ListString = []
@@ -161,3 +159,7 @@ class TestLinqlParser:
       newSearch = search.Where(lambda r: any(lambda s: 1 in s.ListInteger, r.ListRecusrive))
       testLoader.ExecuteTest(newSearch)
 
+   # def test_Inner_Lambda(self):
+   #    search: LinqlSearch[DataModel] = context.Set(DataModel)
+   #    newSearch = search.SelectMany(lambda r: r.ListInteger)
+   #    testLoader.ExecuteTest(newSearch)
