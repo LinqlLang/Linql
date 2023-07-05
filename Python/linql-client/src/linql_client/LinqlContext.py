@@ -7,6 +7,8 @@ from .ALinqlContext import ALinqlContext
 from linql_core.ITypeNameProvider import ITypeNameProvider
 from .LinqlSearch import LinqlSearch
 import http.client
+import ssl
+import json
 
 T = TypeVar("T")
 TResult = TypeVar("TResult")
@@ -23,8 +25,14 @@ class LinqlContext(ALinqlContext):
         return await self.SendHttpRequest(endpoint, Search)
 
     async def SendHttpRequest(self, Endpoint: str, Search: ALinqlSearch[T]) -> TResult:
-        json = self.ToJson(Search)
-        connection = http.client.HTTPSConnection(self._BaseUrl)
-        connection.request("POST", Endpoint, json)
+        jsonSearch = self.ToJson(Search)
+        connection = http.client.HTTPSConnection(self._BaseUrl, context = ssl._create_unverified_context())
+        headers = {'Content-type': 'application/json'}
+        connection.request("POST", Endpoint, jsonSearch, headers)
         response = connection.getresponse()
-        return response.read()
+        jsonResponse = response.read().decode()
+        jsonResult = json.loads(jsonResponse)
+        return jsonResult
+    
+    def Set(self, Type: type) -> LinqlSearch[T]:
+        return self._LinqlSearchType(Type, self)

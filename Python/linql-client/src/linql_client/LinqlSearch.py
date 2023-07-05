@@ -87,7 +87,7 @@ class LinqlSearch(ALinqlSearch, Generic[T]):
         newSearch = self.CustomLinqlFunction("LastOrDefaultAsync", Predicate)
         return newSearch
     
-    async def _executeCustomLinqlFunction(self, FunctionName: str, Predicate: Any | None):
+    async def _executeCustomLinqlFunction(self, FunctionName: str, Predicate: Any | None = None):
         search = self.CustomLinqlFunction(FunctionName, Predicate)
         return await self.Context.GetResult(search)
 

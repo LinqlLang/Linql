@@ -5,7 +5,10 @@
 
 from linql_client.LinqlContext import LinqlContext
 from linql_client.LinqlSearch import LinqlSearch
+import asyncio
 from datetime import datetime
+from typing import TypeVar
+
 
 class StateData: 
     Year: int
@@ -22,7 +25,23 @@ class State:
     FID_1: int
     Data: list[StateData] | None
 
-context = LinqlContext(LinqlSearch, "https://localhost:7113/")
+T = TypeVar("T")
 
-context.Set(State)
+class CustomLinqlContext(LinqlContext):
+    def GetRoute(self, Search: LinqlSearch[T]):
+        endpoint = self.GetSearchTypeString(Search)
+        return f"/{endpoint}"
+
+
+context = CustomLinqlContext(LinqlSearch, "localhost:7113")
+
+async def main():
+    set: LinqlSearch[State] = context.Set(State)
+    results = await set.ToListAsync()
+    print(results)
+
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
 
