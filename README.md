@@ -18,7 +18,9 @@ Using Linql allows you to interact with your api with compile-time safety and fu
 
 ![C# typeahead](./assets/typeahead.csharp.gif)
 
+#### **`Python`**
 
+![Python typeahead](./assets/typeahead.python.gif)
 ## Client Examples
 
 #### **`C#`**
