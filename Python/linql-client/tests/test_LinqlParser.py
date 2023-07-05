@@ -142,3 +142,22 @@ class TestLinqlParser:
       search: LinqlSearch[DataModel] = context.Set(DataModel)
       newSearch = search.Where(lambda r: objectTest.Value.Integer == r.Integer)
       testLoader.ExecuteTest(newSearch)
+
+   def test_List_Int_Contains(self):
+      integers = [1, 2, 3]
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Where(lambda r: r.Integer in integers)
+      testLoader.ExecuteTest(newSearch)
+
+   # Doesn't port exactly to c# since we can't tell the type of the list at compile time.  Fails in Typescript too I think
+   # def test_EmptyList(self):
+   #    integers = []
+   #    search: LinqlSearch[DataModel] = context.Set(DataModel)
+   #    newSearch = search.Where(lambda r: r.Integer in integers)
+   #    testLoader.ExecuteTest(newSearch)
+
+   def test_Inner_Lambda(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Where(lambda r: any(lambda s: 1 in s.ListInteger, r.ListRecusrive))
+      testLoader.ExecuteTest(newSearch)
+
