@@ -42,8 +42,8 @@ const statesICareAbout: Array<State> = search
 
 #### **`Python`**
 ```python
-statesICareAbout = seq("al", "ma")
-search.where(lambda r => statesICareAbout.map(lambda t => t.upper()).exists(r)).to_list();
+statesICareAbout = ["al", "ma"]
+search.Where(lambda r: any(lambda x: r.State_Code in x, map(lambda t: t.upper(), statesICareAbout))).ToListAsync()
 ```
 
 #### **`Java`**
@@ -66,7 +66,7 @@ List<State> statesICareAbout = states
 | -                                    | Angular     | [Full](./Typescript/projects/linql.client-angular/)    | n/a                          | Has native framework wrapper                                                                                                                  |
 | -                                    | React       | [Full](./Typescript/projects/linql.client-fetch/)      | n/a                          | Needs native framework wr apper                                                                                                               |
 | -                                    | Vanilla     | [Full](./Typescript/projects/linql.client-fetch/)      | n/a                          |
-| Python                               |             | [Exploring](./Python/)                                            | Not Started                  | Attempting to implement with PyFunctional                                                                                                                                               |
+| Python                               |             | [Exploring](./Python/)                                 | Not Started                  | Attempting to implement with PyFunctional                                                                                                     |
 | Java                                 |             | Not Started                                            | Not Started                  |
 
 ## Developer Support
