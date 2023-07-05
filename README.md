@@ -68,7 +68,7 @@ List<State> statesICareAbout = states
 | -                                    | Angular     | [Full](./Typescript/projects/linql.client-angular/)    | n/a                          | Has native framework wrapper                                                                                                                  |
 | -                                    | React       | [Full](./Typescript/projects/linql.client-fetch/)      | n/a                          | Needs native framework wr apper                                                                                                               |
 | -                                    | Vanilla     | [Full](./Typescript/projects/linql.client-fetch/)      | n/a                          |
-| Python                               |             | [Exploring](./Python/)                                 | Not Started                  | Attempting to implement with PyFunctional                                                                                                     |
+| Python                               |             | [Partially Completed](./Python/)                       | Not Started                  |                                                                                                                                               |
 | Java                                 |             | Not Started                                            | Not Started                  |
 
 ## Developer Support
