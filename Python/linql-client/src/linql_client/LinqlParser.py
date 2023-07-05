@@ -182,7 +182,8 @@ class LinqlParser:
         "any": "Any",
         "filter": "Where",
         "map": "Select",
-        "selectMany": "SelectMany"
+        "selectMany": "SelectMany",
+        "lower": "ToLower"
     }
 
     def _find_offset(self, ops, offset):
@@ -275,18 +276,24 @@ class LinqlParser:
                     linqlExpression = LinqlConstant(linqlType, value)
                 stack.append(linqlExpression)
                 continue
-            if opname in ('LOAD_GLOBAL', 'LOAD_CLOSURE'):
+            if opname in ('LOAD_GLOBAL', 'LOAD_CLOSURE', "LOAD_METHOD"):
                 globalVars = inspect.stack()[7 + stackModifier][0].f_globals
                 builtIns = __builtins__
-
+                instanceFunction = False
                 if op.argval in globalVars:
                     value = globalVars[op.argval]
                   
                 elif op.argval in builtIns:
                     value = builtIns[op.argval]
+                elif op.argval in self._builtInLookup:
+                    instanceFunction = True
+                    value = op.argval
 
-                if callable(value):
-                    funName = value.__name__
+                if callable(value) or instanceFunction == True:
+                    if callable(value):
+                        funName = value.__name__
+                    else: 
+                        funName = op.argval
                     if funName in self._builtInLookup:
                         funName = self._builtInLookup[funName]
                     fun = LinqlFunction(funName, [])
@@ -460,10 +467,15 @@ class LinqlParser:
                     argCount -= 1
                 
                 fun: LinqlFunction = stack.pop()
-                funArg = argList.pop()
-                iterator: LinqlExpression = argList.pop()
+
+                if op.arg > 0:
+                    funArg = argList.pop()
+                    iterator: LinqlExpression = argList.pop()
+                    fun.Arguments = [funArg]
+                else:
+                    iterator: LinqlExpression = stack.pop()
+                    fun.Arguments = []
                 iterator.GetLastExpressionInNextChain().Next = fun
-                fun.Arguments = [funArg]
                 stack.append(iterator)
                 continue
             # TODO maybe do comprehension

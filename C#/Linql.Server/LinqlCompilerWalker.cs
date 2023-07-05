@@ -116,7 +116,7 @@ namespace Linql.Server
         {
             List<Expression> argExpressions = new List<Expression>();
 
-            Function.Arguments.ForEach(r =>
+            Function.Arguments?.ForEach(r =>
             {
                 Expression argExpression;
                 if (r is LinqlLambda lambda)

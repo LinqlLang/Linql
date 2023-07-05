@@ -199,3 +199,9 @@ class TestLinqlParser:
       search: LinqlSearch[DataModel] = context.Set(DataModel)
       newSearch = search.LastOrDefaultSearch(lambda r: r.Integer == 1)
       testLoader.ExecuteTest(newSearch)
+
+   def test_Lower(self):
+      search: LinqlSearch[DataModel] = context.Set(DataModel)
+      newSearch = search.Select(lambda r: r.String.lower())
+      json = newSearch.ToListAsyncSearch().toJson()
+      assert "ToLower" in json

@@ -38,7 +38,12 @@ context = CustomLinqlContext(LinqlSearch, "localhost:7113")
 async def main():
     set: LinqlSearch[State] = context.Set(State)
     results = await set.ToListAsync()
+    
+    results = await set.Where(lambda r: "A" in r.State_Code).ToListAsync()
+    results = await set.Where(lambda r: "en" in r.State_Name.lower()).ToListAsync()
     print(results)
+    result = await set.FirstOrDefaultAsync()
+    print(result)
 
 
 if __name__ == "__main__":
