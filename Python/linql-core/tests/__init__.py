@@ -1,3 +1,3 @@
-# SPDX-FileCopyrightText: 2023-present kris.sodroski@cbre.com <kris.sodroski@cbre.com>
+# SPDX-FileCopyrightText: 2023-present sodroski@bu.edu <sodroski@bu.edu>
 #
 # SPDX-License-Identifier: MIT

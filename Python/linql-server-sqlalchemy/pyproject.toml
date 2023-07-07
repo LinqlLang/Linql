@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "linql-core"
+name = "linql-server-sqlalchemy"
 dynamic = ["version"]
 description = ''
 readme = "README.md"
@@ -27,12 +27,12 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Documentation = "https://github.com/unknown/linql-core#readme"
-Issues = "https://github.com/unknown/linql-core/issues"
-Source = "https://github.com/unknown/linql-core"
+Documentation = "https://github.com/unknown/linql-server-sqlalchemy#readme"
+Issues = "https://github.com/unknown/linql-server-sqlalchemy/issues"
+Source = "https://github.com/unknown/linql-server-sqlalchemy"
 
 [tool.hatch.version]
-path = "src/linql_core/__about__.py"
+path = "src/linql_server_sqlalchemy/__about__.py"
 
 [tool.hatch.envs.default]
 dependencies = [
@@ -62,7 +62,7 @@ dependencies = [
   "ruff>=0.0.243",
 ]
 [tool.hatch.envs.lint.scripts]
-typing = "mypy --install-types --non-interactive {args:src/linql_core tests}"
+typing = "mypy --install-types --non-interactive {args:src/linql_server_sqlalchemy tests}"
 style = [
   "ruff {args:.}",
   "black --check --diff {args:.}",
@@ -128,7 +128,7 @@ unfixable = [
 ]
 
 [tool.ruff.isort]
-known-first-party = ["linql_core"]
+known-first-party = ["linql_server_sqlalchemy"]
 
 [tool.ruff.flake8-tidy-imports]
 ban-relative-imports = "all"
@@ -138,16 +138,16 @@ ban-relative-imports = "all"
 "tests/**/*" = ["PLR2004", "S101", "TID252"]
 
 [tool.coverage.run]
-source_pkgs = ["linql_core", "tests"]
+source_pkgs = ["linql_server_sqlalchemy", "tests"]
 branch = true
 parallel = true
 omit = [
-  "src/linql_core/__about__.py",
+  "src/linql_server_sqlalchemy/__about__.py",
 ]
 
 [tool.coverage.paths]
-linql_core = ["src/linql_core", "*/linql-core/src/linql_core"]
-tests = ["tests", "*/linql-core/tests"]
+linql_server_sqlalchemy = ["src/linql_server_sqlalchemy", "*/linql-server-sqlalchemy/src/linql_server_sqlalchemy"]
+tests = ["tests", "*/linql-server-sqlalchemy/tests"]
 
 [tool.coverage.report]
 exclude_lines = [
