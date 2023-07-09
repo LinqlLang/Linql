@@ -2,11 +2,12 @@
     "[python]": {
         "editor.defaultFormatter": "ms-python.autopep8"
     },
-    "python.formatting.provider": "ms-python.autopep8",
+    "python.formatting.provider": "autopep8",
     "python.testing.pytestArgs": [
         "--no-cov",
         "linql-core",
-        "linql-client"
+        "linql-client",
+        "linql-server-sqlalchemy"
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
