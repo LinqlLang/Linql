@@ -60,16 +60,16 @@ List<State> statesICareAbout = states
 
 ## Language Support
 
-| Language                             | Environment | Client                                                 | Server                       | Notes                                                                                                                                         |
-| ------------------------------------ | ----------- | ------------------------------------------------------ | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| C#                                   |             | [Full](./C%23/Linql.Client/)                           | [Full](./C%23/Linql.Server/) |
-| [Javascript](./Typescript/README.md) |             |                                                        |                              | Uses Linq emulator                                                                                                                            |
-| -                                    | Node        | [Full](./Typescript/projects/linql.client-node-fetch/) | Not Started                  | [linql.client-fetch](./Typescript/projects/linql.client-fetch/) and [linql.client-node-fetch](./Typescript/projects/linql.client-node-fetch/) |
-| -                                    | Angular     | [Full](./Typescript/projects/linql.client-angular/)    | n/a                          | Has native framework wrapper                                                                                                                  |
-| -                                    | React       | [Full](./Typescript/projects/linql.client-fetch/)      | n/a                          | Needs native framework wr apper                                                                                                               |
-| -                                    | Vanilla     | [Full](./Typescript/projects/linql.client-fetch/)      | n/a                          |
-| Python                               |             | [Partially Completed](./Python/)                       | Not Started                  |                                                                                                                                               |
-| Java                                 |             | Not Started                                            | Not Started                  |
+| Language                             | Environment | Client                                                 | Server                                           | Notes                                                                                                                                         |
+| ------------------------------------ | ----------- | ------------------------------------------------------ | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| C#                                   |             | [Full](./C%23/Linql.Client/)                           | [Full](./C%23/Linql.Server/)                     |
+| [Javascript](./Typescript/README.md) |             |                                                        |                                                  | Uses Linq emulator                                                                                                                            |
+| -                                    | Node        | [Full](./Typescript/projects/linql.client-node-fetch/) | Not Started                                      | [linql.client-fetch](./Typescript/projects/linql.client-fetch/) and [linql.client-node-fetch](./Typescript/projects/linql.client-node-fetch/) |
+| -                                    | Angular     | [Full](./Typescript/projects/linql.client-angular/)    | n/a                                              | Has native framework wrapper                                                                                                                  |
+| -                                    | React       | [Full](./Typescript/projects/linql.client-fetch/)      | n/a                                              | Needs native framework wr apper                                                                                                               |
+| -                                    | Vanilla     | [Full](./Typescript/projects/linql.client-fetch/)      | n/a                                              |
+| Python                               |             | [Partially Completed](./Python/)                       | [In Progress](./Python/linql-server-sqlalchemy/) |                                                                                                                                               |
+| Java                                 |             | Not Started                                            | Not Started                                      |
 
 ## Developer Support
 
