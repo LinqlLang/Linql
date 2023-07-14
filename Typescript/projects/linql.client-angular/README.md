@@ -9,7 +9,7 @@ Provides native linql client support for angular.
 
 ```typescript
 const search = this.context.Set<State>(State, { this: this });
-search.Where(r => r.State_Code!.Contains("A")).ToListAsyncSearch();
+const result = await search.Where(r => r.State_Code!.Contains("A")).ToListAsync();
 ```
 ## Getting Started
 ### Requirements
