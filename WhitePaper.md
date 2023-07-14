@@ -216,11 +216,31 @@ for(let stateID of stateIDs)
 
 Browsers have a [max parallel connections limit](https://stackoverflow.com/questions/985431/max-parallel-http-connections-in-a-browser) that modern applications quickly saturate, causing browsers to halt network activity.  While always having been a problem, the emergence of `event driven` archtecture in combination with the increasing complexity on the frontend has exacerbated network bottleneks.  
 
+### 8. Versioning
+
+Versioning issues here.
+
 ## The Birth of More Specifications
 
-### OData
+Overtime, engineers began to understand the `intrinsic limitations` of `REST`.  In typical fasion, `more standards` were created to combat these issues.  
 
-https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=odata
+Unfortunately, many of these `solutions suffer from additional issues`, which we will briefly cover below.
+
+### Open Data Protocol
+
+One of the first attempts at recitfying `REST`'s limitations was to extend the standard with the `Open Data Protocol (OData)`.
+
+`OData` decided that in order to provide `advanced filtering`, `more information` should be `shoved in the url` using an `esoteric manipulation` of `LHS/RHS' filtering. 
+
+For instance, take this example from the [OData Website](https://www.odata.org/getting-started/understand-odata-in-6-steps/):
+
+```curl
+GET https://services.odata.org/v4/TripPinServiceRW/People?$top=2 &amp; $select=FirstName, LastName &amp; $filter=Trips/any(d:d/Budget gt 3000) HTTP/1.1
+```
+
+Not only does `ODATA`'s methodology suffer from many of the `same issues as REST`, but engineers `never adopted` it in mass.  
+
+In essense, this protocol `failed before it ever succeeded.`
 
 ### Json-Api
 
