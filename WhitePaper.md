@@ -218,7 +218,13 @@ Browsers have a [max parallel connections limit](https://stackoverflow.com/quest
 
 ### 8. Versioning
 
-Versioning issues here.
+`REST` is wholy inadequate to handle `api versioning`.  General consensus has been to add an `additional path` to `routes` in order to provide changing functionality while remaining backwards compatible. Still, many api's implement `other versioning methodologies` since `REST` has `no true recommendation`.   
+
+Unfortunately, in reality, this methodology creates `fragmentation` for `consumers`, `headaches` for `developers`, and `fails` in it's `goals`.  
+
+1. Consumers have to be `intricately aware of the version of each endpoint`.  Generally, this information can only be gleened through `textual documentation` or `schematics`.  Additionally, `endpoints` many times `vary` in their current `version`.  The [Azure Dev Ops Api](https://learn.microsoft.com/en-us/rest/api/azure/devops/?view=azure-devops-rest-7.1) is a good example of the issues that these versioning schemes provide, as versioning is `provided through header values`, and endpoints - even within the same resource - `vary widely` in their `latest version` (7.1-preview.1, 7.1-preview.3, etc.).  
+2. Maintaining these versioned routes is difficult for developers as individual routes must be programmed.  Most of the time, these versions are a consequence of the `data model`, requiring developers to `maintain multiple data models` which is notoriously `difficult`.
+3. Api versioning is generally implemented for all changes to the data model, whether it be `destructive` or `constructive`.  If the change is `destructive`, `consumers` generally always have to make `changes` on their if they `rely` on the `destructed data`.  In cases of `constructive` changes, `consumers uninterested in the new data` don't even need to be aware of the additions, `making versioning to define this change unecessary in its entirety`.
 
 ## The Birth of More Specifications
 
