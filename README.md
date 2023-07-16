@@ -73,13 +73,16 @@ List<State> statesICareAbout = states
 
 ## Developer Support
 
-If Linql resonates with you, please consider supporting the project.  
+If Linql resonates with you, `please consider supporting the project, as the entire stack is maintained by a single developer`.  
 
 ### Ethereum
 
 ```
 0x50373B51Cb601827CcC1Dc5472251031d2fdBF89
 ```
+
+### Open Collective
+We also have an open collective if you wish to `sponsor`, `receive individualized support`, and `prioritize features`. 
 
 ### Hire Me
 
