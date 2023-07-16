@@ -4,6 +4,25 @@ Linql is a next generation graph api library.  It's primary goal is to provide l
 
 [Read the white paper](./WhitePaper.md)  
 
+## Support
+
+If Linql resonates with you, `please consider supporting the project, as the entire stack is maintained by a single developer`.  
+
+### Ethereum
+
+```
+0x50373B51Cb601827CcC1Dc5472251031d2fdBF89
+```
+
+### Open Collective
+We also have an open collective if you wish to `sponsor`, `receive individualized support`, and `prioritize features`. 
+
+### Hire Me
+
+[LinkedIn](https://www.linkedin.com/in/kris-sodroski-60001480/)
+
+[sodroski@bu.edu](mailto:sodroski@bu.edu)
+
 ## Unparalleled Developer Experience 
 
 Because Linql is language-native, it is small, light-weight, and robust.  
@@ -70,25 +89,6 @@ List<State> statesICareAbout = states
 | -                                    | Vanilla     | [Full](./Typescript/projects/linql.client-fetch/)      | n/a                                              |
 | Python                               |             | [Partially Completed](./Python/)                       | [In Progress](./Python/linql-server-sqlalchemy/) |                                                                                                                                               |
 | Java                                 |             | Not Started                                            | Not Started                                      |
-
-## Developer Support
-
-If Linql resonates with you, `please consider supporting the project, as the entire stack is maintained by a single developer`.  
-
-### Ethereum
-
-```
-0x50373B51Cb601827CcC1Dc5472251031d2fdBF89
-```
-
-### Open Collective
-We also have an open collective if you wish to `sponsor`, `receive individualized support`, and `prioritize features`. 
-
-### Hire Me
-
-[LinkedIn](https://www.linkedin.com/in/kris-sodroski-60001480/)
-
-[sodroski@bu.edu](mailto:sodroski@bu.edu)
 
 ## Acknowledgements 
 
