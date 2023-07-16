@@ -2,6 +2,8 @@
 
 Linql is a next generation graph api library.  It's primary goal is to provide language-native graph api integration to achieve consistency and scale across the web. 
 
+> Linql is currently in alpha1.  Support for C# and Typescript may be production ready and significantly improve your web development experience. 
+
 [Read the white paper](./WhitePaper.md)  
 
 ## Support
@@ -79,16 +81,16 @@ List<State> statesICareAbout = states
 
 ## Language Support
 
-| Language                             | Environment | Client                                                 | Server                                           | Notes                                                                                                                                         |
-| ------------------------------------ | ----------- | ------------------------------------------------------ | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| C#                                   |             | [Full](./C%23/Linql.Client/)                           | [Full](./C%23/Linql.Server/)                     |
-| [Javascript](./Typescript/README.md) |             |                                                        |                                                  | Uses Linq emulator                                                                                                                            |
-| -                                    | Node        | [Full](./Typescript/projects/linql.client-node-fetch/) | Not Started                                      | [linql.client-fetch](./Typescript/projects/linql.client-fetch/) and [linql.client-node-fetch](./Typescript/projects/linql.client-node-fetch/) |
-| -                                    | Angular     | [Full](./Typescript/projects/linql.client-angular/)    | n/a                                              | Has native framework wrapper                                                                                                                  |
-| -                                    | React       | [Full](./Typescript/projects/linql.client-fetch/)      | n/a                                              | Needs native framework wr apper                                                                                                               |
-| -                                    | Vanilla     | [Full](./Typescript/projects/linql.client-fetch/)      | n/a                                              |
-| Python                               |             | [Partially Completed](./Python/)                       | [In Progress](./Python/linql-server-sqlalchemy/) |                                                                                                                                               |
-| Java                                 |             | Not Started                                            | Not Started                                      |
+| Language                             | Environment | Client                                                       | Server                                           | Notes                                                                                                                                         |
+| ------------------------------------ | ----------- | ------------------------------------------------------------ | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| C#                                   |             | [Full Alpha](./C%23/Linql.Client/)                           | [Full Alpha](./C%23/Linql.Server/)               |
+| [Javascript](./Typescript/README.md) |             |                                                              |                                                  | Uses Linq emulator                                                                                                                            |
+| -                                    | Node        | [Full Alpha](./Typescript/projects/linql.client-node-fetch/) | Not Started                                      | [linql.client-fetch](./Typescript/projects/linql.client-fetch/) and [linql.client-node-fetch](./Typescript/projects/linql.client-node-fetch/) |
+| -                                    | Angular     | [Full Alpha](./Typescript/projects/linql.client-angular/)    | n/a                                              | Has native framework wrapper                                                                                                                  |
+| -                                    | React       | [Full Alpha](./Typescript/projects/linql.client-fetch/)      | n/a                                              | Needs native framework wr apper                                                                                                               |
+| -                                    | Vanilla     | [Full Alpha](./Typescript/projects/linql.client-fetch/)      | n/a                                              |
+| Python                               |             | [Partial Alpha](./Python/)                                   | [In Progress](./Python/linql-server-sqlalchemy/) |                                                                                                                                               |
+| Java                                 |             | Not Started                                                  | Not Started                                      |
 
 ## Acknowledgements 
 
