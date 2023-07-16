@@ -11,7 +11,7 @@ A linql client implementation that uses node-fetch.
 ### Installation
 
 ```bash
-npm i linql.client-node-fetch
+npm i linql.client-node-fetch@1.0.0-alpha1
 ```
 
 Create a context, and then start using.

@@ -1,6 +1,13 @@
 {
   "name": "linql.client-node-fetch",
   "version": "1.0.0-alpha1",
+  "author": "Kris Sodroski",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheKrisSodroski/Linql"
+  },
+  "description": "Linql Client that uses node-fetch",
   "peerDependencies": {
     "linql.client": "^1.0.0-alpha1",
     "node-fetch": "^3.3.1"

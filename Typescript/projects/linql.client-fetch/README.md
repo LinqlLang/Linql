@@ -9,7 +9,7 @@ A linql client implementation that uses native fetch.
 ### Installation
 
 ```bash
-npm i linql.client-fetch
+npm i linql.client-fetch@1.0.0-alpha1
 ```
 
 Create a context, and then start using.

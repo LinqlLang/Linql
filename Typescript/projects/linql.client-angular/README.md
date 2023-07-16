@@ -19,7 +19,7 @@ const result = await search.Where(r => r.State_Code!.Contains("A")).ToListAsync(
 ### Installation
 
 ```bash
-npm i linql.client-angular
+npm i linql.client-angular@1.0.0-alpha1
 ```
 
 #### **`app.module.ts`**
