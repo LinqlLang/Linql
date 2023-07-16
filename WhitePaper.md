@@ -1,5 +1,7 @@
 # Linql: A Next-Generation, Language-Native Graph Api Language
-##### Kris Sodroski (2023)  
+#### Kris Sodroski (2023)  
+
+> This is a work in progress.  I will be finishing this white paper and the Linql specs at a later date. 
 
 ## Introduction 
 
