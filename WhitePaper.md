@@ -250,7 +250,9 @@ In essense, this protocol `failed before it ever succeeded.`
 
 ### Json-Api
 
-https://jsonapi.org/
+In the same vain as OData, `Json-Api` attempts to rectify `REST`'s limitations while still containing many of the issues that `ODATA` displays.  
+
+Without belaboring the same talking points as before, `Json-Api` is backed by a `giant specification`, and as of today, is `effectively dead`, as `clients` have `not been updated in over half a decade in many cases`, and the `server playground is` [defunct](https://jsonapiplayground.reyesoft.com/).
 
 ## Correct Paradigm, Bad Choices
 
