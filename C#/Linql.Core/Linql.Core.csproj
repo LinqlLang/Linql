@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -6,18 +6,27 @@
 
   <PropertyGroup>
     <VersionPrefix>1.0.0</VersionPrefix>
-    <VersionSuffix>alpha</VersionSuffix>
+    <VersionSuffix>alpha1</VersionSuffix>
     <Authors>Kristopher Sodroski</Authors>
     <Description>Json serializable model for Linql. </Description>
     <PackageProjectUrl>https://github.com/TheKrisSodroski/Linql</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/TheKrisSodroski/Linql/tree/master/C%23/Linql.Core</RepositoryUrl>
+    <RepositoryUrl>https://github.com/TheKrisSodroski/Linql</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>api;graph;graphql;linql;linq</PackageTags>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
 
 
   <ItemGroup>
     <PackageReference Include="System.Text.Json" Version="7.0.*" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Update="LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

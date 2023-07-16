@@ -13,7 +13,7 @@ string output = await search.Where(r => r.Boolean && r.OneToOne.Boolean).ToListA
 ## Installation
 
 ```powershell
-dotnet add package Linql.Client
+dotnet add package Linql.Client -v 1.0.0-alpha1
 ```
 
 ## Basic Usage

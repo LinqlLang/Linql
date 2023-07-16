@@ -32,7 +32,7 @@ object genericData = this.Compiler.Execute(search, this.Data);
 ## Installation
 
 ```powershell
-dotnet add package Linql.Server
+dotnet add package Linql.Server -v 1.0.0-alpha1
 ```
 
 ## WebApi Usage
