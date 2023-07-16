@@ -17,7 +17,7 @@ If Linql resonates with you, `please consider supporting the project, as the ent
 ```
 
 ### Open Collective
-We also have an open collective if you wish to `sponsor`, `receive individualized support`, and `prioritize features`. 
+We also have an (opencollective)[https://opencollective.com/linql] if you wish to `sponsor`, `receive individualized support`, and `prioritize features`. 
 
 ### Hire Me
 
