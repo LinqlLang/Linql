@@ -124,9 +124,6 @@ const notNull = search.Where(r => r.NullableInteger !== undefined && (r.Nullable
 //Get where Is Null
 const isNull = search.Where(r => r.NullableInteger === undefined);
 ```
-
-`Nullable` support can be enhanced with a direct integration with [LinqlModel.Generator](https://github.com/TheKrisSodroski/Linql.ModelGenerator).
-
 ## Dynamic Queries
 
 `Linql` methods accept both `arrow functions` and `strings` as predicates.  This can allow you to do dynamic generation of queries. 

@@ -94,7 +94,7 @@ List<State> statesICareAbout = states
 
 ## Model Generation 
 
-Linql is very powerful if there is automatic model generation for your consumers to use.  This can be accomplished with the (Linql.ModelGenerator)[https://github.com/TheKrisSodroski/Linql.ModelGenerator].
+Linql is very powerful if there is automatic model generation for your consumers to use.  This can be accomplished with the [Linql.ModelGenerator](https://github.com/TheKrisSodroski/Linql.ModelGenerator).
 
 ## Acknowledgements 
 
