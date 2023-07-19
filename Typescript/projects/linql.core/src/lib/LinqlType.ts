@@ -23,7 +23,7 @@ export class LinqlType
                 type.TypeName = "String";
                 break;
             case "bigint":
-                type.TypeName = "Long";
+                type.TypeName = "Int64";
                 break;
             case "boolean":
                 type.TypeName = "Boolean"
