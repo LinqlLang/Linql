@@ -82,7 +82,7 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
         return this.CustomLinqlFunction<T>("Distinct", undefined);
     }
 
-    public Select<S>(Expression: TransformExpression<T, S>)
+    public Select<S>(Expression: TransformExpression<T, S> | string)
     {
         return this.CustomLinqlFunction<S>("Select", Expression);
     }
@@ -92,22 +92,22 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
         return this.CustomLinqlFunction<T>("Select", Expression);
     }
 
-    public SelectMany<S>(Expression: TransformExpression<T, S>)
+    public SelectMany<S>(Expression: TransformExpression<T, S> | string)
     {
         return this.CustomLinqlFunction<S>("SelectMany", Expression);
     }
 
-    public GroupBy<S>(Expression: TransformExpression<T, S>)
+    public GroupBy<S>(Expression: TransformExpression<T, S> | string)
     {
         return this.CustomLinqlFunction<IGrouping<S, T>>("GroupBy", Expression);
     }
 
-    public OrderBy<S>(Expression: TransformExpression<T, S>): AOrderedLinqlSearch<T>
+    public OrderBy<S>(Expression: TransformExpression<T, S> | string): AOrderedLinqlSearch<T>
     {
         return this.CustomLinqlFunction<T>("OrderBy", Expression) as AOrderedLinqlSearch<T>;
     }
 
-    public OrderByDescending<S>(Expression: TransformExpression<T, S>): AOrderedLinqlSearch<T>
+    public OrderByDescending<S>(Expression: TransformExpression<T, S> | string): AOrderedLinqlSearch<T>
     {
         return this.CustomLinqlFunction<T>("OrderByDescending", Expression) as AOrderedLinqlSearch<T>;
     }
@@ -153,6 +153,51 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
     LastOrDefaultSearch(Predicate: BooleanExpression<T> | string | undefined = undefined)
     {
         return this.CustomLinqlFunction<T | null>("LastOrDefaultAsync", Predicate);
+    }
+
+    public AnySearch(Predicate?: BooleanExpression<T> | string)
+    {
+        return this.CustomLinqlFunction<boolean>("AnyAsync", Predicate);
+    }
+
+    public AllSearch(Predicate?: BooleanExpression<T> | string)
+    {
+        return this.CustomLinqlFunction<boolean>("AllAsync", Predicate);
+    }
+
+    public MinSearch(Predicate?: TransformExpression<T, number> | string)
+    {
+        return this.CustomLinqlFunction<number>("MinAsync", Predicate);
+    }
+
+    public MaxSearch(Predicate?: TransformExpression<T, number> | string)
+    {
+        return this.CustomLinqlFunction<number>("MaxAsync", Predicate);
+    }
+
+    public MinBySearch(Predicate: TransformExpression<T, number> | string)
+    {
+        return this.CustomLinqlFunction<T>("MinByAsync", Predicate);
+    }
+
+    public MaxBySearch(Predicate: TransformExpression<T, number> | string)
+    {
+        return this.CustomLinqlFunction<T>("MaxByAsync", Predicate);
+    }
+
+    public SumSearch(Predicate?: TransformExpression<T, number> | string)
+    {
+        return this.CustomLinqlFunction<number>("SumAsync", Predicate);
+    }
+
+    public AverageSearch(Predicate?: TransformExpression<T, number> | string)
+    {
+        return this.CustomLinqlFunction<number>("AverageAsync", Predicate);
+    }
+
+    public CountSearch()
+    {
+        return this.CustomLinqlFunction<number>("CountAsync");
     }
 
     //#endregion
@@ -218,6 +263,11 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
     public AverageAsync(Predicate?: TransformExpression<T, number> | string): Promise<number>
     {
         return this.executeCustomLinqlFunction("AverageAsync", Predicate);
+    }
+
+    public CountAsync(): Promise<number>
+    {
+        return this.executeCustomLinqlFunction("CountAsync");
     }
 
     //#endregion

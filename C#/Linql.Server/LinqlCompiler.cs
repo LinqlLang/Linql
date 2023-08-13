@@ -319,22 +319,30 @@ namespace Linql.Server
         /// <returns></returns>
         protected MethodInfo CompileGenericMethod(MethodInfo GenericMethod, Type SourceType, IEnumerable<Expression> MethodArgs)
         {
-            MethodInfo madeMethod = GenericMethod;
-            IEnumerable<Type> funGenericArgs = GenericMethod.GetGenericArguments();
-            int genericArgCount = funGenericArgs.Count();
-            IEnumerable<ParameterInfo> funParameters = GenericMethod.GetParameters().Skip(1);
-            IEnumerable<Type> methodArgTypes = MethodArgs.Select(r => typeof(Expression<>).MakeGenericType(r.Type));
+            MethodInfo madeMethod;
+            if (!GenericMethod.IsGenericMethod)
+            {
+                madeMethod = GenericMethod;
+            }
+            else 
+            {
+                madeMethod = GenericMethod;
+                IEnumerable<Type> funGenericArgs = GenericMethod.GetGenericArguments();
+                int genericArgCount = funGenericArgs.Count();
+                IEnumerable<ParameterInfo> funParameters = GenericMethod.GetParameters().Skip(1);
+                IEnumerable<Type> methodArgTypes = MethodArgs.Select(r => typeof(Expression<>).MakeGenericType(r.Type));
 
-            Dictionary<string, Type> genericArgMapping = new Dictionary<string, Type>();
-            genericArgMapping.Add(funGenericArgs.FirstOrDefault().Name, SourceType);
+                Dictionary<string, Type> genericArgMapping = new Dictionary<string, Type>();
+                genericArgMapping.Add(funGenericArgs.FirstOrDefault().Name, SourceType);
 
-            funParameters
-               .Zip(methodArgTypes, (left, right) => new { parameter = left, argumentType = right })
-               .ToList().ForEach(r => this.LoadGenericTypesFromArguments(r.parameter.ParameterType, r.argumentType, genericArgMapping));
+                funParameters
+                   .Zip(methodArgTypes, (left, right) => new { parameter = left, argumentType = right })
+                   .ToList().ForEach(r => this.LoadGenericTypesFromArguments(r.parameter.ParameterType, r.argumentType, genericArgMapping));
 
-            List<Type> genericArgs = genericArgMapping.Select(r => r.Value).ToList();
+                List<Type> genericArgs = genericArgMapping.Select(r => r.Value).ToList();
 
-            madeMethod = madeMethod.MakeGenericMethod(genericArgs.Take(genericArgCount).ToArray());
+                madeMethod = madeMethod.MakeGenericMethod(genericArgs.Take(genericArgCount).ToArray());
+            }
             return madeMethod;
         }
 
@@ -525,7 +533,12 @@ namespace Linql.Server
         {
             IEnumerable<MethodInfo> candidates = this.GetMethodsForType(FunctionObjectType);
 
-            IEnumerable<MethodInfo> trimmedMethods = candidates.Where(r => r.Name.Contains(function.FunctionName));
+            IEnumerable<MethodInfo> trimmedMethods = candidates.Where(r => r.Name == function.FunctionName);
+
+            if(trimmedMethods.Any() == false)
+            {
+                trimmedMethods = candidates.Where(r => r.Name.Contains(function.FunctionName));
+            }
 
             if (trimmedMethods.Any() == false && function.FunctionName.Contains("Async"))
             {
