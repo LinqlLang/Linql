@@ -3,5 +3,6 @@
  */
 
 export * from "./lib/ALinqlSearch";
-export * from "./lib/AOrderedLinqlSearch";
 export * from "./lib/LinqlSearch";
+// export * from "./lib/LinqlParser";
+// export * from "./lib/LinqlContext";

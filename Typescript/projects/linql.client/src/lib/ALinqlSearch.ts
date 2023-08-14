@@ -1,5 +1,5 @@
 import { AnyExpression, BooleanExpression, GenericConstructor, IGrouping, LinqlConstant, LinqlExpression, LinqlFunction, LinqlSearch, LinqlType, TransformExpression, ITypeNameProvider } from "linql.core";
-import { AOrderedLinqlSearch } from "./AOrderedLinqlSearch";
+// import { OrderedLinqlSearch } from "./AOrderedLinqlSearch";
 import { LinqlParser } from "./LinqlParser";
 
 
@@ -102,14 +102,21 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
         return this.CustomLinqlFunction<IGrouping<S, T>>("GroupBy", Expression);
     }
 
-    public OrderBy<S>(Expression: TransformExpression<T, S> | string): AOrderedLinqlSearch<T>
+    public OrderBy<S>(Expression: TransformExpression<T, S> | string): OrderedLinqlSearch<T>
     {
-        return this.CustomLinqlFunction<T>("OrderBy", Expression) as AOrderedLinqlSearch<T>;
+        const custom = this.CustomLinqlFunction<T>("OrderBy", Expression);
+        const convert = new OrderedLinqlSearch<T>(this.ModelType, this.ArgumentContext, this.Context);
+        convert.Expressions = custom.Expressions;
+        return convert;
+
     }
 
-    public OrderByDescending<S>(Expression: TransformExpression<T, S> | string): AOrderedLinqlSearch<T>
+    public OrderByDescending<S>(Expression: TransformExpression<T, S> | string): OrderedLinqlSearch<T>
     {
-        return this.CustomLinqlFunction<T>("OrderByDescending", Expression) as AOrderedLinqlSearch<T>;
+        const custom = this.CustomLinqlFunction<T>("OrderByDescending", Expression);
+        const convert = new OrderedLinqlSearch<T>(this.ModelType, this.ArgumentContext, this.Context);
+        convert.Expressions = custom.Expressions;
+        return convert;
     }
 
     public Skip(Skip: number)
@@ -360,5 +367,29 @@ export abstract class ALinqlContext implements ITypeNameProvider
         anycast.Context = undefined;
         anycast.ModelType = undefined;
         return optimizedSearch;
+    }
+}
+
+export class OrderedLinqlSearch<T> extends ALinqlSearch<T>
+{
+    public Copy(): this
+    {
+        const search = new OrderedLinqlSearch<T>(this.ModelType, this.ArgumentContext, this.Context);
+
+        if (this.Expressions)
+        {
+            search.Expressions = this.Expressions.map(r => r.Clone());
+        }
+
+        return search as this;
+    }
+    public ThenByDescending<S>(Expression: TransformExpression<T, S> | string)
+    {
+        return this.CustomLinqlFunction<T>("ThenByDescending", Expression) as OrderedLinqlSearch<T>;
+    }
+
+    public ThenBy<S>(Expression: TransformExpression<T, S> | string)
+    {
+        return this.CustomLinqlFunction<T>("ThenBy", Expression) as OrderedLinqlSearch<T>;
     }
 }
