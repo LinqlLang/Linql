@@ -10,4 +10,14 @@ export class LinqlSearch
     {
     }
 
+    Merge(SearchToMerge: LinqlSearch)
+    {
+        this.Expressions = this.Expressions?.map(r => r.Clone());
+        const lastExpression = this.Expressions?.FirstOrDefault()?.GetLastExpressionInNextChain();
+
+        if (lastExpression)
+        {
+            lastExpression.Next = SearchToMerge.Expressions?.FirstOrDefault()?.Next?.Clone();
+        }
+    }
 }
