@@ -112,7 +112,12 @@ export class LinqlParser
             Literal(Node: Acorn.Node, State: LinqlParser, Callback: AcornWalk.WalkerCallback<LinqlParser>)
             {
                 State.VisitConstant(Node, Callback);
+            },
+            ThisExpression(Node: Acorn.Node, State: LinqlParser, Callback: AcornWalk.WalkerCallback<LinqlParser>)
+            {
+                State.VisitThis(Node, Callback);
             }
+
         });
     }
 
@@ -189,6 +194,33 @@ export class LinqlParser
         this.PushToStack(expression, Node);
 
 
+    }
+
+
+    VisitThis(Node: Acorn.Node, Callback: AcornWalk.WalkerCallback<LinqlParser>)
+    {
+        const node = Node as any as ESTree.ThisExpression;
+        const anyArg = this.ArgumentContext as any;
+        let expression: LinqlExpression;
+        let value = anyArg["this"];
+
+        if (!value)
+        {
+            value = anyArg["_this"];
+        }
+
+        if (!value)
+        {
+            throw `Unable to extract argument ${ Node }`;
+        }
+        else
+        {
+            const type = LinqlType.GetLinqlType(value, this.TypeNameProvider);
+            expression = new LinqlConstant(type, value);
+        }
+
+        this.AttachToExpression(expression);
+        this.PushToStack(expression, Node);
     }
 
     VisitMember(Node: Acorn.Node, Callback: AcornWalk.WalkerCallback<LinqlParser>)
