@@ -1,6 +1,7 @@
 import { AnyExpression, BooleanExpression, GenericConstructor, IGrouping, LinqlConstant, LinqlExpression, LinqlFunction, LinqlSearch, LinqlType, TransformExpression, ITypeNameProvider } from "linql.core";
 // import { OrderedLinqlSearch } from "./AOrderedLinqlSearch";
 import { LinqlParser } from "./LinqlParser";
+import { constructorType } from "./LinqlConstructorType";
 
 
 export declare type LinqlSearchConstructor<T> =
@@ -72,9 +73,9 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
 
     //#region Functions
 
-    public Where(Expression: BooleanExpression<T> | string)
+    public Where(Expression: BooleanExpression<T> | string): this
     {
-        return this.CustomLinqlFunction<T>("Where", Expression);
+        return this.CustomLinqlFunction<T>("Where", Expression) as this;
     }
 
     public Distinct()
@@ -87,9 +88,9 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
         return this.CustomLinqlFunction<S>("Select", Expression);
     }
 
-    public Include<S>(Expression: TransformExpression<T, S> | string)
+    public Include<S>(Expression: TransformExpression<T, S> | string): this
     {
-        return this.CustomLinqlFunction<T>("Include", Expression);
+        return this.CustomLinqlFunction<T>("Include", Expression) as this;
     }
 
     public SelectMany<S>(Expression: TransformExpression<T, S> | string)
@@ -119,7 +120,7 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
         return convert;
     }
 
-    public Skip(Skip: number)
+    public Skip(Skip: number): this
     {
         const type = new LinqlType();
         type.TypeName = "Int32";
@@ -130,7 +131,7 @@ export abstract class ALinqlSearch<T> extends LinqlSearch
         return newSearch;
     }
 
-    public Take(Take: number)
+    public Take(Take: number): this
     {
         const type = new LinqlType();
         type.TypeName = "Int32";
@@ -374,7 +375,9 @@ export class OrderedLinqlSearch<T> extends ALinqlSearch<T>
 {
     public Copy(): this
     {
-        const search = new OrderedLinqlSearch<T>(this.ModelType, this.ArgumentContext, this.Context);
+        const objCast = this as Object;
+        const constructor: constructorType<T, this> = objCast.constructor as constructorType<T, this>;
+        const search = new constructor(this.ModelType, this.ArgumentContext, this.Context)
 
         if (this.Expressions)
         {
@@ -383,13 +386,14 @@ export class OrderedLinqlSearch<T> extends ALinqlSearch<T>
 
         return search as this;
     }
-    public ThenByDescending<S>(Expression: TransformExpression<T, S> | string)
+
+    public ThenByDescending<S>(Expression: TransformExpression<T, S> | string): this
     {
-        return this.CustomLinqlFunction<T>("ThenByDescending", Expression) as OrderedLinqlSearch<T>;
+        return this.CustomLinqlFunction<T>("ThenByDescending", Expression) as this;
     }
 
-    public ThenBy<S>(Expression: TransformExpression<T, S> | string)
+    public ThenBy<S>(Expression: TransformExpression<T, S> | string): this
     {
-        return this.CustomLinqlFunction<T>("ThenBy", Expression) as OrderedLinqlSearch<T>;
+        return this.CustomLinqlFunction<T>("ThenBy", Expression) as this;
     }
 }

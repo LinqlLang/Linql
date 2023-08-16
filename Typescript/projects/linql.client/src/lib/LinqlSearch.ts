@@ -1,5 +1,6 @@
 import { GenericConstructor } from "linql.core";
 import { ALinqlContext, ALinqlSearch, LinqlSearchConstructor } from "./ALinqlSearch";
+import { constructorType } from "./LinqlConstructorType";
 
 export class LinqlSearch<T> extends ALinqlSearch<T>
 {
@@ -14,7 +15,9 @@ export class LinqlSearch<T> extends ALinqlSearch<T>
 
     public Copy(): this
     {
-        const search = new LinqlSearch<T>(this.ModelType, this.ArgumentContext, this.Context);
+        const objCast = this as Object;
+        const constructor: constructorType<T, this> = objCast.constructor as constructorType<T, this>;
+        const search = new constructor(this.ModelType, this.ArgumentContext, this.Context)
 
         if (this.Expressions)
         {
