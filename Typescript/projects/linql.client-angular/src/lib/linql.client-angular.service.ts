@@ -33,6 +33,6 @@ export class LinqlContext extends ALinqlContext implements IObservableContext
 
   SetObservable<T>(Type: string | GenericConstructor<T>, ArgumentContext?: {} | undefined): LinqlObservable<T>
   {
-    return this.Set<T>(Type) as LinqlObservable<T>;
+    return this.Set<T>(Type, ArgumentContext) as LinqlObservable<T>;
   }
 }
