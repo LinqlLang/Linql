@@ -447,7 +447,7 @@ export class LinqlParser
         {
             const attachTo = functionCallee.GetLastExpressionInNextChain();
             attachTo.Next = linqlFunction;
-            this.Root = functionCallee;
+            this.AttachToExpression(functionCallee);
         }
     }
 
