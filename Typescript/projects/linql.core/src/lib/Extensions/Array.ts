@@ -106,7 +106,7 @@ Array.prototype.FirstOrDefault = function <T>(Expression?: BooleanExpression<T>)
 
 Array.prototype.LastOrDefault = function <T>(Expression?: BooleanExpression<T>)
 {
-    const reverse = this.reverse();
+    const reverse = Array.from(this).reverse();
     if (Expression)
     {
         return reverse.find(Expression);

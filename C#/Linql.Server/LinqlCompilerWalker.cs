@@ -272,9 +272,22 @@ namespace Linql.Server
             left = this.HandleNullConstants(left, right);
             right = this.HandleNullConstants(right, left);
 
+            left = this.HandleDates(left, right);
+            right = this.HandleDates(right, left);
+
             Expression binaryExpression = (Expression)binaryMethod.Invoke(null, new object[] { left, right });
             return binaryExpression;
 
+        }
+
+        private Expression HandleDates(Expression left, Expression right)
+        {
+            if(left.Type == typeof(string) && right.Type == typeof(DateTime) && left is ConstantExpression constant)
+            {
+                DateTime stringToTime = DateTime.Parse(constant.Value as string);
+                return Expression.Constant(stringToTime);
+            }
+            return left;
         }
 
         private Expression HandleNullConstants(Expression ExpressionToCheck, Expression CorrespondingExpression)

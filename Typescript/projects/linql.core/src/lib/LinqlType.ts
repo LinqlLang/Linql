@@ -51,6 +51,10 @@ export class LinqlType
                         type.GenericParameters.push(objectType);
                     }
                 }
+                else if (Value instanceof Date)
+                {
+                    type.TypeName = "DateTime";
+                }
                 else
                 {
                     type.TypeName = TypeNameProvider.GetTypeName(Value);

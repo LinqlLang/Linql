@@ -583,7 +583,16 @@ namespace Linql.Server
                     bool isExpressionType = s.left.IsExpression() && s.right.IsFunc();
                     bool generic = s.left.IsGenericParameter;
 
-                    return implements || reverseImplements || genericsMatch || isExpressionType || generic;
+                    Type leftType = s.left.GetEnumerableType();
+                    Type rightType = s.right.GetEnumerableType();
+                    bool internalTypesMatch = true;
+
+                    if (s.left.IsEnumerable() && !leftType.IsGenericParameter && s.right.IsEnumerable())
+                    {
+                        internalTypesMatch = leftType.IsAssignableFrom(rightType);
+                    }
+
+                    return (implements || reverseImplements || genericsMatch || isExpressionType || generic) && internalTypesMatch;
                 });
 
             });

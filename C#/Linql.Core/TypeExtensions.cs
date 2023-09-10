@@ -70,7 +70,7 @@ namespace Linql.Core
         /// <returns>The type of the list</returns>
         public static Type GetEnumerableType(this Type Type)
         {
-            if (Type.IsEnumerable())
+            if (Type.IsGenericType && Type.IsEnumerable())
             {
                 return Type.GetGenericArguments().First();
             }

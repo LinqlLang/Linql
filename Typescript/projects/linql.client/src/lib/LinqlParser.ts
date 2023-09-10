@@ -3,7 +3,29 @@ import * as AcornWalk from 'acorn-walk';
 import * as ESTree from 'estree';
 import { AnyExpression, LinqlBinary, LinqlConstant, LinqlExpression, LinqlFunction, LinqlLambda, LinqlObject, LinqlParameter, LinqlProperty, LinqlType, LinqlUnary, ITypeNameProvider } from "linql.core";
 
+export const BinaryMap: Map<ESTree.LogicalOperator | ESTree.BinaryOperator, string> = new Map(
+    [
 
+        ["==", "Equal"],
+        ["===", "Equal"],
+        ["&", "And"],
+        ["&&", "AndAlso"],
+        ["|", "Or"],
+        ["||", "OrElse"],
+        ["!=", "NotEqual"],
+        ["!==", "NotEqual"],
+        ["<", "LessThan"],
+        ["<=", "LessThanOrEqual"],
+        [">", "GreaterThan"],
+        [">=", "GreaterThanOrEqual"],
+        ["+", "Add"],
+        ["-", "Subtract"],
+        ["*", "Multiply"],
+        ["/", "Divide"],
+        ["%", "Modulo"],
+        ["^", "Power"]
+    ]
+)
 
 export class LinqlParser 
 {
@@ -329,45 +351,13 @@ export class LinqlParser
     {
         const node = Node as any as ESTree.BinaryExpression;
         let binary: LinqlBinary | undefined;
-        const operator: ESTree.BinaryOperator | "&&" | "||" = node.operator as ESTree.BinaryOperator | "&&" | "||";
+        const operator: ESTree.BinaryOperator | ESTree.LogicalOperator = node.operator as ESTree.BinaryOperator | ESTree.LogicalOperator;
 
-        switch (operator)
+        const stringBinary = BinaryMap.get(operator);
+
+        if (stringBinary)
         {
-            case "==":
-            case "===":
-                binary = new LinqlBinary("Equal");
-                break;
-            case "&":
-                binary = new LinqlBinary("And");
-                break;
-            case "&&":
-                binary = new LinqlBinary("AndAlso");
-                break;
-            case "|":
-                binary = new LinqlBinary("Or");
-                break;
-            case "||":
-                binary = new LinqlBinary("OrElse");
-                break;
-            case "!=":
-            case "!==":
-                binary = new LinqlBinary("NotEqual");
-                break;
-            case "<":
-                binary = new LinqlBinary("LessThan");
-                break;
-            case "<=":
-                binary = new LinqlBinary("LessThanOrEqual");
-                break;
-            case ">":
-                binary = new LinqlBinary("GreaterThan");
-                break;
-            case ">=":
-                binary = new LinqlBinary("GreaterThanOrEqual");
-                break;
-            default:
-                break;
-
+            binary = new LinqlBinary(stringBinary);
         }
 
         if (binary)
