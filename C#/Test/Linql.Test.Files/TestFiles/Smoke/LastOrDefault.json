@@ -1,1 +1,0 @@
-{"Type":{"TypeName":"DataModel"},"Expressions":[{"$type":"LinqlConstant","ConstantType":{"TypeName":"LinqlSearch","GenericParameters":[{"TypeName":"DataModel"}]},"Next":{"$type":"LinqlFunction","FunctionName":"LastOrDefaultAsync"}}]}
