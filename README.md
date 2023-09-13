@@ -2,7 +2,7 @@
 
 Linql is a next generation graph api library.  It's primary goal is to provide language-native graph api integration to achieve consistency and scale across the web. 
 
-> Linql is currently in alpha1.  Support for C# and Typescript may be production ready and significantly improve your web development experience. 
+> Linql is currently in alpha.  Support for C# and Typescript may be production ready and significantly improve your web development experience. 
 
 [Read the white paper](./WhitePaper.md)  
 
